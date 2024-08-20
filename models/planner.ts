@@ -10,5 +10,15 @@ const plannerSchema = new mongoose.Schema({
   SUN: Array,
 });
 
+export type Planner = {
+  MON: string[];
+  TUE: string[];
+  WED: string[];
+  THU: string[];
+  FRI: string[];
+  SAT: string[];
+  SUN: string[];
+};
+
 export default mongoose.models?.planner ||
   mongoose.model("planner", plannerSchema, "planner");

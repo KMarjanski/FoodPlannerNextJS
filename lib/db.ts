@@ -30,7 +30,7 @@ async function dbConnect() {
       bufferCommands: false,
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      dbName: "FoodApp",
+      dbName: "NextFoodApp",
     };
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log("Db connected");

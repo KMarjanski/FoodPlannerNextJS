@@ -1,7 +1,7 @@
-import AddRecipe from "@/components/AddRecipe/AddRecipe";
+import AddRecipe from "@/components/planner/RecipeModal/AddRecipe";
 import { daysOfTheWeek } from "@/models/enums";
 
-const Day = (props: { day: number; meals: string[] }) => {
+const Day = (props: { day: number; meals: string[] | [] }) => {
   const day: number = props.day;
   const meals: string[] = props.meals;
   const fullDayName: string = Object.values(daysOfTheWeek)[day];
@@ -10,7 +10,7 @@ const Day = (props: { day: number; meals: string[] }) => {
       <div className="card-body pt-3">
         <div className="inline-block">
           <h2 className="card-title w-0 inline-block">{fullDayName}</h2>
-          <AddRecipe fullDayName={fullDayName} />
+          <AddRecipe day={day} />
         </div>
         <center>
           {(meals.length > 0 ? meals : [""]).map((meal, i) => {

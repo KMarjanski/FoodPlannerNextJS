@@ -2,10 +2,18 @@ import mongoose from "mongoose";
 
 const recipesSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  type: { type: String, required: true },
-  categories: Array,
   ingredients: Array,
 });
+
+export type Recipes = {
+  name: string;
+  ingredients: string[];
+}[];
+
+export type Recipe = {
+  name: string;
+  ingredients: string[];
+};
 
 export default mongoose.models.recipes ||
   mongoose.model("recipes", recipesSchema, "recipes");

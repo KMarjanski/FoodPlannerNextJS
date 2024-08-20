@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SetPlannerButton from "./SetPlannerButton";
+import SetPlannerButtons from "./SetPlannerButtons";
 
 const Menu = () => {
   return (
@@ -23,7 +23,7 @@ const Menu = () => {
       </ul>
       <div className="absolute right-0">
         {/* <button className="btn mr-4">Set planner</button> */}
-        <SetPlannerButton />
+        <SetPlannerButtons />
       </div>
     </nav>
   );
