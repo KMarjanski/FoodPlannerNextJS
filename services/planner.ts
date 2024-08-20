@@ -3,7 +3,7 @@
 import Planner from "@/models/planner";
 
 const getPlanner = async () => {
-  return Planner.find();
+  return Planner.findOne();
 };
 
 const setPlanner = async () => {

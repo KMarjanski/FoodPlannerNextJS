@@ -2,7 +2,7 @@ import React from "react";
 import OpenModalButton from "./OpenModalButton";
 import ModalBody from "./ModalBody";
 
-const AddRecipe = (props: { fullDayName: string; getData: object }) => {
+const AddRecipe = (props: { fullDayName: string }) => {
   return (
     <>
       <OpenModalButton />
@@ -13,7 +13,7 @@ const AddRecipe = (props: { fullDayName: string; getData: object }) => {
               ✕
             </button>
           </form>
-          <ModalBody fullDayName={props.fullDayName} getData={props.getData} />
+          <ModalBody fullDayName={props.fullDayName} />
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const ModalBody = (props: { fullDayName: string; getData: object }) => {
+const ModalBody = (props: { fullDayName: string }) => {
   return (
     <>
       <h3 className="font-bold text-lg">{props.fullDayName}</h3>

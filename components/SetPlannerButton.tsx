@@ -6,7 +6,7 @@ import React from "react";
 const SetPlannerButton = () => {
   return (
     <button className="btn mr-4" onClick={setPlanner}>
-      Set planner
+      Save planner
     </button>
   );
 };

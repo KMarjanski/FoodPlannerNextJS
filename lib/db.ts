@@ -1,6 +1,13 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
-const MONGODB_URI = process.env.MONGO_URI;
+declare global {
+  var mongoose: {
+    promise: Promise<Mongoose> | null;
+    conn: Mongoose | null;
+  };
+}
+
+const MONGODB_URI = process.env.MONGO_URI!;
 
 if (!MONGODB_URI) {
   throw new Error(
