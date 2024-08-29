@@ -9,11 +9,7 @@ const Planner = async () => {
   const newPlanner = JSON.parse(JSON.stringify(planner));
   const recipes = await getRecipes();
   const newRecipes = JSON.parse(JSON.stringify(recipes));
-  return (
-    <div className="grid grid-cols-6 gap-4 p-4">
-      <PlannerInitializer planner={newPlanner} recipes={newRecipes} />
-    </div>
-  );
+  return <PlannerInitializer planner={newPlanner} recipes={newRecipes} />;
 };
 
 export default Planner;

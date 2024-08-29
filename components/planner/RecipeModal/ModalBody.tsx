@@ -50,7 +50,7 @@ const ModalBody = (props: { day: number }) => {
         onChange={(e) => setValue(e.target.value)}
         type="text"
         placeholder="Search..."
-      ></input>
+      />
       <center>
         {allRecipes
           .filter(
