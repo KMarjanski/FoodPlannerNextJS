@@ -9,8 +9,6 @@ const ModalBody = (props: { day: number }) => {
   const planner = plannerStore((state) => state.planner);
   const selectedRecipes = Object.values(planner)[props.day];
   const allRecipes = recipesStore((state) => state.recipes);
-  console.log(selectedRecipes);
-  console.log(allRecipes);
   return (
     <div className="flex flex-row">
       <div className="basis-1/3">

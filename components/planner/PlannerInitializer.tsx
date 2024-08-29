@@ -20,7 +20,7 @@ export default function PlannerInitializer({
   useEffect(() => {
     initPlanner(planner);
     initRecipes(recipes);
-  }, [planner, initPlanner]);
+  }, [planner, initPlanner, recipes, initRecipes]);
   return (
     <>
       {Object.keys(storePlanner).map((key, i) => {
