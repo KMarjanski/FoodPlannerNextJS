@@ -10,11 +10,6 @@ const AddRecipe = (props: { day: number }) => {
       <OpenModalButton day={props.day} />
       <dialog id={`my_modal_${props.day}`} className="modal">
         <div className="modal-box">
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
-            </button>
-          </form>
           <h3 className="font-bold text-lg">{fullDayName}</h3>
           <ModalBody day={props.day} />
         </div>

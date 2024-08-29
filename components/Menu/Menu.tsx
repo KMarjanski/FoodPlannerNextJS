@@ -22,7 +22,6 @@ const Menu = () => {
         </li>
       </ul>
       <div className="absolute right-0">
-        {/* <button className="btn mr-4">Set planner</button> */}
         <SetPlannerButtons />
       </div>
     </nav>

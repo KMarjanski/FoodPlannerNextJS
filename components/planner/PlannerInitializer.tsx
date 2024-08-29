@@ -15,12 +15,23 @@ export default function PlannerInitializer({
   recipes: Recipes;
 }) {
   const storePlanner = plannerStore((state) => state.planner);
+  const originalPlanner = plannerStore((state) => state.original);
   const initPlanner = plannerStore((state) => state.initPlanner);
   const initRecipes = recipesStore((state) => state.initRecipes);
+  const originalRecipes = recipesStore((state) => state.original);
   useEffect(() => {
-    initPlanner(planner);
-    initRecipes(recipes);
-  }, [planner, initPlanner, recipes, initRecipes]);
+    JSON.stringify(originalPlanner) !== JSON.stringify(planner) &&
+      initPlanner(planner);
+    JSON.stringify(originalRecipes) !== JSON.stringify(recipes) &&
+      initRecipes(recipes);
+  }, [
+    planner,
+    initPlanner,
+    recipes,
+    initRecipes,
+    originalPlanner,
+    originalRecipes,
+  ]);
   return (
     <>
       {Object.keys(storePlanner).map((key, i) => {
