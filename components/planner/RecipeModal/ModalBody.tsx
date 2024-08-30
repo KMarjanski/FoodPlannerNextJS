@@ -2,7 +2,6 @@
 
 import { Planner } from "@/models/planner";
 import { Recipe } from "@/models/recipes";
-import { setPlanner } from "@/services/planner";
 import { plannerStore } from "@/store/planner";
 import { recipesStore } from "@/store/recipes";
 import React, { useState } from "react";

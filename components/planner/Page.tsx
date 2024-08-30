@@ -1,5 +1,5 @@
 import React from "react";
-import Day from "./Day/Day";
+import Day from "./Day";
 import { plannerStore } from "@/store/planner";
 import { Planner } from "@/models/planner";
 

@@ -8,7 +8,7 @@ const AddRecipe = (props: { day: number }) => {
   return (
     <>
       <OpenModalButton day={props.day} />
-      <dialog id={`my_modal_${props.day}`} className="modal">
+      <dialog id={`day_modal_${props.day}`} className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">{fullDayName}</h3>
           <ModalBody day={props.day} />

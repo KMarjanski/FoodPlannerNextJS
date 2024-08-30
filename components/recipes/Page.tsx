@@ -1,25 +1,28 @@
 import { recipesStore } from "@/store/recipes";
 import React from "react";
+import SearchBar from "./SearchBar";
+import NewRecipe from "./NewRecipeModal/NewRecipe";
+import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const storeRecipes = recipesStore((state) => state.recipes);
+  const searchParams = useSearchParams();
+  const searchParam = searchParams.get("search")?.toLowerCase() || "";
   return (
     <div>
       <div>
         <center>
-          <input
-            className="rounded-r-3xl w-full py-3 px-3 mb-4 text-gray-700 focus:outline-none focus:shadow-outline"
-            type="text"
-            placeholder="Search..."
-          />
-          <button className="btn absolute right-0 btn-success">+</button>
+          <SearchBar />
+          <NewRecipe />
         </center>
       </div>
-      {storeRecipes.map((recipe, i) => (
-        <div className="badge m-1 bg-success" key={i}>
-          {recipe.name}
-        </div>
-      ))}
+      {storeRecipes
+        .filter((sr) => sr.name.toLowerCase().includes(searchParam))
+        .map((recipe, i) => (
+          <div className="badge m-1 bg-success" key={i}>
+            {recipe.name}
+          </div>
+        ))}
     </div>
   );
 };

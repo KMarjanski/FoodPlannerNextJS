@@ -2,14 +2,14 @@
 
 import React from "react";
 
-const OpenModalButton = (props: { day: number }) => {
+const OpenModalButton = () => {
   return (
     <button
-      className="btn text-xl border-none bg-green-400 hover:bg-green-600 absolute right-0 top-0"
+      className="btn absolute right-0 btn-success"
       onClick={() => {
         if (document) {
           (
-            document.getElementById(`day_modal_${props.day}`) as HTMLFormElement
+            document.getElementById(`new_recipe_modal`) as HTMLFormElement
           ).showModal();
         }
       }}
