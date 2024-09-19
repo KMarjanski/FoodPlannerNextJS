@@ -28,21 +28,7 @@ const ModalBody = (props: { day: number }) => {
     setPlannerStore(newPlanner);
   };
   return (
-    <div className="">
-      <center>
-        {selectedRecipes.map((recipe: string, i: number) => {
-          return (
-            <div
-              className="badge p-3 bg-green-600 cursor-pointer"
-              onClick={(e) => handleOnBadgeClick(e, false)}
-              key={i}
-            >
-              {recipe}
-            </div>
-          );
-        })}
-      </center>
-      <center className="my-2">{"↕"}</center>
+    <div>
       <input
         className="rounded w-full py-2 px-3 mb-4 text-gray-700 focus:outline-none focus:shadow-outline"
         value={value}
@@ -64,7 +50,7 @@ const ModalBody = (props: { day: number }) => {
           .map((recipe: Recipe, i: number) => {
             return (
               <div
-                className="badge p-3 bg-green-600 cursor-pointer"
+                className="badge p-3 bg-green-500 cursor-pointer"
                 onClick={(e) => handleOnBadgeClick(e, true)}
                 key={i}
               >
@@ -72,6 +58,20 @@ const ModalBody = (props: { day: number }) => {
               </div>
             );
           })}
+      </center>
+      <center className="my-2">{"↕"}</center>
+      <center>
+        {selectedRecipes.map((recipe: string, i: number) => {
+          return (
+            <div
+              className="badge p-3 bg-green-600 cursor-pointer"
+              onClick={(e) => handleOnBadgeClick(e, false)}
+              key={i}
+            >
+              {recipe}
+            </div>
+          );
+        })}
       </center>
     </div>
   );

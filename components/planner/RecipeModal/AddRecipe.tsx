@@ -1,5 +1,4 @@
 import React from "react";
-import OpenModalButton from "./OpenModalButton";
 import ModalBody from "./ModalBody";
 import { daysOfTheWeek } from "@/models/enums";
 
@@ -7,16 +6,20 @@ const AddRecipe = (props: { day: number }) => {
   const fullDayName: string = Object.values(daysOfTheWeek)[props.day];
   return (
     <>
-      <OpenModalButton day={props.day} />
-      <dialog id={`day_modal_${props.day}`} className="modal">
+      <input
+        type="checkbox"
+        id={`day_modal_${props.day}`}
+        className="modal-toggle"
+      />
+      <div className="modal backdrop-blur-md" role="dialog">
         <div className="modal-box">
           <h3 className="font-bold text-lg">{fullDayName}</h3>
           <ModalBody day={props.day} />
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+        <label className="modal-backdrop" htmlFor={`day_modal_${props.day}`}>
+          Close
+        </label>
+      </div>
     </>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import Day from "./Day";
 import { plannerStore } from "@/store/planner";
 import { Planner } from "@/models/planner";
+import AddRecipe from "./RecipeModal/AddRecipe";
 
 const Page = () => {
   const storePlanner = plannerStore((state) => state.planner);
@@ -18,6 +19,7 @@ const Page = () => {
         };
         return (
           <div key={key} className={getClassName()}>
+            <AddRecipe day={i} />
             <Day day={i} meals={storePlanner[typeKey]} />
           </div>
         );

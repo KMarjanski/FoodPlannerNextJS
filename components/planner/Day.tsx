@@ -1,5 +1,5 @@
-import AddRecipe from "@/components/planner/RecipeModal/AddRecipe";
 import { daysOfTheWeek } from "@/models/enums";
+import OpenModalButton from "./RecipeModal/OpenModalButton";
 
 const Day = (props: { day: number; meals: string[] | [] }) => {
   const day: number = props.day;
@@ -10,7 +10,7 @@ const Day = (props: { day: number; meals: string[] | [] }) => {
       <div className="card-body pt-3">
         <div className="inline-block">
           <h2 className="card-title w-0 inline-block">{fullDayName}</h2>
-          <AddRecipe day={day} />
+          <OpenModalButton day={props.day} />
         </div>
         <center>
           {(meals.length > 0 ? meals : [""]).map((meal, i) => {
