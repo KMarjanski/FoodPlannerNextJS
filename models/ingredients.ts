@@ -6,5 +6,11 @@ const ingredientsSchema = new mongoose.Schema({
   inRecipes: Array,
 });
 
+export type Ingredients = {
+  name: string;
+  category: string;
+  inRecipes: string[];
+}[];
+
 export default mongoose.models.ingredients ||
   mongoose.model("ingredients", ingredientsSchema, "ingredients");

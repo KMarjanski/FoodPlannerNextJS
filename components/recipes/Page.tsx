@@ -19,7 +19,7 @@ const Page = () => {
       {storeRecipes
         .filter((sr) => sr.name.toLowerCase().includes(searchParam))
         .map((recipe, i) => (
-          <div className="badge m-1 bg-success" key={i}>
+          <div className="badge m-1 p-8 bg-success" key={i}>
             {recipe.name}
           </div>
         ))}

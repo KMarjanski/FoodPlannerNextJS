@@ -1,9 +1,9 @@
 "use server";
 
-import ingredients from "@/models/ingredients";
+import Ingredients from "@/models/ingredients";
 
 const getIngredients = async () => {
-  ingredients.find();
+  return Ingredients.find();
 };
 
 export { getIngredients };
