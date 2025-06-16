@@ -1,6 +1,6 @@
 "use server";
 
-import Planner, { Planner as PlannerModel } from "@/models/planner";
+import Planner, { Planner as PlannerModel } from "@features/planner/model";
 
 const getPlanner = async () => {
   return Planner.findOne();

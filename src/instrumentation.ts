@@ -1,4 +1,4 @@
-import connect from "@/lib/db";
+import connect from "@shared/db";
 
 export async function register() {
   await connect();

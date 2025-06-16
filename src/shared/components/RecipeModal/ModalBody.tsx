@@ -1,9 +1,9 @@
 "use client";
 
-import { Planner } from "@/models/planner";
-import { Recipe } from "@/models/recipes";
-import { plannerStore } from "@/store/planner";
-import { recipesStore } from "@/store/recipes";
+import { Planner } from "@features/planner/model";
+import { plannerStore } from "@features/planner/store";
+import { Recipe } from "@features/recipes/model";
+import { recipesStore } from "@features/recipes/store";
 import React, { useState } from "react";
 
 const ModalBody = (props: { day: number }) => {

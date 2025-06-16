@@ -1,6 +1,6 @@
-import PlannerInitializer from "@/components/planner/PlannerInitializer";
-import { getPlanner } from "@/services/planner";
-import { getRecipes } from "@/services/recipes";
+import PlannerInitializer from "@features/planner/components/PlannerInitializer";
+import { getPlanner } from "@features/planner/service";
+import { getRecipes } from "@features/recipes/service";
 
 const Planner = async () => {
   const plannerRaw = await getPlanner();

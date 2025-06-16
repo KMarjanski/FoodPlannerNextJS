@@ -1,8 +1,8 @@
-import { recipesStore } from "@/store/recipes";
 import React from "react";
-import SearchBar from "./SearchBar";
-import NewRecipe from "./NewRecipeModal/NewRecipe";
 import { useSearchParams } from "next/navigation";
+import NewRecipe from "@shared/components/NewRecipeModal/NewRecipe";
+import { recipesStore } from "@features/recipes/store";
+import SearchBar from "@features/recipes/components/SearchBar";
 
 const Page = () => {
   const storeRecipes = recipesStore((state) => state.recipes);
@@ -17,8 +17,10 @@ const Page = () => {
         </center>
       </div>
       {storeRecipes
-        .filter((sr) => sr.name.toLowerCase().includes(searchParam))
-        .map((recipe, i) => (
+        .filter((sr: { name: string }) =>
+          sr.name.toLowerCase().includes(searchParam)
+        )
+        .map((recipe: { name: string }, i: number) => (
           <div className="badge m-1 p-8 bg-success" key={i}>
             {recipe.name}
           </div>

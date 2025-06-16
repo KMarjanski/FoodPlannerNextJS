@@ -1,12 +1,12 @@
 "use client";
 
-import { plannerStore } from "@/store/planner";
-import { Planner } from "@/models/planner";
 import React, { useEffect, useState } from "react";
-import { Recipes } from "@/models/recipes";
-import { recipesStore } from "@/store/recipes";
-import Spinner from "../common/Spinner";
-import Page from "./Page";
+import Spinner from "@shared/components/Spinner";
+import { recipesStore } from "@features/recipes/store";
+import { Recipes } from "@features/recipes/model";
+import { plannerStore } from "@features/planner/store";
+import { Planner } from "@features/planner/model";
+import Page from "@features/planner/components/Page";
 
 export default function PlannerInitializer({
   planner,

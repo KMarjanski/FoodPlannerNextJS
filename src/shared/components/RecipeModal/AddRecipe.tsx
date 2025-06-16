@@ -1,6 +1,6 @@
 import React from "react";
 import ModalBody from "./ModalBody";
-import { daysOfTheWeek } from "@/models/enums";
+import { daysOfTheWeek } from "@shared/model";
 
 const AddRecipe = (props: { day: number }) => {
   const fullDayName: string = Object.values(daysOfTheWeek)[props.day];

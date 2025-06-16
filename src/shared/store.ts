@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Ingredients } from "@/models/ingredients";
+import { Ingredients } from "@shared/model";
 
 interface IngredientsState {
   ingredients: Ingredients;

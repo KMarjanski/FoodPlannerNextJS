@@ -1,5 +1,5 @@
-import { daysOfTheWeek } from "@/models/enums";
-import OpenModalButton from "./RecipeModal/OpenModalButton";
+import { daysOfTheWeek } from "@shared/model";
+import OpenModalButton from "@shared/components/RecipeModal/OpenModalButton";
 
 const Day = (props: { day: number; meals: string[] | [] }) => {
   const day: number = props.day;

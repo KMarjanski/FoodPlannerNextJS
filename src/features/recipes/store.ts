@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Recipes } from "@/models/recipes";
+import { Recipes } from "@features/recipes/model";
 
 interface RecipesState {
   original: Recipes;

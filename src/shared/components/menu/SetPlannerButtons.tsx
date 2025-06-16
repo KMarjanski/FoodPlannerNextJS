@@ -1,7 +1,7 @@
 "use client";
 
-import { setPlanner } from "@/services/planner";
-import { plannerStore } from "@/store/planner";
+import { setPlanner } from "@features/planner/service";
+import { plannerStore } from "@features/planner/store";
 import { usePathname } from "next/navigation";
 import React from "react";
 

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Planner } from "@/models/planner";
+import { Planner } from "@features/planner/model";
 
 interface PlannerState {
   original: Planner;

@@ -1,6 +1,6 @@
 import React from "react";
-import { getList } from "@/services/list";
-import ListItem from "../../../components/list/ListItem";
+import { getList } from "@features/list/service";
+import ListItem from "@features/list/component";
 
 const List = async () => {
   const listRAW = await getList();
