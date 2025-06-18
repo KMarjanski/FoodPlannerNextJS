@@ -1,8 +1,8 @@
 import RecipesInitializer from "@features/recipes/components/RecipesInitializer";
 import { Recipes as RecipesModel } from "@features/recipes/model";
 import { getRecipes } from "@features/recipes/service";
-import { Ingredients as IngredientsModel } from "@shared/model";
-import { getIngredients } from "@shared/service";
+import { Ingredients as IngredientsModel } from "@core/entities/ingredients/model";
+import { getIngredients } from "@core/entities/ingredients/service";
 
 const Recipes = async () => {
   const recipes = await getRecipes();

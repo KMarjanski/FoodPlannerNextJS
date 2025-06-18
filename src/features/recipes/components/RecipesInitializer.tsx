@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Spinner from "@shared/components/Spinner";
+import Spinner from "@/src/shared/components/Spinner";
 import Page from "@features/recipes/components/Page";
 import { Recipes } from "@features/recipes/model";
 import { recipesStore } from "@features/recipes/store";
-import { Ingredients } from "@shared/model";
-import { ingredientsStore } from "@shared/store";
+import { Ingredients } from "@/src/core/entities/ingredients/model";
+import { ingredientsStore } from "@/src/core/entities/ingredients/store";
 
 const RecipesInitializer = ({
   ingredients,

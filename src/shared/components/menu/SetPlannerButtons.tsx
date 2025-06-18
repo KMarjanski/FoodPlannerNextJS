@@ -4,6 +4,7 @@ import { setPlanner } from "@features/planner/service";
 import { plannerStore } from "@features/planner/store";
 import { usePathname } from "next/navigation";
 import React from "react";
+import Text from "../topography/Text";
 
 const SetPlannerButtons = () => {
   const path = usePathname();
@@ -25,17 +26,17 @@ const SetPlannerButtons = () => {
     <>
       {displaySavePlanner && (
         <button className="btn mr-4" onClick={() => refresh(originalPlanner)}>
-          Refresh
+          <Text retro>Refresh</Text>
         </button>
       )}
       {!isEmpty && (
         <button className="btn mr-4" onClick={resetPlanner}>
-          Reset planner
+          <Text retro>Reset planner</Text>
         </button>
       )}
       {displaySavePlanner && (
         <button className="btn mr-4 btn-success" onClick={() => handleSave()}>
-          Save planner
+          <Text retro>Save planner</Text>
         </button>
       )}
     </>

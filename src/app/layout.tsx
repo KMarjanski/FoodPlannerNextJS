@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Press_Start_2P, Inter } from "next/font/google";
 import "./globals.css";
-import Menu from "@shared/components/menu/Menu";
+import Menu from "@/src/shared/components/menu/Menu";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const retro = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-retro",
+});
 
 export const metadata: Metadata = {
   title: "Foodies",
@@ -17,7 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} h-screen bg-green-300`}>
+      <body
+        className={`${inter.className} ${retro.variable} h-screen bg-background`}
+      >
         <Menu />
         {children}
       </body>

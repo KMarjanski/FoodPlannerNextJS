@@ -2,12 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* === Global Reset === */
+* {
+  @apply box-border m-0 p-0;
 }
 
-html {
-  scrollbar-gutter: auto !important;
+html,
+body {
+  @apply min-h-screen bg-background text-text font-sans;
+}
+
+/* === Scrollbar styl retro/minimal === */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #d6d1b1; /* delikatniejszy odcień beżu */
+}
+::-webkit-scrollbar-thumb {
+  background-color: #2b8abf; /* retro niebieski */
+  border-radius: 10px;
+  border: 2px solid #d6d1b1;
+}
+
+/* === Links === */
+a {
+  @apply text-primary underline hover:opacity-80;
+}
+
+/* === Headings (bazowo) === */
+h1 {
+  @apply text-h1 font-retro;
+}
+h2 {
+  @apply text-h2 font-retro;
+}
+h3 {
+  @apply text-h3 font-retro;
+}
+h4 {
+  @apply text-h4 font-retro;
+}
+
+/* === Typography retro flavor (optional to expand) === */
+code,
+pre {
+  @apply font-retro bg-[#fff8dc] p-2 rounded;
 }

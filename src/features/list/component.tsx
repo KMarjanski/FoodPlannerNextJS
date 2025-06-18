@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Text from "@shared/components/topography/Text";
 
 export default function ListItem({ name }: { name: string }) {
   const [selected, setSelected] = useState(false);
@@ -12,7 +13,9 @@ export default function ListItem({ name }: { name: string }) {
         selected ? "bg-green-500" : "bg-success"
       }`}
     >
-      {name}
+      <Text retro>
+        {name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}
+      </Text>
     </div>
   );
 }

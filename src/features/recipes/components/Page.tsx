@@ -1,8 +1,9 @@
 import React from "react";
 import { useSearchParams } from "next/navigation";
-import NewRecipe from "@shared/components/NewRecipeModal/NewRecipe";
+import NewRecipe from "@/src/shared/components/newRecipeModal/NewRecipe";
 import { recipesStore } from "@features/recipes/store";
 import SearchBar from "@features/recipes/components/SearchBar";
+import Text from "@/src/shared/components/topography/Text";
 
 const Page = () => {
   const storeRecipes = recipesStore((state) => state.recipes);
@@ -22,7 +23,9 @@ const Page = () => {
         )
         .map((recipe: { name: string }, i: number) => (
           <div className="badge m-1 p-8 bg-success" key={i}>
-            {recipe.name}
+            <Text size="label" retro>
+              {recipe.name}
+            </Text>
           </div>
         ))}
     </div>

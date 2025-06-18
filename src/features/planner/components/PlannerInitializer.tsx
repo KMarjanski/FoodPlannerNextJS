@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Spinner from "@shared/components/Spinner";
+import Spinner from "@/src/shared/components/Spinner";
 import { recipesStore } from "@features/recipes/store";
 import { Recipes } from "@features/recipes/model";
 import { plannerStore } from "@features/planner/store";

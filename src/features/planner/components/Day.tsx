@@ -1,10 +1,11 @@
-import { daysOfTheWeek } from "@shared/model";
-import OpenModalButton from "@shared/components/RecipeModal/OpenModalButton";
+import { DaysOfTheWeek } from "@core/const/types";
+import OpenModalButton from "@/src/shared/components/recipeModal/OpenModalButton";
+import Text from "@shared/components/topography/Text";
 
 const Day = (props: { day: number; meals: string[] | [] }) => {
   const day: number = props.day;
   const meals: string[] = props.meals;
-  const fullDayName: string = Object.values(daysOfTheWeek)[day];
+  const fullDayName: string = Object.values(DaysOfTheWeek)[day];
   return (
     <div className="card glass">
       <div className="card-body pt-3">
@@ -21,7 +22,7 @@ const Day = (props: { day: number; meals: string[] | [] }) => {
                   meal.length > 0 ? "bg-green-600" : "bg-transparent"
                 } ${meal.length === 0 && "border-none"}`}
               >
-                {meal}
+                <Text retro>{meal}</Text>
               </div>
             );
           })}

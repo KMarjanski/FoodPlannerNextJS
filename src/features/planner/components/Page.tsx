@@ -2,7 +2,7 @@ import React from "react";
 import Day from "./Day";
 import { plannerStore } from "@features/planner/store";
 import { Planner } from "@features/planner/model";
-import AddRecipe from "@shared/components/RecipeModal/AddRecipe";
+import AddRecipe from "@/src/shared/components/recipeModal/AddRecipe";
 
 const Page = () => {
   const storePlanner = plannerStore((state) => state.planner);

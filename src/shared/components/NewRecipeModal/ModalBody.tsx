@@ -1,4 +1,4 @@
-import { ingredientsStore } from "@shared/store";
+import { ingredientsStore } from "@/src/core/entities/ingredients/store";
 import React from "react";
 
 const ModalBody = () => {

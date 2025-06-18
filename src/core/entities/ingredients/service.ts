@@ -1,6 +1,6 @@
 "use server";
 
-import Ingredients from "@shared/model";
+import Ingredients from "@core/entities/ingredients/model";
 
 const getIngredients = async () => {
   return Ingredients.find();

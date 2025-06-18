@@ -1,9 +1,9 @@
 import React from "react";
 import ModalBody from "./ModalBody";
-import { daysOfTheWeek } from "@shared/model";
+import { DaysOfTheWeek } from "@core/const/types";
 
 const AddRecipe = (props: { day: number }) => {
-  const fullDayName: string = Object.values(daysOfTheWeek)[props.day];
+  const fullDayName: string = Object.values(DaysOfTheWeek)[props.day];
   return (
     <>
       <input
