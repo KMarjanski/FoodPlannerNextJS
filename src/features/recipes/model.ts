@@ -5,15 +5,12 @@ const recipesSchema = new mongoose.Schema({
   ingredients: Array,
 });
 
-export type Recipes = {
-  name: string;
-  ingredients: string[];
-}[];
-
 export type Recipe = {
   name: string;
   ingredients: string[];
 };
+
+export type Recipes = Recipe[];
 
 export default mongoose.models.recipes ||
   mongoose.model("recipes", recipesSchema, "recipes");
