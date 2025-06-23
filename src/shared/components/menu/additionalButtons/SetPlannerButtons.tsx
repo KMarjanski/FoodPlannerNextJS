@@ -1,14 +1,9 @@
-"use client";
-
 import { setPlanner } from "@features/planner/service";
 import { plannerStore } from "@features/planner/store";
-import { usePathname } from "next/navigation";
 import React from "react";
-import Text from "../topography/Text";
+import Text from "../../topography/Text";
 
 const SetPlannerButtons = () => {
-  const path = usePathname();
-  const isCorrectPath = path === "/planner";
   const originalPlanner = plannerStore((state) => state.original);
   const planner = plannerStore((state) => state.planner);
   const displaySavePlanner =
@@ -21,7 +16,6 @@ const SetPlannerButtons = () => {
     window.location.reload();
   };
   const isEmpty = Object.values(planner).every((a) => !a.length);
-  if (!isCorrectPath) return null;
   return (
     <>
       {displaySavePlanner && (

@@ -1,9 +1,15 @@
 "use server";
 
-import Chart from "@/src/features/cart/model";
+import Cart, { Cart as CartModel } from "@/src/features/cart/model";
 
 const getCart = async () => {
-  return Chart.find();
+  return Cart.find();
 };
 
-export { getCart };
+const setCart = (newCart: CartModel) => {
+  Cart.findOneAndReplace({}, newCart, { returnNewDocument: false }).then(
+    (x) => x
+  );
+};
+
+export { getCart, setCart };

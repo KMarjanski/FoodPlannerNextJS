@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SetPlannerButtons from "./SetPlannerButtons";
+import AddButtons from "./additionalButtons/addButtons";
 
 const Menu = () => {
   return (
@@ -31,9 +31,7 @@ const Menu = () => {
           </Link>
         </li>
       </ul>
-      <div className="absolute right-0">
-        <SetPlannerButtons />
-      </div>
+      <AddButtons />
     </nav>
   );
 };

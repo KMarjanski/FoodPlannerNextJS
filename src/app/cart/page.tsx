@@ -2,6 +2,7 @@ import { Ingredients as IngredientsModel } from "@core/entities/ingredients/mode
 import { getIngredients } from "@core/entities/ingredients/service";
 import { Cart as CartModel } from "@/src/features/cart/model";
 import { getCart } from "@/src/features/cart/service";
+import CartPage from "@features/cart/components/CartPage";
 
 const Cart = async () => {
   const cart = await getCart();
@@ -10,7 +11,7 @@ const Cart = async () => {
   const newIngredients = JSON.parse(
     JSON.stringify(ingredients)
   ) as IngredientsModel;
-  return <div>cart</div>;
+  return <CartPage cart={newCart} ingredients={newIngredients} />;
 };
 
 export default Cart;
