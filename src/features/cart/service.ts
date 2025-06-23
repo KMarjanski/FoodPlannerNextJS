@@ -1,6 +1,6 @@
 "use server";
 
-import Chart from "@features/chart/model";
+import Chart from "@/src/features/cart/model";
 
 const getCart = async () => {
   return Chart.find();
