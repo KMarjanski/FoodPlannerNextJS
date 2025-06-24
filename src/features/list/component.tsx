@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Text from "@shared/components/topography/Text";
+import { capitalize } from "@shared/lib/utils";
 
 export default function ListItem({ name }: { name: string }) {
   const [selected, setSelected] = useState(false);
-
   return (
     <div
       onClick={() => setSelected((prev) => !prev)}
@@ -13,9 +13,7 @@ export default function ListItem({ name }: { name: string }) {
         selected ? "bg-green-500" : "bg-success"
       }`}
     >
-      <Text retro>
-        {name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}
-      </Text>
+      <Text retro>{capitalize(name)}</Text>
     </div>
   );
 }

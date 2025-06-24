@@ -2,7 +2,7 @@ import React from "react";
 import { useSearchParams } from "next/navigation";
 import NewRecipe from "@/src/shared/components/newRecipeModal/NewRecipe";
 import { recipesStore } from "@features/recipes/store";
-import SearchBar from "@features/recipes/components/SearchBar";
+import SearchBar from "@/src/shared/components/SearchBar";
 import Text from "@/src/shared/components/topography/Text";
 
 const Page = () => {

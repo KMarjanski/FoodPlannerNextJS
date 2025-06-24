@@ -12,7 +12,7 @@ type Props = {
 };
 
 const CartWorkspace = ({ cart, ingredients }: Props) => {
-  const [cartItems, setCartItems] = useState<Ingredient[]>(cart.cart ?? []);
+  const [cartItems, setCartItems] = useState<Ingredient[]>(cart[0].cart ?? []);
 
   const handleAddToCart = (ingredientId: string) => {
     if (cartItems.find((item) => item.name === ingredientId)) return;
