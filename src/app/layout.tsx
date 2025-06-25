@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Press_Start_2P, Inter } from "next/font/google";
 import "./globals.css";
 import Menu from "@/src/shared/components/menu/Menu";
@@ -23,11 +24,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} ${retro.variable} h-screen bg-background`}
-      >
+      <body className={`${inter.className} ${retro.variable} relative z-0`}>
+        <main className="relative z-0 min-h-screen">
+          {/* <Image
+            src="/background.jpeg"
+            alt="background"
+            fill
+            className="absolute z-[-1] object-cover object-center"
+            quality={100}
+            priority
+          /> */}
+          {children}
+        </main>
         <Menu />
-        {children}
       </body>
     </html>
   );

@@ -13,7 +13,7 @@ export default function ListItem({ name }: { name: string }) {
         selected ? "bg-green-500" : "bg-success"
       }`}
     >
-      <Text retro>{capitalize(name)}</Text>
+      <Text>{capitalize(name)}</Text>
     </div>
   );
 }

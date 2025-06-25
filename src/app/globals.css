@@ -49,3 +49,17 @@ code,
 pre {
   @apply font-retro bg-[#fff8dc] p-2 rounded;
 }
+
+.glyph-fix {
+  position: relative;
+  top: 4px;
+}
+
+.glyph-bigfix {
+  display: inline-block;
+  transform: scale(1.3);
+  transform-origin: bottom left;
+  line-height: 1;
+  vertical-align: text-bottom;
+  margin-right: 5px;
+}

@@ -20,17 +20,17 @@ const SetPlannerButtons = () => {
     <>
       {displaySavePlanner && (
         <button className="btn mr-4" onClick={() => refresh(originalPlanner)}>
-          <Text retro>Refresh</Text>
+          <Text>Refresh</Text>
         </button>
       )}
       {!isEmpty && (
         <button className="btn mr-4" onClick={resetPlanner}>
-          <Text retro>Reset planner</Text>
+          <Text>Reset planner</Text>
         </button>
       )}
       {displaySavePlanner && (
         <button className="btn mr-4 btn-success" onClick={() => handleSave()}>
-          <Text retro>Save planner</Text>
+          <Text>Save planner</Text>
         </button>
       )}
     </>

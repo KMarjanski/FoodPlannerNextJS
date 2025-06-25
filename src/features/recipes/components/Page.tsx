@@ -23,9 +23,7 @@ const Page = () => {
         )
         .map((recipe: { name: string }, i: number) => (
           <div className="badge m-1 p-8 bg-success" key={i}>
-            <Text size="label" retro>
-              {recipe.name}
-            </Text>
+            <Text size="label">{recipe.name}</Text>
           </div>
         ))}
     </div>

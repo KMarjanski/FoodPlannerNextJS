@@ -1,22 +1,26 @@
-import { cn } from "@/src/shared/lib/utils";
+import { cn, fixGlyphs } from "@/src/shared/lib/utils";
 import { ReactNode } from "react";
 
 type TextProps = {
   size?: "body" | "small" | "label";
   children: ReactNode;
   className?: string;
-  retro?: boolean;
+  noretro?: boolean;
 };
 
 const Text = ({
   size = "body",
   children,
   className = "",
-  retro,
+  noretro,
 }: TextProps) => {
-  const font = retro ? "font-retro" : "font-sans";
+  const font = noretro ? "font-sans" : "font-retro";
   const sizeClass = `text-${size}`;
-  return <p className={cn(sizeClass, font, className)}>{children}</p>;
+  return (
+    <p className={cn(sizeClass, font, className)}>
+      {typeof children === "string" ? fixGlyphs(children) : children}
+    </p>
+  );
 };
 
 export default Text;

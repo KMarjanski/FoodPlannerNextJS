@@ -14,25 +14,19 @@ const SetCartButtons = () => {
     setCart(clearCart);
     window.location.reload();
   };
-  const isEmpty = Object.values(cart).every((a) => !a.length);
   return (
     <>
       <button className="btn mr-4" onClick={() => refresh(originalCart)}>
-        <Text retro>Generate cart</Text>
+        <Text>Generate cart</Text>
       </button>
       {displaySaveCart && (
         <button className="btn mr-4" onClick={() => refresh(originalCart)}>
-          <Text retro>Refresh</Text>
-        </button>
-      )}
-      {!isEmpty && (
-        <button className="btn mr-4" onClick={resetCart}>
-          <Text retro>Reset cart</Text>
+          <Text>Refresh</Text>
         </button>
       )}
       {displaySaveCart && (
         <button className="btn mr-4 btn-success" onClick={() => handleSave()}>
-          <Text retro>Save cart</Text>
+          <Text>Save cart</Text>
         </button>
       )}
     </>

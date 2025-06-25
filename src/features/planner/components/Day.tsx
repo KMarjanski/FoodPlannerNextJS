@@ -22,7 +22,7 @@ const Day = (props: { day: number; meals: string[] | [] }) => {
                   meal.length > 0 ? "bg-green-600" : "bg-transparent"
                 } ${meal.length === 0 && "border-none"}`}
               >
-                <Text retro>{meal}</Text>
+                <Text>{meal}</Text>
               </div>
             );
           })}

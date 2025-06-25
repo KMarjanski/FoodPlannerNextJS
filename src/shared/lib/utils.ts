@@ -1,3 +1,4 @@
+import React, { ReactNode } from "react";
 import { CartEntry } from "@features/cart/model";
 import { Ingredient, Ingredients } from "@core/entities/ingredients/model";
 
@@ -72,4 +73,33 @@ export const sortListByCategory = (entry: CartEntry): CartEntry => {
     ...entry,
     cart: sortedCart,
   };
+};
+
+export const fixGlyphs = (text: string): ReactNode[] => {
+  const bigMissingGlyphs = new Set(["Ś", "Ć", "Ź"]);
+  return text.split("").map((char, i) => {
+    if (char === "ą" || char === "ę") {
+      return React.createElement(
+        "span",
+        {
+          key: i,
+          className: "glyph-fix",
+        },
+        char
+      );
+    }
+
+    if (bigMissingGlyphs.has(char)) {
+      return React.createElement(
+        "span",
+        {
+          key: i,
+          className: "glyph-bigfix",
+        },
+        char
+      );
+    }
+
+    return char;
+  });
 };
