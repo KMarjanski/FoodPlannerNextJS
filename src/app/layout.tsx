@@ -26,17 +26,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} ${retro.variable} relative z-0`}>
         <main className="relative z-0 min-h-screen">
-          {/* <Image
-            src="/background.jpeg"
-            alt="background"
-            fill
-            className="absolute z-[-1] object-cover object-center"
-            quality={100}
-            priority
-          /> */}
+          <Menu />
           {children}
         </main>
-        <Menu />
       </body>
     </html>
   );
