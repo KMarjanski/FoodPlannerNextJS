@@ -2,10 +2,11 @@ import React from "react";
 import OpenModalButton from "./OpenModalButton";
 import ModalBody from "./ModalBody";
 
-const NewRecipe = () => {
+
+const NewRecipe = ({ hideButton = false }: { hideButton?: boolean }) => {
   return (
     <>
-      <OpenModalButton />
+      {!hideButton && <OpenModalButton />}
       <dialog id={`new_recipe_modal`} className="modal">
         <div className="modal-box">
           <ModalBody />

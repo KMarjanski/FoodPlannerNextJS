@@ -2,6 +2,7 @@
 
 import SetPlannerButtons from "./SetPlannerButtons";
 import SetCartButtons from "./SetCartButtons";
+import SetRecipeButton from "./SetRecipeButton";
 import { usePathname } from "next/navigation";
 
 const AddButtons = () => {
@@ -16,6 +17,11 @@ const AddButtons = () => {
       {path === "/cart" && (
         <div className="absolute right-0">
           <SetCartButtons />
+        </div>
+      )}
+      {path === "/recipes" && (
+        <div className="absolute right-0">
+          <SetRecipeButton />
         </div>
       )}
     </>

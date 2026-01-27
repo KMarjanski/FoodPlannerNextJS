@@ -33,12 +33,12 @@ const Day = (props: { day: number; meals?: MealPlan }) => {
     <div className="card glass">
       <div className="card-body pt-3">
         <div className="inline-block w-full flex items-center justify-between mb-2">
-          <h2 className="card-title text-lg font-bold tracking-wide text-gray-800 drop-shadow-sm">{fullDayName}</h2>
+          <h2 className="card-title text-lg font-bold tracking-wide text-white/80 drop-shadow-sm">{fullDayName}</h2>
           <OpenModalButton day={props.day} />
         </div>
         <div className="flex flex-col gap-3 mt-2">
           <div>
-            <span className="font-semibold text-yellow-900 text-base">Śniadanie</span>
+            <span className="font-semibold text-base">Śniadanie</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(breakfast.length > 0 ? breakfast : [""]).map((meal, i) => (
                 <div
@@ -53,7 +53,7 @@ const Day = (props: { day: number; meals?: MealPlan }) => {
             </div>
           </div>
           <div>
-            <span className="font-semibold text-green-900 text-base">Obiad</span>
+            <span className="font-semibold text-base">Obiad</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(lunch.length > 0 ? lunch : [""]).map((meal, i) => (
                 <div
@@ -68,7 +68,7 @@ const Day = (props: { day: number; meals?: MealPlan }) => {
             </div>
           </div>
           <div>
-            <span className="font-semibold text-blue-900 text-base">Kolacja</span>
+            <span className="font-semibold text-base">Kolacja</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(dinner.length > 0 ? dinner : [""]).map((meal, i) => (
                 <div

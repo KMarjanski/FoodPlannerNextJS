@@ -86,9 +86,9 @@ const ModalBody = (props: { day: number }) => {
       dinner: 'bg-blue-200 text-blue-900',
     };
     const badgeSelectedColors: Record<string, string> = {
-      breakfast: 'bg-yellow-400 text-yellow-900',
-      lunch: 'bg-green-400 text-green-900',
-      dinner: 'bg-blue-400 text-blue-900',
+      breakfast: 'bg-yellow-200 text-yellow-900',
+      lunch: 'bg-green-200 text-green-900',
+      dinner: 'bg-blue-200 text-blue-900',
     };
     const borderColor = borderColors[meal];
     const scrollbarColor = scrollbarColors[meal];
@@ -119,7 +119,7 @@ const ModalBody = (props: { day: number }) => {
         </div>
         <div className="flex flex-row w-full items-stretch">
           {/* Dostępne przepisy */}
-          <div className={`flex-1 flex flex-wrap gap-2 justify-start border-r border-solid pr-20 max-h-48 overflow-y-auto ${borderColor} ${scrollbarColor}`}>
+          <div className={`flex-1 flex flex-wrap gap-2 justify-start pr-20 max-h-48 overflow-y-auto ${scrollbarColor}`}>
             {recipes.length === 0 && (
               <span className="text-gray-400 text-xs">Brak</span>
             )}
@@ -141,7 +141,7 @@ const ModalBody = (props: { day: number }) => {
             })}
           </div>
           {/* Przypisane przepisy */}
-          <div className={`flex-1 flex flex-wrap gap-2 justify-end border-l border-solid pl-20 w-full content-start max-h-48 overflow-y-auto ${borderColor} ${scrollbarColor}`}>
+          <div className={`flex-1 flex flex-wrap gap-2 justify-end pl-20 w-full content-start max-h-48 overflow-y-auto ${scrollbarColor}`}>
             {Array.isArray(dayPlan[meal]) && dayPlan[meal].length === 0 && (
               <span className="text-gray-400 text-xs">Brak</span>
             )}
@@ -186,6 +186,4 @@ const ModalBody = (props: { day: number }) => {
   );
 };
 
-// Custom scrollbar styles for each section
-import "./scrollbarColors.css";
 export default ModalBody;
