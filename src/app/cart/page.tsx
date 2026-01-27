@@ -4,6 +4,8 @@ import { Cart as CartModel } from "@/src/features/cart/model";
 import { getCart } from "@/src/features/cart/service";
 import CartPage from "@features/cart/components/CartPage";
 
+export const dynamic = 'force-dynamic';
+
 const Cart = async () => {
   const cart = await getCart();
   const ingredients = await getIngredients();

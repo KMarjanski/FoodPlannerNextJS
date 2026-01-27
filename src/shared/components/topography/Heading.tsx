@@ -5,14 +5,12 @@ type HeadingProps = {
   level?: 1 | 2 | 3 | 4;
   children: ReactNode;
   className?: string;
-  noretro?: boolean;
 };
 
 const Heading = ({
   level = 1,
   children,
   className = "",
-  noretro,
 }: HeadingProps) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
 
@@ -23,10 +21,8 @@ const Heading = ({
     4: "text-h4",
   }[level];
 
-  const font = noretro ? "font-sans" : "font-retro";
-
   return (
-    <Tag className={cn(baseStyle, font, className)}>
+    <Tag className={cn(baseStyle, "font-sans", className)}>
       {typeof children === "string" ? fixGlyphs(children) : children}
     </Tag>
   );

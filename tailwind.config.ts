@@ -6,19 +6,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#eae3cb", // jasnobeżowe retro tło
-        background2: "#c3bca7", // ciemniejsze beżowe tło
-        backgroundtext: "#3b7dd8", // jasnoniebieskie tło dla tekst
+        background: "#f8f9fa", // jasne tło
+        background2: "#ffffff", // białe tło
+        backgroundtext: "#0f172a", // ciemny tekst
         surface: "#ffffff",
-        primary: "#2b8abf", // retro niebieski (przyciski/linki)
-        secondary: "#f78c6b", // pastelowy pomarańczowy (akcenty)
-        accent: "#8a3ffc", // retro fioletowy
-        text: "#1b1b1b",
-        muted: "#757575",
+        primary: "#06b6d4", // nowoczesny cyan
+        secondary: "#f97316", // pomarańczowy akcent
+        accent: "#8b5cf6", // fioletowy akcent
+        text: "#0f172a",
+        muted: "#64748b",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],
-        retro: ["var(--font-retro)", "monospace"],
       },
       fontSize: {
         h1: ["2.25rem", { lineHeight: "2.5rem", fontWeight: "700" }],
@@ -33,11 +32,11 @@ const config: Config = {
         ],
       },
       borderRadius: {
-        xl: "1rem",
-        "2xl": "1.5rem",
+        xl: "0.75rem",
+        "2xl": "1rem",
       },
       boxShadow: {
-        card: "0 4px 12px rgba(0,0,0,0.06)",
+        card: "0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)",
       },
     },
   },
@@ -46,15 +45,15 @@ const config: Config = {
     themes: [
       {
         foodies: {
-          primary: "#2b8abf",
-          secondary: "#f78c6b",
-          accent: "#8a3ffc",
-          neutral: "#1b1b1b",
-          "base-100": "#eae3cb",
+          primary: "#06b6d4",
+          secondary: "#f97316",
+          accent: "#8b5cf6",
+          neutral: "#0f172a",
+          "base-100": "#f8f9fa",
           "base-200": "#ffffff",
-          info: "#2b8abf",
-          success: "#34d399",
-          warning: "#facc15",
+          info: "#06b6d4",
+          success: "#10b981",
+          warning: "#f59e0b",
           error: "#ef4444",
         },
       },

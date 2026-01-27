@@ -27,18 +27,27 @@ async function dbConnect() {
   }
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
+      bufferCommands: true,
       dbName: "NextFoodApp",
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
+      retryWrites: true,
+      maxPoolSize: 10,
     };
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log("Db connected");
+      console.log("✅ Database connected successfully");
       return mongoose;
+    }).catch((error) => {
+      console.error("❌ Database connection failed:", error.message);
+      throw error;
     });
   }
   try {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    console.error("Connection error:", e);
     throw e;
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSearchParams } from "next/navigation";
-import NewRecipe from "@/src/shared/components/newRecipeModal/NewRecipe";
+import NewRecipe from "@/src/shared/components/NewRecipeModal/NewRecipe";
 import { recipesStore } from "@features/recipes/store";
 import SearchBar from "@/src/shared/components/SearchBar";
 import Text from "@/src/shared/components/topography/Text";

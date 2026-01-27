@@ -10,14 +10,14 @@ interface CartState {
 }
 
 const cartStore = create<CartState>()((set) => ({
-  original: { cart: [] },
-  cart: { cart: [] },
+  original: [],
+  cart: [],
   initCart: (newCart: Cart) =>
     set(() => ({ cart: newCart, original: newCart })),
   setCart: (newCart: Cart) => set(() => ({ cart: newCart })),
   resetCart: () => {
     return set({
-      cart: { cart: [] },
+      cart: [],
     });
   },
 }));

@@ -9,25 +9,24 @@ interface PlannerState {
   resetPlanner: () => void;
 }
 
+const emptyDay = { breakfast: [], lunch: [], dinner: [] };
+const emptyPlanner = {
+  MON: { ...emptyDay },
+  TUE: { ...emptyDay },
+  WED: { ...emptyDay },
+  THU: { ...emptyDay },
+  FRI: { ...emptyDay },
+  SAT: { ...emptyDay },
+  SUN: { ...emptyDay },
+};
+
 const plannerStore = create<PlannerState>()((set) => ({
-  original: { MON: [], TUE: [], WED: [], THU: [], FRI: [], SAT: [], SUN: [] },
-  planner: { MON: [], TUE: [], WED: [], THU: [], FRI: [], SAT: [], SUN: [] },
+  original: { ...emptyPlanner },
+  planner: { ...emptyPlanner },
   initPlanner: (newPlanner: Planner) =>
     set(() => ({ planner: newPlanner, original: newPlanner })),
   setPlanner: (newPlanner: Planner) => set(() => ({ planner: newPlanner })),
-  resetPlanner: () => {
-    return set({
-      planner: {
-        MON: [],
-        TUE: [],
-        WED: [],
-        THU: [],
-        FRI: [],
-        SAT: [],
-        SUN: [],
-      },
-    });
-  },
+  resetPlanner: () => set({ planner: { ...emptyPlanner } }),
 }));
 
 export { plannerStore };

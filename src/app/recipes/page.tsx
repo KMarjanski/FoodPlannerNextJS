@@ -4,6 +4,8 @@ import { getRecipes } from "@features/recipes/service";
 import { Ingredients as IngredientsModel } from "@core/entities/ingredients/model";
 import { getIngredients } from "@core/entities/ingredients/service";
 
+export const dynamic = 'force-dynamic';
+
 const Recipes = async () => {
   const recipes = await getRecipes();
   const ingredients = await getIngredients();

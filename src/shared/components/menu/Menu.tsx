@@ -3,31 +3,31 @@ import AddButtons from "./additionalButtons/addButtons";
 
 const Menu = () => {
   return (
-    <nav className="flex bg-background2 h-12">
-      <h1 className="mx-4 content-center font-bold text-2xl">
-        <Link className="text-backgroundtext" href="/">
-          Foodies
+    <nav className="flex items-center backdrop-blur-sm border-b border-white/10 h-16">
+      <h1 className="mx-6 font-bold text-2xl">
+        <Link className="text-green-500 hover:text-green-400 transition-colors" href="/">
+          Jedzonko
         </Link>
       </h1>
-      <ul className="flex p-3">
-        <li className="mx-3">
-          <Link className="text-backgroundtext font-retro" href="/list">
-            List
+      <ul className="flex gap-8 p-4">
+        <li>
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/list">
+            Lista
           </Link>
         </li>
-        <li className="mx-3">
-          <Link className="text-backgroundtext font-retro" href="/planner">
-            Planner
+        <li>
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/planner">
+            Planer
           </Link>
         </li>
-        <li className="mx-3">
-          <Link className="text-backgroundtext font-retro" href="/recipes">
-            Recipes
+        <li>
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/recipes">
+            Przepisy
           </Link>
         </li>
-        <li className="mx-3">
-          <Link className="text-backgroundtext font-retro" href="/cart">
-            Cart
+        <li>
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/cart">
+            Koszyk
           </Link>
         </li>
       </ul>

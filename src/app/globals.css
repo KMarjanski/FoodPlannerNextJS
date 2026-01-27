@@ -12,96 +12,189 @@ body {
   @apply min-h-screen bg-background text-text font-sans;
 }
 
-/* === Scrollbar styl retro/minimal === */
+html {
+  background: linear-gradient(135deg, #312e81 0%, #e0aaff 100%);
+  min-height: 100vh;
+}
+body {
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+/* === Scrollbar nowoczesny === */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #d6d1b1; /* delikatniejszy odcień beżu */
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #2b8abf; /* retro niebieski */
-  border-radius: 10px;
-  border: 2px solid #d6d1b1;
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
 }
 
 /* === Links === */
 a {
-  @apply text-primary underline hover:opacity-80;
+  @apply text-primary underline hover:opacity-80 transition-opacity;
 }
 
-/* === Headings (bazowo) === */
+/* === Headings === */
 h1 {
-  @apply text-h1 font-retro;
+  @apply text-h1 font-bold;
 }
 h2 {
-  @apply text-h2 font-retro;
+  @apply text-h2 font-bold;
 }
 h3 {
-  @apply text-h3 font-retro;
+  @apply text-h3 font-semibold;
 }
 h4 {
-  @apply text-h4 font-retro;
+  @apply text-h4 font-semibold;
 }
 
-/* === Typography retro flavor (optional to expand) === */
+/* === Typography nowoczesna === */
 code,
 pre {
-  @apply font-retro bg-[#fff8dc] p-2 rounded;
+  @apply bg-slate-100 p-2 rounded text-sm;
 }
 
-.glyph-fix {
-  position: relative;
-  top: 4px;
-}
-
-.glyph-bigfix {
-  display: inline-block;
-  transform: scale(1.3);
-  transform-origin: bottom left;
-  line-height: 1;
-  vertical-align: text-bottom;
-  margin-right: 5px;
-}
-
+/* === Utility classes === */
 .badge {
-  border-radius: 0;
-  clip-path: polygon(
-    0 40%,
-    2.5% 40%,
-    2.5% 30%,
-    5% 30%,
-    5% 20%,
-    7.5% 20%,
-    7.5% 10%,
-    10% 10%,
-    10% 0,
-    90% 0,
-    90% 10%,
-    92.5% 10%,
-    92.5% 20%,
-    95% 20%,
-    95% 30%,
-    97.5% 30%,
-    97.5% 40%,
-    100% 40%,
-    100% 60%,
-    97.5% 60%,
-    97.5% 70%,
-    95% 70%,
-    95% 80%,
-    92.5% 80%,
-    92.5% 90%,
-    90% 90%,
-    90% 100%,
-    10% 100%,
-    10% 90%,
-    7.5% 90%,
-    7.5% 80%,
-    5% 80%,
-    5% 70%,
-    2.5% 70%,
-    2.5% 60%,
-    0 60%
-  );
+  @apply inline-flex items-center px-3 py-1 rounded-full bg-primary text-white text-sm font-medium;
+}
+
+/* === Custom Animations === */
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.4);
+  }
+}
+
+@keyframes auroraWave1 {
+  0%, 100% {
+    transform: translateX(-100%) translateY(0px);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translateX(-50%) translateY(-50px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(0px) translateY(0px);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translateX(50%) translateY(-30px);
+    opacity: 0.4;
+  }
+}
+
+@keyframes auroraWave2 {
+  0%, 100% {
+    transform: translateX(100%) translateY(0px);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translateX(50%) translateY(40px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(0px) translateY(0px);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateX(-50%) translateY(40px);
+    opacity: 0.3;
+  }
+}
+
+@keyframes auroraWave3 {
+  0%, 100% {
+    transform: translateX(0px) translateY(100%);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateX(0px) translateY(-50%);
+    opacity: 0.4;
+  }
+}
+
+@keyframes colorShiftBlue {
+  0%, 100% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(30deg);
+  }
+}
+
+.aurora-light {
+  position: absolute;
+  filter: blur(80px);
+  mix-blend-mode: screen;
+}
+
+.aurora-light-1 {
+  animation: auroraWave1 12s ease-in-out infinite;
+}
+
+.aurora-light-2 {
+  animation: auroraWave2 15s ease-in-out infinite;
+}
+
+.aurora-light-3 {
+  animation: auroraWave3 18s ease-in-out infinite;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes colorShift {
+  0%, 100% {
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(34, 197, 94, 1), 0 0 60px rgba(34, 197, 94, 0.8), 0 0 90px rgba(34, 197, 94, 0.6);
+  }
+  25% {
+    color: #86efac;
+    text-shadow: 0 0 40px rgba(134, 239, 172, 1), 0 0 80px rgba(134, 239, 172, 0.8), 0 0 120px rgba(34, 197, 94, 0.6);
+  }
+  50% {
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(34, 197, 94, 1), 0 0 60px rgba(34, 197, 94, 0.8), 0 0 90px rgba(34, 197, 94, 0.6);
+  }
+  75% {
+    color: #4ade80;
+    text-shadow: 0 0 40px rgba(74, 222, 128, 1), 0 0 80px rgba(74, 222, 128, 0.8), 0 0 120px rgba(34, 197, 94, 0.6);
+  }
+}
+
+@keyframes pulse3d {
+  0%, 100% {
+    transform: scale(1) rotateX(0deg);
+  }
+  50% {
+    transform: scale(1.05) rotateX(5deg);
+  }
+}
+
+.animate-color-shift {
+  animation: colorShift 4s ease-in-out infinite;
+}
+
+.animate-pulse-3d {
+  animation: pulse3d 3s ease-in-out infinite;
 }

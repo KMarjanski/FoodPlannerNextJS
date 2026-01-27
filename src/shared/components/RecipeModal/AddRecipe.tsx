@@ -12,7 +12,7 @@ const AddRecipe = (props: { day: number }) => {
         className="modal-toggle"
       />
       <div className="modal backdrop-blur-md" role="dialog">
-        <div className="modal-box">
+        <div className="modal-box glass max-w-5xl w-full border-2 border-gray-300 shadow-lg rounded-lg">
           <h3 className="font-bold text-lg">{fullDayName}</h3>
           <ModalBody day={props.day} />
         </div>

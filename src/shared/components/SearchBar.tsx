@@ -19,7 +19,7 @@ const SearchBar = () => {
   };
   return (
     <input
-      className="w-full py-3 px-3 mb-4 font-retro text-gray-700 focus:outline-none focus:shadow-outline"
+      className="w-full py-3 px-4 mb-4 text-slate-700 placeholder-slate-400 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
       type="text"
       onChange={(e) => handleSearch(e.target.value)}
       defaultValue={searchParams.get("search"?.toString()) || ""}
