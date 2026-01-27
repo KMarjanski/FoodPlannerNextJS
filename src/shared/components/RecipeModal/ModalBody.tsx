@@ -70,11 +70,6 @@ const ModalBody = (props: { day: number }) => {
     const renderMealRow = (meal: keyof typeof dayPlan, label: string, color: string) => {
     const recipes = availableRecipesMemo[meal] || [];
     // Kolory borderów i badge dla sekcji
-    const borderColors: Record<string, string> = {
-      breakfast: 'border-yellow-700',
-      lunch: 'border-green-700',
-      dinner: 'border-blue-700',
-    };
     const scrollbarColors: Record<string, string> = {
       breakfast: 'scrollbar-yellow',
       lunch: 'scrollbar-green',
@@ -90,7 +85,6 @@ const ModalBody = (props: { day: number }) => {
       lunch: 'bg-green-200 text-green-900',
       dinner: 'bg-blue-200 text-blue-900',
     };
-    const borderColor = borderColors[meal];
     const scrollbarColor = scrollbarColors[meal];
     // Ustal kolory badge na podstawie meal przekazywanego do renderMealRow
     let badgeColor = '';
