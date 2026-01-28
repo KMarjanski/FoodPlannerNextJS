@@ -21,6 +21,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
   const [search, setSearch] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState<any[]>(initialIngredients);
   const [recipeName, setRecipeName] = useState(initialName);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Update state when props change (for edit mode)
   useEffect(() => {
@@ -56,6 +57,40 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
         <h2 className="text-left flex-1 mb-0">Nazwa przepisu</h2>
         {initialName ? (
           <>
+            <button
+              className="btn bg-error ml-2"
+              title="Usuń przepis"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              Usuń
+            </button>
+            {showDeleteConfirm && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full">
+                  <h3 className="text-lg font-semibold mb-4">Potwierdź usunięcie</h3>
+                  <p className="mb-6">Czy na pewno chcesz usunąć ten przepis?</p>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      className="btn btn-sm"
+                      onClick={() => setShowDeleteConfirm(false)}
+                    >
+                      Anuluj
+                    </button>
+                    <button
+                      className="btn btn-sm bg-error text-white"
+                      onClick={() => {
+                        const filtered = recipes.filter(r => r.name.toLowerCase() !== initialName.trim().toLowerCase());
+                        setRecipes(filtered);
+                        setShowDeleteConfirm(false);
+                        if (onAdd) onAdd();
+                      }}
+                    >
+                      Usuń
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             <button
               className="btn bg-success ml-2"
               disabled={
