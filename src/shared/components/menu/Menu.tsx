@@ -11,22 +11,22 @@ const Menu = () => {
       </h1>
       <ul className="flex gap-8 p-4">
         <li>
-          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/list">
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/lista">
             Lista
           </Link>
         </li>
         <li>
-          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/planner">
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/planer">
             Planer
           </Link>
         </li>
         <li>
-          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/recipes">
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/przepisy">
             Przepisy
           </Link>
         </li>
         <li>
-          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/cart">
+          <Link className="text-white/80 hover:text-green-400 font-medium transition-colors" href="/koszyk">
             Koszyk
           </Link>
         </li>

@@ -15,7 +15,9 @@ const Page = () => {
         <SearchBar />
       </div>
       <div className="card glass p-3">
-      <div className="flex flex-wrap justify-between gap-2">
+      <div className={
+        `flex flex-wrap gap-2 ${searchParam ? 'justify-start' : 'justify-between'}`
+      }>
         {storeRecipes
           .filter((sr: { name: string }) =>
             sr.name.toLowerCase().includes(searchParam)

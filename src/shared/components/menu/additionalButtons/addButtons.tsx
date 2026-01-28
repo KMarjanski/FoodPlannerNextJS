@@ -9,17 +9,17 @@ const AddButtons = () => {
   const path = usePathname();
   return (
     <>
-      {path === "/planner" && (
+      {path === "/planer" && (
         <div className="absolute right-0">
           <SetPlannerButtons />
         </div>
       )}
-      {path === "/cart" && (
+      {path === "/koszyk" && (
         <div className="absolute right-0">
           <SetCartButtons />
         </div>
       )}
-      {path === "/recipes" && (
+      {path === "/przepisy" && (
         <div className="absolute right-0">
           <SetRecipeButton />
         </div>

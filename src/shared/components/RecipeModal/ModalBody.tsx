@@ -32,7 +32,7 @@ const ModalBody = (props: { day: number }) => {
   // Zakładamy, że Recipe może mieć mealType: 'breakfast' | 'lunch' | 'dinner' | undefined
   type RecipeWithType = { name: string; mealType: 'breakfast' | 'lunch' | 'dinner' | 'all' };
   const mapType = (type: string | undefined): 'breakfast' | 'lunch' | 'dinner' | 'all' => {
-    if (!type) return 'all';
+    if (!type) return 'lunch';
     // Usuwanie diakrytyków bez flagi 'u' (dla zgodności z ES5)
     const t = type
       .toLowerCase()
@@ -41,7 +41,7 @@ const ModalBody = (props: { day: number }) => {
     if (t.includes('sniadanie') || t.includes('breakfast')) return 'breakfast';
     if (t.includes('kolacja') || t.includes('dinner')) return 'dinner';
     if (t.includes('obiad') || t.includes('lunch')) return 'lunch';
-    return 'all'; // nieznany typ, pokaż w każdej sekcji
+    return 'lunch'; // nieznany typ, domyślnie obiad
   };
   const allRecipesWithType: RecipeWithType[] = allRecipes.map((r) => {
     const typeField = (r as any).mealType || (r as any).type;

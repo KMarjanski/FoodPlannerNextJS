@@ -15,19 +15,34 @@ const SetPlannerButtons = () => {
     await setPlanner(clearPlanner);
     window.location.reload();
   };
+  const weeks = plannerStore((state) => state.weeks);
+  const setWeeks = plannerStore((state) => state.setWeeks);
   // Sprawdź czy wszystkie posiłki w każdym dniu są puste
   const isEmpty = Object.values(planner).every((day) =>
     Object.values(day).every((meals) => meals.length === 0)
   );
   return (
-    <>
+    <div className={`flex items-center gap-4 my-4 ${!displaySavePlanner && "mr-4"}`}>
+      <label htmlFor="weeks" className="font-semibold">Ilość tygodni:</label>
+      <input
+        id="weeks"
+        type="number"
+        min={1}
+        max={4}
+        value={weeks}
+        onChange={e => {
+          const val = Math.max(1, Math.min(4, Number(e.target.value)));
+          setWeeks(val);
+        }}
+        className="input input-bordered w-20 text-center font-bold text-lg"
+      />
       {displaySavePlanner && (
-        <button className="btn mr-4" onClick={() => refresh(originalPlanner)}>
+        <button className={`btn ${!displaySavePlanner && "mr-4"}`} onClick={() => refresh(originalPlanner)}>
           <Text>Cofnij zmiany</Text>
         </button>
       )}
       {!isEmpty && (
-        <button className="btn mr-4" onClick={resetPlanner}>
+        <button className={`btn ${!displaySavePlanner && "mr-4"}`} onClick={resetPlanner}>
           <Text>Wyczyść planer</Text>
         </button>
       )}
@@ -36,7 +51,7 @@ const SetPlannerButtons = () => {
           <Text>Zapisz planer</Text>
         </button>
       )}
-    </>
+    </div>
   );
 };
 
