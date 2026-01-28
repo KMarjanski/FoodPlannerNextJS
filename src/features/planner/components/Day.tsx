@@ -33,8 +33,8 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
     <div className="card glass">
       <div className="card-body pt-2 pb-2 pl-3 pr-0 pt-0">
         <div className="flex items-center justify-between w-full mb-2 gap-2 relative">
-          <div className="flex-1 flex justify-center">
-            <h2 className="card-title text-lg mt-4 font-bold tracking-wide text-white/80 drop-shadow-sm text-center">
+          <div className="flex-1 flex">
+            <h2 className="card-title text-lg mt-4 font-bold tracking-wide text-white/80 drop-shadow-sm">
               {fullDayName}
             </h2>
           </div>
