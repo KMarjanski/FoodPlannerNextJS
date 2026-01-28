@@ -25,7 +25,7 @@ const CartWorkspace = ({ cart, ingredients }: Props) => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <CartList cartItems={cartItems} onRemove={handleRemoveFromCart} />
       <IngredientsList
         ingredients={ingredients}

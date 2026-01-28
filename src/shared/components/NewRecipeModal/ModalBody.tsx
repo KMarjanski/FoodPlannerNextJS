@@ -12,9 +12,10 @@ interface ModalBodyProps {
   onAdd?: () => void;
   initialName?: string;
   initialIngredients?: Ingredient[];
+  dialogRef?: React.RefObject<HTMLDialogElement>;
 }
 
-const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBodyProps) => {
+const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef }: ModalBodyProps) => {
   const ingredients = ingredientsStore((state) => state.ingredients);
   const setRecipes = recipesStore((state) => state.setRecipes);
   const recipes = recipesStore((state) => state.recipes);
@@ -51,6 +52,55 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
   const handleRemove = (ingredient: any) => {
     setSelectedIngredients(selectedIngredients.filter((sel: any) => sel.name !== ingredient.name));
   };
+
+  // API helpers
+  const fetchRecipes = async () => {
+    const res = await fetch("/api/recipes");
+    const data = await res.json();
+    setRecipes(data);
+  };
+
+  const closeModal = () => {
+    if (dialogRef && dialogRef.current) {
+      dialogRef.current.close();
+    }
+  };
+
+  const addRecipe = async () => {
+    await fetch("/api/recipes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: recipeName.trim(),
+        ingredients: selectedIngredients.map((ing) => ing.name),
+      }),
+    });
+    await fetchRecipes();
+    closeModal();
+  };
+
+  const editRecipe = async () => {
+    await fetch("/api/recipes", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: recipeName.trim(),
+        ingredients: selectedIngredients.map((ing) => ing.name),
+      }),
+    });
+    await fetchRecipes();
+    closeModal();
+  };
+
+  const deleteRecipe = async () => {
+    await fetch("/api/recipes", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: initialName.trim() }),
+    });
+    await fetchRecipes();
+    closeModal();
+  };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div className="flex items-center mb-4">
@@ -78,9 +128,8 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
                     </button>
                     <button
                       className="btn btn-sm bg-error text-white"
-                      onClick={() => {
-                        const filtered = recipes.filter(r => r.name.toLowerCase() !== initialName.trim().toLowerCase());
-                        setRecipes(filtered);
+                      onClick={async () => {
+                        await deleteRecipe();
                         setShowDeleteConfirm(false);
                         if (onAdd) onAdd();
                       }}
@@ -109,8 +158,8 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
                       ? 'Wprowadź zmiany, aby edytować'
                       : ''
               }
-              onClick={() => {
-                // TODO: implement edit logic
+              onClick={async () => {
+                await editRecipe();
                 if (onAdd) onAdd();
               }}
             >
@@ -138,16 +187,9 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
                       ? 'Powiel dostępny tylko jeśli zmieniła się nazwa i liczba składników'
                       : ''
               }
-              onClick={() => {
-                // Powiel: dodaj nowy przepis na podstawie obecnych danych
+              onClick={async () => {
                 if (recipeName.trim().length >= 3 && selectedIngredients.length >= 2) {
-                  const newRecipe = {
-                    name: recipeName.trim(),
-                    ingredients: selectedIngredients.map((ing) => ing.name),
-                  };
-                  if (!recipes.some(r => r.name.toLowerCase() === newRecipe.name.toLowerCase())) {
-                    setRecipes([...recipes, newRecipe]);
-                  }
+                  await addRecipe();
                   if (onAdd) onAdd();
                 }
               }}
@@ -166,15 +208,9 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBo
                   ? 'Dodaj co najmniej 2 składniki'
                   : ''
             }
-            onClick={() => {
+            onClick={async () => {
               if (recipeName.trim().length >= 3 && selectedIngredients.length >= 2) {
-                const newRecipe = {
-                  name: recipeName.trim(),
-                  ingredients: selectedIngredients.map((ing) => ing.name),
-                };
-                if (!recipes.some(r => r.name.toLowerCase() === newRecipe.name.toLowerCase())) {
-                  setRecipes([...recipes, newRecipe]);
-                }
+                await addRecipe();
                 if (onAdd) onAdd();
               }
             }}

@@ -7,11 +7,17 @@ type Props = {
   ingredients: Ingredients;
 };
 
+
+import Heading from "@shared/components/topography/Heading";
+
 const CartPage = ({ cart, ingredients }: Props) => {
   return (
-    <div className="p-4">
+    <section className="max-w-4xl mx-auto mt-8 bg-white/90 rounded-xl shadow-lg p-6 backdrop-blur-sm">
+      <Heading level={2} className="mb-6 text-emerald-700 text-center">
+        Koszyk
+      </Heading>
       <CartWorkspace cart={cart} ingredients={ingredients} />
-    </div>
+    </section>
   );
 };
 

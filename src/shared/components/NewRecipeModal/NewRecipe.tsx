@@ -36,7 +36,7 @@ const NewRecipe = React.forwardRef(({ hideButton = false }: { hideButton?: boole
       {!hideButton && <OpenModalButton />}
       <dialog id={`new_recipe_modal`} className="modal" ref={dialogRef}>
         <div className="modal-box">
-          <ModalBody initialName={editRecipe?.name} initialIngredients={editRecipe?.ingredients} />
+          <ModalBody initialName={editRecipe?.name} initialIngredients={editRecipe?.ingredients} dialogRef={dialogRef} />
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
