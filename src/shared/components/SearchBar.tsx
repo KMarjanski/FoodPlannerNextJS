@@ -23,7 +23,7 @@ const SearchBar = () => {
       type="text"
       onChange={(e) => handleSearch(e.target.value)}
       defaultValue={searchParams.get("search"?.toString()) || ""}
-      placeholder="Search..."
+      placeholder="Szukaj..."
     />
   );
 };

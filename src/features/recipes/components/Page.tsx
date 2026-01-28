@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import NewRecipe from "@/src/shared/components/NewRecipeModal/NewRecipe";
 import { recipesStore } from "@features/recipes/store";
@@ -9,51 +9,80 @@ const Page = () => {
   const storeRecipes = recipesStore((state) => state.recipes);
   const searchParams = useSearchParams();
   const searchParam = searchParams.get("search")?.toLowerCase() || "";
+  const newRecipeRef = useRef<any>(null);
   return (
     <div className="mx-4">
       <div className="mx-4 mb-4 mt-2">
         <SearchBar />
       </div>
       <div className="card glass p-3">
-      <div className={
-        `flex flex-wrap gap-2 ${searchParam ? 'justify-start' : 'justify-between'}`
-      }>
-        {storeRecipes
-          .filter((sr: { name: string }) =>
-            sr.name.toLowerCase().includes(searchParam)
-          )
-          .map((recipe: { name: string; mealType?: string; type?: string }, i: number) => {
-            // Ustal typ posiłku (obsługuje mealType i type)
-            const normalize = (str: string) =>
-              str
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
-            const typeRaw = recipe.mealType || recipe.type || '';
-            const type = normalize(typeRaw);
-            let badgeColor = 'bg-green-200 text-green-900';
-            if (type.includes('sniadanie') || type.includes('breakfast')) {
-              badgeColor = 'bg-yellow-200 text-yellow-900';
-            } else if (type.includes('obiad') || type.includes('lunch')) {
-              badgeColor = 'bg-green-200 text-green-900';
-            } else if (type.includes('kolacja') || type.includes('dinner')) {
-              badgeColor = 'bg-blue-200 text-blue-900';
-            }
-            // Styl jak w Day.tsx
-            const badgeBase = 'inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1';
-            return (
-              <div className={badgeBase + ' ' + badgeColor} key={i}>
-                <Text size="label">{
-                  recipe.name
-                    ? recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1).toLowerCase()
-                    : ''
-                }</Text>
-              </div>
-            );
-          })}
+        <div className={
+          `flex flex-wrap gap-2 ${searchParam ? 'justify-start' : 'justify-between'}`
+        }>
+          {storeRecipes
+            .filter((sr: { name: string }) =>
+              sr.name.toLowerCase().includes(searchParam)
+            )
+            .map((recipe: { name: string; ingredients: any[]; mealType?: string; type?: string }, i: number) => {
+              // Ustal typ posiłku (obsługuje mealType i type)
+              const typeRaw = recipe.mealType || recipe.type || '';
+              // Sprawdź zarówno z diakrytykami jak i bez
+              const typeLower = typeof typeRaw === 'string' ? typeRaw.toLowerCase().trim() : '';
+              const typeNorm = typeof typeRaw === 'string'
+                ? typeRaw
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/\p{Diacritic}/gu, '')
+                : '';
+              let badgeColor = 'bg-gray-200 text-gray-900';
+              if (
+                typeLower.includes('śniadanie') ||
+                typeNorm.includes('sniadanie') ||
+                typeLower.includes('breakfast')
+              ) {
+                badgeColor = 'bg-yellow-200 text-yellow-900';
+              } else if (
+                typeLower.includes('obiad') ||
+                typeNorm.includes('obiad') ||
+                typeLower.includes('lunch')
+              ) {
+                badgeColor = 'bg-green-200 text-green-900';
+              } else if (
+                typeLower.includes('kolacja') ||
+                typeNorm.includes('kolacja') ||
+                typeLower.includes('dinner')
+              ) {
+                badgeColor = 'bg-blue-200 text-blue-900';
+              }
+              // Styl jak w Day.tsx
+              const badgeBase = 'inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1';
+              return (
+                <span className={badgeBase + ' ' + badgeColor} key={i}>
+                  <span
+                    style={{ cursor: 'pointer', display: 'inline-block', width: '100%' }}
+                    onClick={() => {
+                      if (newRecipeRef.current && newRecipeRef.current.openEdit) {
+                        newRecipeRef.current.openEdit({
+                          name: recipe.name,
+                          ingredients: recipe.ingredients.map((name: string) => ({ name })),
+                          mealType: recipe.mealType,
+                          type: recipe.type,
+                        });
+                      }
+                    }}
+                  >
+                    <Text size="label">{
+                      recipe.name
+                        ? recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1).toLowerCase()
+                        : ''
+                    }</Text>
+                  </span>
+                </span>
+              );
+            })}
+        </div>
       </div>
-      </div>
-      <NewRecipe hideButton />
+      <NewRecipe ref={newRecipeRef} hideButton />
     </div>
   );
 };

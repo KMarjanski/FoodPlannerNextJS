@@ -7,7 +7,7 @@ import Menu from "@/src/shared/components/menu/Menu";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Foodies",
+  title: "Jedzonko",
   description: "App that allows planning food for your week :)",
 };
 
