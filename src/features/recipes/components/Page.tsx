@@ -4,6 +4,7 @@ import NewRecipe from "@/src/shared/components/NewRecipeModal/NewRecipe";
 import { recipesStore } from "@features/recipes/store";
 import SearchBar from "@/src/shared/components/SearchBar";
 import Text from "@/src/shared/components/topography/Text";
+import Badge from "@shared/components/Badge";
 
 const Page = () => {
   const storeRecipes = recipesStore((state) => state.recipes);
@@ -57,27 +58,29 @@ const Page = () => {
               // Styl jak w Day.tsx
               const badgeBase = 'inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1';
               return (
-                <span className={badgeBase + ' ' + badgeColor} key={i}>
-                  <span
-                    style={{ cursor: 'pointer', display: 'inline-block', width: '100%' }}
-                    onClick={() => {
-                      if (newRecipeRef.current && newRecipeRef.current.openEdit) {
-                        newRecipeRef.current.openEdit({
-                          name: recipe.name,
-                          ingredients: recipe.ingredients.map((name: string) => ({ name })),
-                          mealType: recipe.mealType,
-                          type: recipe.type,
-                        });
-                      }
-                    }}
-                  >
-                    <Text size="label">{
-                      recipe.name
-                        ? recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1).toLowerCase()
-                        : ''
-                    }</Text>
-                  </span>
-                </span>
+                <Badge
+                  key={i}
+                  color={badgeColor.split(' ')[0]}
+                  textColor={badgeColor.split(' ')[1]}
+                  className="inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 w-auto"
+                  onClick={() => {
+                    if (newRecipeRef.current && newRecipeRef.current.openEdit) {
+                      newRecipeRef.current.openEdit({
+                        name: recipe.name,
+                        ingredients: recipe.ingredients.map((name: string) => ({ name })),
+                        mealType: recipe.mealType,
+                        type: recipe.type,
+                      });
+                    }
+                  }}
+                  title="Edytuj przepis"
+                >
+                  <Text size="label">{
+                    recipe.name
+                      ? recipe.name.charAt(0).toUpperCase() + recipe.name.slice(1).toLowerCase()
+                      : ''
+                  }</Text>
+                </Badge>
               );
             })}
         </div>

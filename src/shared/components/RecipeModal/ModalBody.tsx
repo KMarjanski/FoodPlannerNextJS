@@ -5,6 +5,7 @@ import type { Recipe } from "@features/recipes/model";
 import { plannerStore } from "@features/planner/store";
 import { recipesStore } from "@features/recipes/store";
 import React, { useState, useMemo } from "react";
+import Badge from "@shared/components/Badge";
 
 const ModalBody = (props: { day: number }) => {
   const planner = plannerStore((state) => state.planner);
@@ -119,23 +120,20 @@ const ModalBody = (props: { day: number }) => {
         <div className="flex flex-row w-full items-stretch">
           {/* Dostępne przepisy */}
           <div className={`flex-1 flex flex-wrap gap-2 justify-start pr-20 max-h-48 overflow-y-auto ${scrollbarColor}`}>
-            {recipes.length === 0 && (
-              <span className="text-gray-400 text-xs">Brak</span>
-            )}
             {recipes.map((recipe) => {
               // Sprawdź, czy przepis jest już przypisany do wybranych
               const isSelected = Array.isArray(dayPlan[meal]) && dayPlan[meal].some((r: Recipe | null) => r && r.name === recipe.name);
               return (
-                <button
+                <Badge
                   key={recipe.name + "-add"}
-                  type="button"
-                  className={`px-4 py-2 text-base font-semibold rounded-lg cursor-pointer transition-colors duration-150 ${badgeColor} hover:${badgeSelectedColor} ${isSelected ? 'opacity-50 pointer-events-none' : ''}`}
+                  color={badgeColor}
+                  textColor={""}
+                  className={`cursor-pointer ${isSelected ? 'opacity-50 pointer-events-none' : ''} hover:${badgeSelectedColor}`}
                   onClick={() => !isSelected && moveRecipe(meal, recipe, true)}
-                  aria-disabled={isSelected}
                   title={isSelected ? 'Przepis już przypisany' : 'Dodaj do wybranych'}
                 >
                   {recipe.name}
-                </button>
+                </Badge>
               );
             })}
           </div>
@@ -147,15 +145,16 @@ const ModalBody = (props: { day: number }) => {
             {Array.isArray(dayPlan[meal]) && dayPlan[meal]
               .filter((recipe: Recipe | null) => recipe && recipe.name)
               .map((recipe: Recipe) => (
-                <button
+                <Badge
                   key={recipe.name + "-remove"}
-                  type="button"
-                  className={`px-4 py-2 text-base font-semibold rounded-lg cursor-pointer transition-colors duration-150 ${badgeSelectedColor} hover:bg-red-400 hover:text-white self-start`}
+                  color={badgeSelectedColor}
+                  textColor={""}
+                  className={"self-start cursor-pointer hover:bg-red-400 hover:text-white"}
                   onClick={() => moveRecipe(meal, recipe, false)}
                   title="Usuń z wybranych"
                 >
                   {recipe.name}
-                </button>
+                </Badge>
               ))}
           </div>
         </div>

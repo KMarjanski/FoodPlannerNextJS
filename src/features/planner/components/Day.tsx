@@ -1,8 +1,8 @@
-
 import React from "react";
 import { DaysOfTheWeek } from "@core/const/types";
 import OpenModalButton from "@/src/shared/components/RecipeModal/OpenModalButton";
 import Text from "@shared/components/topography/Text";
+import Badge from "@shared/components/Badge";
 import type { Recipe } from "@features/recipes/model";
 
 type MealPlan = {
@@ -46,14 +46,14 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
             <span className="font-semibold text-base">Śniadanie</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(breakfast.length > 0 ? breakfast : [null]).map((meal, i) => (
-                <div
+                <Badge
                   key={"breakfast-" + i}
-                  className={
-                    badgeBase + ' ' + (meal && meal.name ? badgeColors.breakfast : badgeEmptyColors)
-                  }
+                  color={meal && meal.name ? "bg-yellow-200" : "bg-transparent border-none"}
+                  textColor={meal && meal.name ? "text-yellow-900" : ""}
+                  className="px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150"
                 >
                   <Text>{meal && meal.name ? meal.name : ""}</Text>
-                </div>
+                </Badge>
               ))}
             </div>
           </div>
@@ -61,14 +61,14 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
             <span className="font-semibold text-base">Obiad</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(lunch.length > 0 ? lunch : [null]).map((meal, i) => (
-                <div
+                <Badge
                   key={"lunch-" + i}
-                  className={
-                    badgeBase + ' ' + (meal && meal.name ? badgeColors.lunch : badgeEmptyColors)
-                  }
+                  color={meal && meal.name ? "bg-green-200" : "bg-transparent border-none"}
+                  textColor={meal && meal.name ? "text-green-900" : ""}
+                  className="px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150"
                 >
                   <Text>{meal && meal.name ? meal.name : ""}</Text>
-                </div>
+                </Badge>
               ))}
             </div>
           </div>
@@ -76,14 +76,14 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
             <span className="font-semibold text-base">Kolacja</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(dinner.length > 0 ? dinner : [null]).map((meal, i) => (
-                <div
+                <Badge
                   key={"dinner-" + i}
-                  className={
-                    badgeBase + ' ' + (meal && meal.name ? badgeColors.dinner : badgeEmptyColors)
-                  }
+                  color={meal && meal.name ? "bg-blue-200" : "bg-transparent border-none"}
+                  textColor={meal && meal.name ? "text-blue-900" : ""}
+                  className="px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150"
                 >
                   <Text>{meal && meal.name ? meal.name : ""}</Text>
-                </div>
+                </Badge>
               ))}
             </div>
           </div>

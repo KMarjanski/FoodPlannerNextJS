@@ -2,6 +2,7 @@ import Text from "@/src/shared/components/topography/Text";
 import { Ingredient } from "@core/entities/ingredients/model";
 import { capitalize, groupByCategory } from "@shared/lib/utils";
 import { useState } from "react";
+import Badge from "@shared/components/Badge";
 
 type Props = {
   cartItems: Ingredient[];
@@ -40,9 +41,9 @@ const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }:
                 aria-expanded={!isCollapsed}
                 aria-controls={`cart-category-${category}`}
               >
-                <span className="badge bg-emerald-600 text-white px-2 py-1 text-xs font-semibold">
+                <Badge color="bg-emerald-600" textColor="text-white" className="text-xs font-semibold">
                   {capitalize(category)}
-                </span>
+                </Badge>
                 <span className="text-xs text-gray-500">{items.length} szt.</span>
                 <span className="ml-auto text-gray-500 group-hover:text-emerald-700 transition-transform">
                   {isCollapsed ? (
@@ -59,16 +60,16 @@ const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }:
               {!isCollapsed && (
                 <div id={`cart-category-${category}`} className="space-y-1">
                   {items.map((ing) => (
-                    <button
+                    <Badge
                       key={ing.name}
+                      color={editMode ? "bg-red-200" : "bg-emerald-200"}
+                      textColor={editMode ? "text-red-900" : "text-emerald-900"}
+                      className={`px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 border shadow-sm cursor-pointer ${editMode ? "hover:bg-red-300 border-red-300" : "hover:bg-emerald-300 border-emerald-300"}`}
                       onClick={() => editMode && onDeleteIngredient ? onDeleteIngredient(ing.name) : onRemove(ing.name)}
-                      className={`inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 border shadow-sm cursor-pointer ${editMode ? "bg-red-200 text-red-900 hover:bg-red-300 border-red-300" : "bg-emerald-200 text-emerald-900 hover:bg-emerald-300 border-emerald-300"}`}
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
-                      aria-label={editMode ? `Usuń ${capitalize(ing.name)} z bazy` : `Odłóż ${capitalize(ing.name)} z koszyka`}
-                      type="button"
+                      title={editMode ? `Usuń ${capitalize(ing.name)} z bazy` : `Odłóż ${capitalize(ing.name)} z koszyka`}
                     >
                       {capitalize(ing.name)}
-                    </button>
+                    </Badge>
                   ))}
                 </div>
               )}

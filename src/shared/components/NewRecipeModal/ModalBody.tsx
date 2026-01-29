@@ -1,7 +1,7 @@
 import { ingredientsStore } from "@/src/core/entities/ingredients/store";
 import React, { useState, useEffect } from "react";
 import LocalSearchBar from "./LocalSearchBar";
-
+import Badge from "@shared/components/Badge";
 
 import { recipesStore } from "@features/recipes/store";
 
@@ -233,9 +233,11 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
           <span className="text-gray-400">Brak wybranych składników</span>
         )}
         {selectedIngredients.map((ingredient, i) => (
-          <div
+          <Badge
             key={i}
-            className="badge p-3 bg-blue-200 text-blue-900 cursor-pointer hover:bg-blue-300"
+            color="bg-blue-200"
+            textColor="text-blue-900"
+            className="p-3 cursor-pointer hover:bg-blue-300"
             onClick={() => handleRemove(ingredient)}
             title="Usuń z przepisu"
           >
@@ -245,7 +247,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
                   .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                   .join(' ')
               : ''}
-          </div>
+          </Badge>
         ))}
       </div>
       <hr className="h-px my-8 border-0 bg-gray-500" />
@@ -279,9 +281,11 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
               ingredient: { name: string | null | undefined },
               i: React.Key | null | undefined
             ) => (
-              <div
+              <Badge
                 key={i}
-                className={`badge p-3 bg-success cursor-pointer hover:bg-green-300`}
+                color="bg-success"
+                textColor="text-white"
+                className="p-3 cursor-pointer hover:bg-green-300"
                 onClick={() => handleSelect(ingredient)}
                 title="Dodaj do przepisu"
               >
@@ -291,7 +295,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
                       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                       .join(' ')
                   : ''}
-              </div>
+              </Badge>
             )
           )}
       </div>

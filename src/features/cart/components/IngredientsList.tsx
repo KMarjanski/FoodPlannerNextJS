@@ -6,6 +6,7 @@ import Text from "@/src/shared/components/topography/Text";
 import { useState } from "react";
 import { createIngredient, getIngredients } from "@core/entities/ingredients/service";
 import { ingredientsStore } from "@core/entities/ingredients/store";
+import Badge from "@shared/components/Badge";
 
 const categoryOptions = [
   "Owoce", "Warzywa", "Zioła", "Pieczywo", "Pasty", "Słoiki", "Puszki", "Przyprawy", "Sosy", "Dania gotowe", "Nabiał", "Mrożonki", "Suche", "Napoje", "Słodycze", "Snacki", "Chemia", "Inne"
@@ -124,9 +125,9 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
                 aria-expanded={!isCollapsed}
                 aria-controls={`ingredients-category-${category}`}
               >
-                <span className="badge bg-blue-200 text-blue-900 px-2 py-1 text-xs font-semibold">
+                <Badge color="bg-emerald-600" textColor="text-white" className="text-xs font-semibold">
                   {capitalize(category)}
-                </span>
+                </Badge>
                 <span className="text-xs text-gray-500">{items.length} szt.</span>
                 <span className="ml-auto text-gray-500 group-hover:text-emerald-700 transition-transform">
                   {isCollapsed ? (
@@ -143,14 +144,16 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
               {!isCollapsed && (
                 <div id={`ingredients-category-${category}`} className="space-y-1">
                   {items.map((ing) => (
-                    <button
+                    <Badge
                       key={ing.name}
+                      color={editMode ? "bg-red-200" : "bg-emerald-100"}
+                      textColor={editMode ? "text-red-900" : "text-emerald-900"}
+                      className={`px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 border shadow-sm cursor-pointer ${editMode ? "hover:bg-red-300 border-red-300" : "hover:bg-emerald-200 border-emerald-200"}`}
                       onClick={() => editMode && onDeleteIngredient ? onDeleteIngredient(ing.name) : onAdd(ing.name)}
-                      className={`inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 border shadow-sm cursor-pointer ${editMode ? "bg-red-200 text-red-900 hover:bg-red-300 border-red-300" : "bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border-emerald-200"}`}
-                      style={{ display: 'inline-flex', alignItems: 'center' }}
+                      title={editMode ? `Usuń ${capitalize(ing.name)} z bazy` : `Dodaj ${capitalize(ing.name)} do koszyka`}
                     >
                       {capitalize(ing.name)}
-                    </button>
+                    </Badge>
                   ))}
                 </div>
               )}

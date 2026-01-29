@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ListItemComponent from "./ListItemComponent";
 import { Ingredients } from "@core/entities/ingredients/model";
+import Badge from "@shared/components/Badge";
 
 type ListCategoryProps = {
   categoryName: string;
@@ -31,9 +32,9 @@ export default function ListCategory({ categoryName, items }: ListCategoryProps)
       {/* Category Header */}
       <div className="w-full flex items-center justify-between p-4 mt-6 first:mt-0 bg-gray-300 text-gray-800 font-bold text-lg">
         <span>{categoryName}</span>
-        <span className="badge badge-neutral text-white font-bold">
+        <Badge color="bg-gray-700" textColor="text-white" className="font-bold">
           {progress}
-        </span>
+        </Badge>
       </div>
 
       {/* Items */}
