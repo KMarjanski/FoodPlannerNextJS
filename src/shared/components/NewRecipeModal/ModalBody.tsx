@@ -15,10 +15,9 @@ interface ModalBodyProps {
   onAdd?: () => void;
   initialName?: string;
   initialIngredients?: Ingredient[];
-  dialogRef?: React.RefObject<HTMLDialogElement>;
 }
 
-const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef }: ModalBodyProps) => {
+const ModalBody = ({ onAdd, initialName = "", initialIngredients = [] }: ModalBodyProps) => {
   const ingredients = ingredientsStore((state) => state.ingredients);
   const setRecipes = recipesStore((state) => state.setRecipes);
   const [search, setSearch] = useState("");
@@ -62,10 +61,9 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
     setRecipes(data);
   };
 
+  // Zamknięcie modala przez callback przekazany z rodzica
   const closeModal = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.close();
-    }
+    if (onAdd) onAdd();
   };
 
   const addRecipe = async () => {
