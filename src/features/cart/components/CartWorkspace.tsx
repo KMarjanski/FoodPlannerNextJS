@@ -5,14 +5,16 @@ import { cartStore } from "@features/cart/store";
 import CartList from "./CartList";
 import { deleteIngredientByName } from "@core/entities/ingredients/service";
 import IngredientsList from "./IngredientsList";
-import { Ingredients, Ingredient } from "@core/entities/ingredients/model";
-import { Cart } from "../model";
+import { Ingredient, Ingredients } from "@core/entities/ingredients/types";
+import { Cart } from "@features/cart/types";
+import { ingredientsStore } from "@core/entities/ingredients/store";
+import { useSearchParams } from "next/navigation";
+import { createIngredient, getIngredients } from "@core/entities/ingredients/service";
 
 type Props = {
   cart: Cart;
   ingredients: Ingredients;
 };
-
 
 const CartWorkspace = ({ cart, ingredients }: Props) => {
   const setCart = cartStore((state) => state.setCart);
@@ -21,22 +23,42 @@ const CartWorkspace = ({ cart, ingredients }: Props) => {
   const initCart = cartStore((state) => state.initCart);
   const cartItems = (cartState && cartState[0] && cartState[0].cart) ? cartState[0].cart : [];
   const [editMode, setEditMode] = useState(false);
-  const [allIngredients, setAllIngredients] = useState(ingredients);
+  const globalIngredients = ingredientsStore((state) => state.ingredients);
+  const searchParams = useSearchParams();
 
+
+  // Always hydrate cart and ingredients from server props on mount
   useEffect(() => {
     if (cart && cart.length > 0) {
       initCart(cart);
     }
-  }, [cart, initCart]);
+    if (ingredients && ingredients.length > 0) {
+      ingredientsStore.getState().setIngredients(ingredients);
+    }
+  }, [cart, initCart, ingredients]);
 
-  const handleAddToCart = (ingredientId: string) => {
-    if (cartItems.find((item) => item.name === ingredientId)) return;
-    const ingredient = allIngredients.find((item) => item.name === ingredientId);
+  // Always fetch fresh ingredients on search param change (navigation/search)
+  useEffect(() => {
+    const fetchFresh = async () => {
+      const fresh = await getIngredients();
+      ingredientsStore.getState().setIngredients(fresh);
+    };
+    fetchFresh();
+  }, [searchParams?.get("search")]);
+
+  // Usuń efekt synchronizujący po searchParams!
+
+  const handleAddToCart = async (ingredientId: string) => {
+    if (cartItems.find((item: Ingredient) => item.name === ingredientId)) return;
+    const ingredient = globalIngredients.find((item: Ingredient) => item.name === ingredientId);
     if (ingredient) {
       if (cartState && cartState[0] && cartState[0]._id) {
         setCart([{ _id: cartState[0]._id, cart: [...cartItems, ingredient] }]);
       }
     }
+    // Always fetch fresh ingredients after add
+    const fresh = await getIngredients();
+    ingredientsStore.getState().setIngredients(fresh);
   };
 
   const handleRemoveFromCart = (ingredientId: string) => {
@@ -49,9 +71,11 @@ const CartWorkspace = ({ cart, ingredients }: Props) => {
   // Usuwanie składnika z bazy i odświeżenie listy
   const handleDeleteIngredient = async (ingredientName: string) => {
     await deleteIngredientByName(ingredientName);
-    setAllIngredients((prev) => prev.filter((i) => i.name !== ingredientName));
     // Usuwamy też z koszyka jeśli był
     handleRemoveFromCart(ingredientName);
+    // Always fetch fresh ingredients after delete
+    const fresh = await getIngredients();
+    ingredientsStore.getState().setIngredients(fresh);
   };
 
   return (
@@ -63,7 +87,6 @@ const CartWorkspace = ({ cart, ingredients }: Props) => {
         />
       </div>
       <IngredientsList
-        ingredients={allIngredients}
         cartItems={cartItems}
         onAdd={handleAddToCart}
         editMode={editMode}

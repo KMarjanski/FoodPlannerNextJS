@@ -7,7 +7,7 @@ interface IngredientsState {
 }
 
 const ingredientsStore = create<IngredientsState>()((set) => ({
-  ingredients: [{ name: "", category: "", inRecipes: [""] }],
+  ingredients: [],
   setIngredients: (newIngredients: Ingredients) =>
     set(() => ({ ingredients: newIngredients })),
 }));

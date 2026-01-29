@@ -1,12 +1,18 @@
 import { useSearchParams } from "next/navigation";
-import { Ingredient } from "@core/entities/ingredients/model";
+import { Ingredient } from "@core/entities/ingredients/types";
 import { capitalize, groupByCategory } from "@/src/shared/lib/utils";
 import SearchBar from "@shared/components/SearchBar";
 import Text from "@/src/shared/components/topography/Text";
 import { useState } from "react";
+import { createIngredient, getIngredients } from "@core/entities/ingredients/service";
+import { ingredientsStore } from "@core/entities/ingredients/store";
+
+const categoryOptions = [
+  "Owoce", "Warzywa", "Zioła", "Pieczywo", "Pasty", "Słoiki", "Puszki", "Przyprawy", "Sosy", "Dania gotowe", "Nabiał", "Mięsko", "Mrożonki", "Suche", "Napoje", "Słodycze", "Snacki", "Chemia", "Inne"
+];
 
 type Props = {
-  ingredients: Ingredient[];
+  // usuń: ingredients: Ingredient[];
   cartItems: Ingredient[];
   onAdd: (id: string) => void;
   editMode?: boolean;
@@ -14,7 +20,8 @@ type Props = {
   onDeleteIngredient?: (id: string) => void;
 };
 
-const IngredientsList = ({ ingredients, cartItems, onAdd, editMode = false, setEditMode, onDeleteIngredient }: Props) => {
+const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDeleteIngredient }: Props) => {
+  const ingredients = ingredientsStore((state) => state.ingredients);
   const disabledIds = new Set(cartItems.map((i) => i.name));
   const searchParams = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() ?? "";
@@ -27,6 +34,12 @@ const IngredientsList = ({ ingredients, cartItems, onAdd, editMode = false, setE
 
   const grouped = groupByCategory(filtered);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [showAdd, setShowAdd] = useState(false);
+  const [newCategory, setNewCategory] = useState(categoryOptions[0]);
+  const [adding, setAdding] = useState(false);
+
+  const exists = ingredients.some((ing) => ing.name.toLowerCase() === search.trim().toLowerCase());
+  const canAdd = search.trim().length > 0 && !exists && filtered.length === 0;
 
   const toggleCollapse = (category: string) => {
     setCollapsed((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -39,7 +52,7 @@ const IngredientsList = ({ ingredients, cartItems, onAdd, editMode = false, setE
         {setEditMode && (
           <button
             className={`btn btn-xs ${editMode ? "btn-error" : "btn-outline"}`}
-            onClick={() => setEditMode((v) => !v)}
+            onClick={() => setEditMode && setEditMode(!editMode)}
           >
             {editMode ? "Wyłącz edycję" : "Tryb edycji"}
           </button>
@@ -48,6 +61,49 @@ const IngredientsList = ({ ingredients, cartItems, onAdd, editMode = false, setE
       <div className="mb-4">
         <SearchBar />
       </div>
+      {!editMode && canAdd && (
+        <div className="flex flex-col items-center mb-4 gap-2">
+          {!showAdd ? (
+            <button
+              className="px-4 py-2 text-base font-semibold rounded-lg shadow-sm border border-emerald-200 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 transition-colors cursor-pointer"
+              onClick={() => setShowAdd(true)}
+            >
+              Dodaj nowy składnik: {search.trim().charAt(0).toUpperCase() + search.trim().slice(1).toLowerCase()}
+            </button>
+          ) : (
+            <>
+              <div className="font-semibold">Wybierz kategorię dla <span className="text-emerald-700">{search.trim().charAt(0).toUpperCase() + search.trim().slice(1).toLowerCase()}</span>:</div>
+              <select
+                className="select select-bordered w-full max-w-xs"
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value)}
+                disabled={adding}
+              >
+                {categoryOptions.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <button
+                className="btn btn-success mt-2"
+                disabled={adding}
+                onClick={async () => {
+                  setAdding(true);
+                  // Capitalize first letter, lowercase the rest
+                  const formattedName = search.trim().charAt(0).toUpperCase() + search.trim().slice(1).toLowerCase();
+                  await createIngredient({ name: formattedName, category: newCategory, inRecipes: [] });
+                  const fresh = await getIngredients();
+                  ingredientsStore.getState().setIngredients(fresh);
+                  setShowAdd(false);
+                  setAdding(false);
+                }}
+              >
+                Dodaj składnik
+              </button>
+              <button className="btn btn-xs btn-outline mt-1" onClick={() => setShowAdd(false)}>Anuluj</button>
+            </>
+          )}
+        </div>
+      )}
       {editMode && (
         <div className="mb-2 text-red-700 font-semibold text-center">Tryb edycji: kliknij składnik, aby usunąć z bazy</div>
       )}

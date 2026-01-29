@@ -4,7 +4,12 @@ import Cart, { Cart as CartModel } from "@/src/features/cart/model";
 
 const getCart = async () => {
   const result = await Cart.find();
-  return JSON.parse(JSON.stringify(result));
+  // Zamień _id na string w każdym entry
+  const plain = result.map((entry: any) => ({
+    ...entry.toObject(),
+    _id: entry._id?.toString?.() ?? String(entry._id),
+  }));
+  return JSON.parse(JSON.stringify(plain));
 };
 
 // newCartEntry: pojedynczy CartEntry (nie tablica!)
