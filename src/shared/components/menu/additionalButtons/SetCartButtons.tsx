@@ -59,7 +59,7 @@ const SetCartButtons = () => {
       if (cart && cart[0] && cart[0]._id) {
         refresh([{ _id: cart[0]._id, cart: ingredients }]);
       } else {
-        refresh([{ cart: ingredients }]);
+        refresh([{ _id: "", cart: ingredients }]);
       }
     } finally {
       setLoading(false);

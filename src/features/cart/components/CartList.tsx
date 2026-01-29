@@ -7,9 +7,11 @@ import { useState } from "react";
 type Props = {
   cartItems: Ingredient[];
   onRemove: (id: string) => void;
+  editMode?: boolean;
+  onDeleteIngredient?: (id: string) => void;
 };
 
-const CartList = ({ cartItems, onRemove }: Props) => {
+const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }: Props) => {
   const grouped = groupByCategory(cartItems);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
@@ -19,6 +21,9 @@ const CartList = ({ cartItems, onRemove }: Props) => {
 
   return (
     <div className="bg-gray-100 rounded-lg p-4 shadow-sm">
+      {editMode && (
+        <div className="mb-2 text-red-700 font-semibold text-center">Tryb edycji: kliknij składnik, aby usunąć z bazy</div>
+      )}
       <h3 className="text-lg font-bold text-emerald-700 mb-4 text-center">Twój koszyk</h3>
       {cartItems.length === 0 ? (
         <Text className="text-gray-400 text-center">Koszyk jest pusty.</Text>
@@ -55,10 +60,10 @@ const CartList = ({ cartItems, onRemove }: Props) => {
                   {items.map((ing) => (
                     <button
                       key={ing.name}
-                      onClick={() => onRemove(ing.name)}
-                      className="inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 bg-emerald-200 text-emerald-900 hover:bg-emerald-300 border border-emerald-300 shadow-sm cursor-pointer"
+                      onClick={() => editMode && onDeleteIngredient ? onDeleteIngredient(ing.name) : onRemove(ing.name)}
+                      className={`inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 border shadow-sm cursor-pointer ${editMode ? "bg-red-200 text-red-900 hover:bg-red-300 border-red-300" : "bg-emerald-200 text-emerald-900 hover:bg-emerald-300 border-emerald-300"}`}
                       style={{ display: 'inline-flex', alignItems: 'center' }}
-                      aria-label={`Odłóż ${capitalize(ing.name)} z koszyka`}
+                      aria-label={editMode ? `Usuń ${capitalize(ing.name)} z bazy` : `Odłóż ${capitalize(ing.name)} z koszyka`}
                       type="button"
                     >
                       {capitalize(ing.name)}

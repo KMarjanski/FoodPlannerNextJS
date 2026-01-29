@@ -9,9 +9,12 @@ type Props = {
   ingredients: Ingredient[];
   cartItems: Ingredient[];
   onAdd: (id: string) => void;
+  editMode?: boolean;
+  setEditMode?: (v: boolean) => void;
+  onDeleteIngredient?: (id: string) => void;
 };
 
-const IngredientsList = ({ ingredients, cartItems, onAdd }: Props) => {
+const IngredientsList = ({ ingredients, cartItems, onAdd, editMode = false, setEditMode, onDeleteIngredient }: Props) => {
   const disabledIds = new Set(cartItems.map((i) => i.name));
   const searchParams = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() ?? "";
@@ -31,10 +34,23 @@ const IngredientsList = ({ ingredients, cartItems, onAdd }: Props) => {
 
   return (
     <div className="bg-gray-50 rounded-lg p-4 shadow-sm">
-      <h3 className="text-lg font-bold text-emerald-700 mb-4 text-center">Dodaj składniki</h3>
+      <div className="flex items-center justify-center mb-4 gap-2">
+        <h3 className="text-lg font-bold text-emerald-700 text-center mb-0">Dodaj składniki</h3>
+        {setEditMode && (
+          <button
+            className={`btn btn-xs ${editMode ? "btn-error" : "btn-outline"}`}
+            onClick={() => setEditMode((v) => !v)}
+          >
+            {editMode ? "Wyłącz edycję" : "Tryb edycji"}
+          </button>
+        )}
+      </div>
       <div className="mb-4">
         <SearchBar />
       </div>
+      {editMode && (
+        <div className="mb-2 text-red-700 font-semibold text-center">Tryb edycji: kliknij składnik, aby usunąć z bazy</div>
+      )}
       {grouped.length === 0 ? (
         <Text className="text-gray-400 text-center">Brak dostępnych składników.</Text>
       ) : (
@@ -70,8 +86,8 @@ const IngredientsList = ({ ingredients, cartItems, onAdd }: Props) => {
                   {items.map((ing) => (
                     <button
                       key={ing.name}
-                      onClick={() => onAdd(ing.name)}
-                      className="inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border border-emerald-200 shadow-sm cursor-pointer"
+                      onClick={() => editMode && onDeleteIngredient ? onDeleteIngredient(ing.name) : onAdd(ing.name)}
+                      className={`inline-block px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150 m-1 border shadow-sm cursor-pointer ${editMode ? "bg-red-200 text-red-900 hover:bg-red-300 border-red-300" : "bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border-emerald-200"}`}
                       style={{ display: 'inline-flex', alignItems: 'center' }}
                     >
                       {capitalize(ing.name)}
