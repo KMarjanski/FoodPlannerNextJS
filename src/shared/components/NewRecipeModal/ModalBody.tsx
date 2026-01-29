@@ -4,6 +4,7 @@ import LocalSearchBar from "./LocalSearchBar";
 import Badge from "@shared/components/Badge";
 import SectionBox from "@shared/components/SectionBox";
 import Input from "@shared/components/Input";
+import Button from "@shared/components/Button";
 
 import { recipesStore } from "@features/recipes/store";
 
@@ -105,30 +106,34 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
   return (
     <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div className="flex items-center mb-4">
-        <h2 className="text-left flex-1 mb-0">Nazwa przepisu</h2>
+        <h2 className="text-left flex-1 text-white/80 mb-0">Nazwa przepisu</h2>
         {initialName ? (
           <>
-            <button
-              className="btn bg-error ml-2"
+            <Button
+              variant="error"
+              className="ml-2"
               title="Usuń przepis"
               onClick={() => setShowDeleteConfirm(true)}
             >
               Usuń
-            </button>
+            </Button>
             {showDeleteConfirm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                 <SectionBox className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full">
-                  <h3 className="text-lg font-semibold mb-4">Potwierdź usunięcie</h3>
-                  <p className="mb-6">Czy na pewno chcesz usunąć ten przepis?</p>
+                  <h3 className="text-lg font-semibold text-white/80 mb-4">Potwierdź usunięcie</h3>
+                  <p className="mb-6 text-white/80">Czy na pewno chcesz usunąć ten przepis?</p>
                   <div className="flex justify-end gap-2">
-                    <button
-                      className="btn btn-sm"
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => setShowDeleteConfirm(false)}
                     >
                       Anuluj
-                    </button>
-                    <button
-                      className="btn btn-sm bg-error text-white"
+                    </Button>
+                    <Button
+                      variant="error"
+                      size="sm"
+                      className="text-white"
                       onClick={async () => {
                         await deleteRecipe();
                         setShowDeleteConfirm(false);
@@ -136,13 +141,14 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
                       }}
                     >
                       Usuń
-                    </button>
+                    </Button>
                   </div>
                 </SectionBox>
               </div>
             )}
-            <button
-              className="btn bg-success ml-2"
+            <Button
+              variant="success"
+              className="ml-2"
               disabled={
                 recipeName.trim().length < 3 ||
                 selectedIngredients.length < 2 ||
@@ -159,65 +165,26 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
                       ? 'Wprowadź zmiany, aby edytować'
                       : ''
               }
-              onClick={async () => {
-                await editRecipe();
-                if (onAdd) onAdd();
-              }}
+              onClick={initialName ? editRecipe : addRecipe}
             >
-              Edytuj
-            </button>
-            <button
-              className="btn bg-success ml-2"
-              disabled={
-                recipeName.trim().length < 3 ||
-                selectedIngredients.length < 2 ||
-                !(
-                  recipeName.trim() !== initialName?.trim() &&
-                  selectedIngredients.length !== (initialIngredients?.length ?? 0)
-                )
-              }
-              title={
-                recipeName.trim().length < 3
-                  ? 'Podaj nazwę przepisu (min. 3 znaki)'
-                  : selectedIngredients.length < 2
-                    ? 'Dodaj co najmniej 2 składniki'
-                    : !(
-                        recipeName.trim() !== initialName?.trim() &&
-                        selectedIngredients.length !== (initialIngredients?.length ?? 0)
-                      )
-                      ? 'Powiel dostępny tylko jeśli zmieniła się nazwa i liczba składników'
-                      : ''
-              }
-              onClick={async () => {
-                if (recipeName.trim().length >= 3 && selectedIngredients.length >= 2) {
-                  await addRecipe();
-                  if (onAdd) onAdd();
-                }
-              }}
+              Zapisz
+            </Button>
+            <Button
+              variant="success"
+              className="ml-2"
+              onClick={addRecipe}
             >
-              Powiel
-            </button>
+              Dodaj
+            </Button>
           </>
         ) : (
-          <button
-            className="btn bg-success ml-4"
-            disabled={recipeName.trim().length < 3 || selectedIngredients.length < 2}
-            title={
-              recipeName.trim().length < 3
-                ? 'Podaj nazwę przepisu (min. 3 znaki)'
-                : selectedIngredients.length < 2
-                  ? 'Dodaj co najmniej 2 składniki'
-                  : ''
-            }
-            onClick={async () => {
-              if (recipeName.trim().length >= 3 && selectedIngredients.length >= 2) {
-                await addRecipe();
-                if (onAdd) onAdd();
-              }
-            }}
+          <Button
+            variant="success"
+            className="ml-4"
+            onClick={addRecipe}
           >
-            Dodaj
-          </button>
+            Dodaj składnik
+          </Button>
         )}
       </div>
       <Input
@@ -229,7 +196,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
       />
       
       <hr className="h-px my-8 border-0 bg-gray-500" />
-      <h2 className="text-left mb-2">Składniki w przepisie</h2>
+      <h2 className="text-left text-white/80 mb-2">Składniki w przepisie</h2>
       <div className="flex flex-wrap gap-2 mb-2">
         {selectedIngredients.length === 0 && (
           <span className="text-gray-400">Brak wybranych składników</span>
@@ -253,7 +220,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
         ))}
       </div>
       <hr className="h-px my-8 border-0 bg-gray-500" />
-      <h2 className="text-left">Lista składników</h2>
+      <h2 className="text-left text-white/80">Lista składników</h2>
       <div className="my-2">
         <LocalSearchBar
           value={search}

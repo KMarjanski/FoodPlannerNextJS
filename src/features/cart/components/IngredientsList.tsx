@@ -4,6 +4,7 @@ import { capitalize, groupByCategory } from "@/src/shared/lib/utils";
 import SearchBar from "@shared/components/SearchBar";
 import Text from "@/src/shared/components/topography/Text";
 import { useState } from "react";
+import Button from "@shared/components/Button";
 import { createIngredient, getIngredients } from "@core/entities/ingredients/service";
 import { ingredientsStore } from "@core/entities/ingredients/store";
 import Badge from "@shared/components/Badge";
@@ -55,12 +56,14 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
       <div className="flex items-center justify-center mb-4 gap-2">
         <h3 className="text-lg font-bold text-emerald-700 text-center mb-0">Dodaj składniki</h3>
         {setEditMode && (
-          <button
-            className={`btn btn-xs ${editMode ? "btn-error" : "btn-outline"}`}
+          <Button
+            size="sm"
+            variant={editMode ? "error" : "outline"}
+            className="btn-xs"
             onClick={() => setEditMode && setEditMode(!editMode)}
           >
             {editMode ? "Wyłącz edycję" : "Tryb edycji"}
-          </button>
+          </Button>
         )}
       </div>
       <div className="mb-4">
@@ -69,12 +72,14 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
       {!editMode && canAdd && (
         <div className="flex flex-col items-center mb-4 gap-2">
           {!showAdd ? (
-            <button
-              className="px-4 py-2 text-base font-semibold rounded-lg shadow-sm border border-emerald-200 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 transition-colors cursor-pointer"
+            <Button
+              variant="white"
+              size="md"
+              className="font-semibold shadow-sm border border-emerald-200 text-emerald-900 hover:bg-emerald-200 transition-colors cursor-pointer"
               onClick={() => setShowAdd(true)}
             >
               Dodaj nowy składnik: {search.trim().charAt(0).toUpperCase() + search.trim().slice(1).toLowerCase()}
-            </button>
+            </Button>
           ) : (
             <>
               <div className="font-semibold">Wybierz kategorię dla <span className="text-emerald-700">{search.trim().charAt(0).toUpperCase() + search.trim().slice(1).toLowerCase()}</span>:</div>
@@ -88,9 +93,12 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
-              <button
-                className="btn btn-success mt-2"
+              <Button
+                variant="success"
+                size="md"
+                className="mt-2"
                 disabled={adding}
+                loading={adding}
                 onClick={async () => {
                   setAdding(true);
                   // Capitalize first letter, lowercase the rest
@@ -103,8 +111,15 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
                 }}
               >
                 Dodaj składnik
-              </button>
-              <button className="btn btn-xs btn-outline mt-1" onClick={() => setShowAdd(false)}>Anuluj</button>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="btn-xs mt-1"
+                onClick={() => setShowAdd(false)}
+              >
+                Anuluj
+              </Button>
             </>
           )}
         </div>
@@ -119,8 +134,10 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
           const isCollapsed = collapsed[category];
           return (
             <div key={category} className="mb-4">
-              <button
+              <Button
                 type="button"
+                variant="white"
+                size="md"
                 className="flex items-center gap-2 mb-2 w-full group select-none"
                 onClick={() => toggleCollapse(category)}
                 aria-expanded={!isCollapsed}
@@ -141,7 +158,7 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
                     </svg>
                   )}
                 </span>
-              </button>
+              </Button>
               {!isCollapsed && (
                 <div id={`ingredients-category-${category}`} className="space-y-1">
                   {items.map((ing) => (

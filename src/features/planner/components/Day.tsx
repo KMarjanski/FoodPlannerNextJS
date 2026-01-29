@@ -21,20 +21,13 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
   const lunch: Recipe[] = Array.isArray(meals.lunch) ? meals.lunch : [];
   const dinner: Recipe[] = Array.isArray(meals.dinner) ? meals.dinner : [];
   const fullDayName: string = Object.values(DaysOfTheWeek)[day];
-  const badgeColors: Record<string, string> = {
-    breakfast: 'bg-yellow-200 text-yellow-900',
-    lunch: 'bg-green-200 text-green-900',
-    dinner: 'bg-blue-200 text-blue-900',
-  };
-  const badgeEmptyColors = 'bg-transparent border-none';
-  const badgeBase = 'px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150';
 
   return (
     <SectionBox className="card">
       <div className="card-body pt-2 pb-2 pl-3 pr-0 pt-0">
         <div className="flex items-center justify-between w-full mb-2 gap-2 relative">
           <div className="flex-1 flex">
-            <h2 className="card-title text-lg mt-4 font-bold tracking-wide text-white/80 drop-shadow-sm">
+            <h2 className="card-title text-lg mt-4 font-bold tracking-wide text-green-500 drop-shadow-sm">
               {fullDayName}
             </h2>
           </div>
@@ -44,7 +37,7 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
         </div>
         <div className="flex flex-col gap-3 mt-2">
           <div>
-            <span className="font-semibold text-base">Śniadanie</span>
+            <span className="font-semibold text-base text-white/80">Śniadanie</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(breakfast.length > 0 ? breakfast : [null]).map((meal, i) => (
                 <Badge
@@ -59,7 +52,7 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
             </div>
           </div>
           <div>
-            <span className="font-semibold text-base">Obiad</span>
+            <span className="font-semibold text-base text-white/80">Obiad</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(lunch.length > 0 ? lunch : [null]).map((meal, i) => (
                 <Badge
@@ -74,7 +67,7 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
             </div>
           </div>
           <div>
-            <span className="font-semibold text-base">Kolacja</span>
+            <span className="font-semibold text-base text-white/80">Kolacja</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
               {(dinner.length > 0 ? dinner : [null]).map((meal, i) => (
                 <Badge

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@shared/components/Button";
 import ListItemComponent from "./ListItemComponent";
 import { Ingredients } from "@core/entities/ingredients/model";
 import Badge from "@shared/components/Badge";
@@ -44,13 +45,15 @@ export default function ListCategory({ categoryName, items }: ListCategoryProps)
         {uncheckedItems.length > 0 && (
           <div className="space-y-0">
             {uncheckedItems.map((item) => (
-              <button
+              <Button
                 key={item.name}
+                variant="white"
+                size="md"
                 onClick={() => handleItemToggle(item.name)}
                 className="w-full text-left p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
               >
                 <ListItemComponent name={item.name} checked={false} />
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -59,13 +62,15 @@ export default function ListCategory({ categoryName, items }: ListCategoryProps)
         {checkedItemsList.length > 0 && (
           <div className="space-y-0 bg-gray-50 border-t-2 border-gray-300">
             {checkedItemsList.map((item) => (
-              <button
+              <Button
                 key={item.name}
+                variant="white"
+                size="md"
                 onClick={() => handleItemToggle(item.name)}
                 className="w-full text-left p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-100 transition-colors"
               >
                 <ListItemComponent name={item.name} checked={true} />
-              </button>
+              </Button>
             ))}
           </div>
         )}

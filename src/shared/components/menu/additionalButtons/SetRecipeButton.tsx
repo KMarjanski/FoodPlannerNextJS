@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "@shared/components/Button";
 
 type Props = {
   newRecipeRef: React.RefObject<{ open: () => void }>;
@@ -6,14 +7,16 @@ type Props = {
 
 const SetRecipeButton = ({ newRecipeRef }: Props) => {
   return (
-    <button
-      className="btn btn-white ml-4 mr-8"
+    <Button
+      variant="white"
+      size="md"
+      className="ml-4 mr-8"
       onClick={() => {
         newRecipeRef.current?.open();
       }}
     >
       Dodaj przepis
-    </button>
+    </Button>
   );
 };
 

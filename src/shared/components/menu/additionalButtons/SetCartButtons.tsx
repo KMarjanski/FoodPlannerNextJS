@@ -2,6 +2,7 @@ import { setCart } from "@features/cart/service";
 import { generateCartFromPlanner } from "@features/planner/service.server";
 import { cartStore } from "@features/cart/store";
 import React from "react";
+import Button from "@shared/components/Button";
 import Text from "../../topography/Text";
 
 import { useState } from "react";
@@ -66,21 +67,20 @@ const SetCartButtons = () => {
   };
   return (
     <>
-      <button className="btn mr-4" onClick={handleGenerateCart} disabled={loading}>
+      <Button
+        className="mr-4"
+        variant="outline"
+        size="md"
+        onClick={handleGenerateCart}
+        disabled={loading}
+        loading={loading}
+      >
         <Text>{loading ? "Generowanie..." : "Wygeneruj koszyk"}</Text>
-      </button>
-      <button
-        className={
-          `btn mr-4 btn-outline` +
-          ((
-            !cart ||
-            cart.length === 0 ||
-            !cart[0] ||
-            !Array.isArray(cart[0].cart) ||
-            cart[0].cart.length === 0
-          ) ? ' opacity-50 cursor-not-allowed' : '')
-        }
-        style={{ background: 'white', color: '#333', borderColor: '#ccc' }}
+      </Button>
+      <Button
+        className="mr-4"
+        variant="outline"
+        size="md"
         onClick={clearCart}
         disabled={
           !cart ||
@@ -96,15 +96,18 @@ const SetCartButtons = () => {
         }
       >
         <Text>Wyczyść koszyk</Text>
-      </button>
-      <button
-        className="btn mr-4 btn-success"
+      </Button>
+      <Button
+        className="mr-4"
+        variant="success"
+        size="md"
         onClick={handleSave}
         disabled={!displaySaveCart || loading}
+        loading={loading}
         title={!displaySaveCart ? 'Koszyk jest już zapisany' : ''}
       >
         {loading ? <Text>Zapisywanie...</Text> : <Text>Zapisz koszyk</Text>}
-      </button>
+      </Button>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { setPlanner } from "@features/planner/service";
 import { plannerStore } from "@features/planner/store";
 import React from "react";
+import Button from "@shared/components/Button";
 import Text from "../../topography/Text";
 import Input from "@shared/components/Input";
 
@@ -38,19 +39,34 @@ const SetPlannerButtons = () => {
         className="w-20 text-center font-bold text-lg"
       />
       {displaySavePlanner && (
-        <button className={`btn ${!displaySavePlanner && "mr-4"}`} onClick={() => refresh(originalPlanner)}>
+        <Button
+          variant="outline"
+          size="md"
+          className={`${!displaySavePlanner ? "mr-4" : ""}`}
+          onClick={() => refresh(originalPlanner)}
+        >
           <Text>Cofnij zmiany</Text>
-        </button>
+        </Button>
       )}
       {!isEmpty && (
-        <button className={`btn ${!displaySavePlanner && "mr-4"}`} onClick={resetPlanner}>
+        <Button
+          variant="outline"
+          size="md"
+          className={`${!displaySavePlanner ? "mr-4" : ""}`}
+          onClick={resetPlanner}
+        >
           <Text>Wyczyść planer</Text>
-        </button>
+        </Button>
       )}
       {displaySavePlanner && (
-        <button className="btn mr-4 btn-success" onClick={() => handleSave()}>
+        <Button
+          variant="success"
+          size="md"
+          className="mr-4"
+          onClick={() => handleSave()}
+        >
           <Text>Zapisz planer</Text>
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import Text from "@/src/shared/components/topography/Text";
 import { Ingredient } from "@core/entities/ingredients/model";
 import { capitalize, groupByCategory } from "@shared/lib/utils";
 import { useState } from "react";
+import Button from "@shared/components/Button";
 import Badge from "@shared/components/Badge";
 import SectionBox from "@shared/components/SectionBox";
 
@@ -35,8 +36,10 @@ const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }:
           const isCollapsed = collapsed[category];
           return (
             <div key={category} className="mb-4">
-              <button
+              <Button
                 type="button"
+                variant="white"
+                size="md"
                 className="flex items-center gap-2 mb-2 w-full group select-none"
                 onClick={() => toggleCollapse(category)}
                 aria-expanded={!isCollapsed}
@@ -57,7 +60,7 @@ const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }:
                     </svg>
                   )}
                 </span>
-              </button>
+              </Button>
               {!isCollapsed && (
                 <div id={`cart-category-${category}`} className="space-y-1">
                   {items.map((ing) => (

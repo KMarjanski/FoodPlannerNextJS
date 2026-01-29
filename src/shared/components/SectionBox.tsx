@@ -20,7 +20,7 @@ const SectionBox: React.FC<SectionBoxProps> = ({
   const Tag = as;
   return (
     <Tag
-      className={`bg-white rounded-lg shadow-md border border-gray-200 p-4 ${className}`}
+      className={`bg-neutral-900 rounded-lg shadow-md border border-gray-200 p-4 ${className}`}
       style={style}
     >
       {children}
