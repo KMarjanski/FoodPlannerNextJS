@@ -21,12 +21,10 @@ const NewRecipe = React.forwardRef(({ hideButton = false }: { hideButton?: boole
   React.useImperativeHandle(ref, () => ({
     openEdit: (recipe: EditRecipe) => {
       setEditRecipe(recipe);
-      console.log("Opening modal for editing recipe:", recipe);
       dialogRef.current?.showModal();
     },
     open: () => {
       setEditRecipe(null);
-      console.log("Opening modal for new recipe");
       dialogRef.current?.showModal();
     }
   }));

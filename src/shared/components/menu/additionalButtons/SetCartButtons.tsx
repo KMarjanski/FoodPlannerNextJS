@@ -1,4 +1,5 @@
 import { setCart } from "@features/cart/service";
+import { generateCartFromPlanner } from "@features/planner/service.server";
 import { cartStore } from "@features/cart/store";
 import React from "react";
 import Text from "../../topography/Text";
@@ -12,13 +13,14 @@ const SetCartButtons = () => {
   // Porównuj po posortowanych nazwach składników
   const cartArr = (cart && cart[0] && cart[0].cart) ? cart[0].cart : [];
   const originalArr = (originalCart && originalCart[0] && originalCart[0].cart) ? originalCart[0].cart : [];
-  function normalize(arr) {
+  type SimpleIngredient = { name: string; category: string };
+  function normalize(arr: any[]): SimpleIngredient[] {
     return arr
-      .filter(i => i && typeof i.name === "string" && typeof i.category === "string")
-      .map(i => ({ name: i.name, category: i.category }))
-      .sort((a, b) => a.name.localeCompare(b.name) || a.category.localeCompare(b.category));
+      .filter((i: any) => i && typeof i.name === "string" && typeof i.category === "string")
+      .map((i: any) => ({ name: i.name, category: i.category }))
+      .sort((a: SimpleIngredient, b: SimpleIngredient) => a.name.localeCompare(b.name) || a.category.localeCompare(b.category));
   }
-  function isCartEqual(a, b) {
+  function isCartEqual(a: any[], b: any[]): boolean {
     const normA = normalize(a);
     const normB = normalize(b);
     if (normA.length !== normB.length) return false;
@@ -27,11 +29,6 @@ const SetCartButtons = () => {
     }
     return true;
   }
-  console.log("cartArr", cartArr);
-  console.log("originalArr", originalArr);
-  console.log("normalize(cartArr)", normalize(cartArr));
-  console.log("normalize(originalArr)", normalize(originalArr));
-  console.log("isCartEqual", isCartEqual(cartArr, originalArr));
   const displaySaveCart = !isCartEqual(cartArr, originalArr);
   const resetCart = cartStore((state) => state.resetCart);
   const refresh = cartStore((state) => state.setCart);
@@ -47,10 +44,59 @@ const SetCartButtons = () => {
       setLoading(false);
     }
   };
+  const clearCart = () => {
+    if (cart && cart[0] && cart[0]._id) {
+      refresh([{ _id: cart[0]._id, cart: [] }]);
+    }
+  };
+  // Nowa funkcja: generuj koszyk na podstawie planera
+  const handleGenerateCart = async () => {
+    setLoading(true);
+    try {
+      // Pobierz wygenerowany koszyk z serwera
+      const ingredients = await generateCartFromPlanner();
+      // Ustaw w store (jako CartEntry[])
+      if (cart && cart[0] && cart[0]._id) {
+        refresh([{ _id: cart[0]._id, cart: ingredients }]);
+      } else {
+        refresh([{ cart: ingredients }]);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
-      <button className="btn mr-4" onClick={() => refresh(originalCart)}>
-        <Text>Wygeneruj koszyk</Text>
+      <button className="btn mr-4" onClick={handleGenerateCart} disabled={loading}>
+        <Text>{loading ? "Generowanie..." : "Wygeneruj koszyk"}</Text>
+      </button>
+      <button
+        className={
+          `btn mr-4 btn-outline` +
+          ((
+            !cart ||
+            cart.length === 0 ||
+            !cart[0] ||
+            !Array.isArray(cart[0].cart) ||
+            cart[0].cart.length === 0
+          ) ? ' opacity-50 cursor-not-allowed' : '')
+        }
+        style={{ background: 'white', color: '#333', borderColor: '#ccc' }}
+        onClick={clearCart}
+        disabled={
+          !cart ||
+          cart.length === 0 ||
+          !cart[0] ||
+          !Array.isArray(cart[0].cart) ||
+          cart[0].cart.length === 0
+        }
+        title={
+          !cart || cart.length === 0 || !cart[0] || !Array.isArray(cart[0].cart) || cart[0].cart.length === 0
+            ? 'Koszyk jest już pusty'
+            : ''
+        }
+      >
+        <Text>Wyczyść koszyk</Text>
       </button>
       <button
         className="btn mr-4 btn-success"

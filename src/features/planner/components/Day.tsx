@@ -3,23 +3,22 @@ import React from "react";
 import { DaysOfTheWeek } from "@core/const/types";
 import OpenModalButton from "@/src/shared/components/RecipeModal/OpenModalButton";
 import Text from "@shared/components/topography/Text";
-
+import type { Recipe } from "@features/recipes/model";
 
 type MealPlan = {
-  breakfast: string[];
-  lunch: string[];
-  dinner: string[];
+  breakfast: Recipe[];
+  lunch: Recipe[];
+  dinner: Recipe[];
 };
-
 
 const emptyMeals: MealPlan = { breakfast: [], lunch: [], dinner: [] };
 
 const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: () => void }) => {
   const day: number = props.day;
   const meals: MealPlan = props.meals ?? emptyMeals;
-  const breakfast = Array.isArray(meals.breakfast) ? meals.breakfast : [];
-  const lunch = Array.isArray(meals.lunch) ? meals.lunch : [];
-  const dinner = Array.isArray(meals.dinner) ? meals.dinner : [];
+  const breakfast: Recipe[] = Array.isArray(meals.breakfast) ? meals.breakfast : [];
+  const lunch: Recipe[] = Array.isArray(meals.lunch) ? meals.lunch : [];
+  const dinner: Recipe[] = Array.isArray(meals.dinner) ? meals.dinner : [];
   const fullDayName: string = Object.values(DaysOfTheWeek)[day];
   const badgeColors: Record<string, string> = {
     breakfast: 'bg-yellow-200 text-yellow-900',
@@ -46,14 +45,14 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
           <div>
             <span className="font-semibold text-base">Śniadanie</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
-              {(breakfast.length > 0 ? breakfast : [""]).map((meal, i) => (
+              {(breakfast.length > 0 ? breakfast : [null]).map((meal, i) => (
                 <div
                   key={"breakfast-" + i}
                   className={
-                    badgeBase + ' ' + (meal.length > 0 ? badgeColors.breakfast : badgeEmptyColors)
+                    badgeBase + ' ' + (meal && meal.name ? badgeColors.breakfast : badgeEmptyColors)
                   }
                 >
-                  <Text>{meal}</Text>
+                  <Text>{meal && meal.name ? meal.name : ""}</Text>
                 </div>
               ))}
             </div>
@@ -61,14 +60,14 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
           <div>
             <span className="font-semibold text-base">Obiad</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
-              {(lunch.length > 0 ? lunch : [""]).map((meal, i) => (
+              {(lunch.length > 0 ? lunch : [null]).map((meal, i) => (
                 <div
                   key={"lunch-" + i}
                   className={
-                    badgeBase + ' ' + (meal.length > 0 ? badgeColors.lunch : badgeEmptyColors)
+                    badgeBase + ' ' + (meal && meal.name ? badgeColors.lunch : badgeEmptyColors)
                   }
                 >
-                  <Text>{meal}</Text>
+                  <Text>{meal && meal.name ? meal.name : ""}</Text>
                 </div>
               ))}
             </div>
@@ -76,14 +75,14 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
           <div>
             <span className="font-semibold text-base">Kolacja</span>
             <div className="flex flex-wrap gap-2 justify-center mt-1">
-              {(dinner.length > 0 ? dinner : [""]).map((meal, i) => (
+              {(dinner.length > 0 ? dinner : [null]).map((meal, i) => (
                 <div
                   key={"dinner-" + i}
                   className={
-                    badgeBase + ' ' + (meal.length > 0 ? badgeColors.dinner : badgeEmptyColors)
+                    badgeBase + ' ' + (meal && meal.name ? badgeColors.dinner : badgeEmptyColors)
                   }
                 >
-                  <Text>{meal}</Text>
+                  <Text>{meal && meal.name ? meal.name : ""}</Text>
                 </div>
               ))}
             </div>

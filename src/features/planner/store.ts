@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { Planner } from "@features/planner/model";
+import type { Recipe } from "@features/recipes/model";
+
 
 interface PlannerState {
   original: Planner;
@@ -11,7 +13,8 @@ interface PlannerState {
   setWeeks: (weeks: number) => void;
 }
 
-const emptyDay = { breakfast: [], lunch: [], dinner: [] };
+
+const emptyDay = { breakfast: [] as Recipe[], lunch: [] as Recipe[], dinner: [] as Recipe[] };
 const emptyPlanner = {
   MON: { ...emptyDay },
   TUE: { ...emptyDay },

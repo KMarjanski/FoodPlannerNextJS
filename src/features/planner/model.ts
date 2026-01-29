@@ -1,10 +1,20 @@
 import mongoose from "mongoose";
 
 
+
+const recipeSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  ingredients: [String],
+  // Pozwól na dodatkowe pola, np. kategorie, type, __v
+  categories: { type: [String], required: false },
+  type: { type: String, required: false },
+  __v: { type: Number, required: false },
+}, { _id: false });
+
 const mealSchema = new mongoose.Schema({
-  breakfast: [String],
-  lunch: [String],
-  dinner: [String],
+  breakfast: [recipeSchema],
+  lunch: [recipeSchema],
+  dinner: [recipeSchema],
 }, { _id: false });
 
 const plannerSchema = new mongoose.Schema({
@@ -18,10 +28,13 @@ const plannerSchema = new mongoose.Schema({
 });
 
 
+
+import type { Recipe } from "@features/recipes/model";
+
 export type MealPlan = {
-  breakfast: string[];
-  lunch: string[];
-  dinner: string[];
+  breakfast: Recipe[];
+  lunch: Recipe[];
+  dinner: Recipe[];
 };
 
 export type Planner = {

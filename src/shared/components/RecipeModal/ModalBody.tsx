@@ -1,6 +1,7 @@
 "use client";
 
 import { Planner } from "@features/planner/model";
+import type { Recipe } from "@features/recipes/model";
 import { plannerStore } from "@features/planner/store";
 import { recipesStore } from "@features/recipes/store";
 import React, { useState, useMemo } from "react";
@@ -14,15 +15,23 @@ const ModalBody = (props: { day: number }) => {
   const dayPlan = planner[dayKey];
 
   // Funkcja do przerzucania przepisów
-  const moveRecipe = (meal: keyof typeof dayPlan, recipe: string, add: boolean) => {
+  const moveRecipe = (meal: keyof typeof dayPlan, recipe: Recipe, add: boolean) => {
     const newDay = { ...dayPlan };
     if (!Array.isArray(newDay[meal])) {
       newDay[meal] = [];
     }
+    // Jeśli recipe to string (ID), znajdź pełny obiekt Recipe
+    let recipeObj: Recipe | null = recipe && typeof recipe === 'object' ? recipe : null;
+    if (!recipeObj && typeof recipe === 'string') {
+      recipeObj = allRecipes.find(r => (r as any)._id === recipe || (r as any).id === recipe || r.name === recipe) || null;
+    }
+    if (!recipeObj) return;
     if (add) {
-      newDay[meal] = [...newDay[meal], recipe];
+      if (!newDay[meal].some((r: Recipe | null) => r && r.name === recipeObj!.name)) {
+        newDay[meal] = [...newDay[meal], recipeObj];
+      }
     } else {
-      newDay[meal] = newDay[meal].filter((r) => r !== recipe);
+      newDay[meal] = newDay[meal].filter((r: Recipe) => r.name !== recipeObj!.name);
     }
     const newPlanner = { ...planner, [dayKey]: newDay };
     setPlannerStore(newPlanner);
@@ -51,23 +60,25 @@ const ModalBody = (props: { day: number }) => {
 
   // Przepisy dostępne do dodania (nieprzypisane do danego posiłku)
   const availableRecipesMemo = useMemo(() => {
-    const result: { [key: string]: string[] } = {};
+    const result: { [key: string]: Recipe[] } = {};
     (['breakfast', 'lunch', 'dinner'] as const).forEach((meal) => {
-      let names = allRecipesWithType
-        .filter((r) => r.mealType === meal || r.mealType === 'all')
-        .map((r) => r.name);
-      names = Array.from(new Set(names));
+      let recipes = allRecipes.filter((r) => {
+        const typeField = (r as any).mealType || (r as any).type;
+        const mealType = mapType(typeField);
+        return mealType === meal || mealType === 'all';
+      });
+      // Filtruj, aby nie pokazywać już przypisanych przepisów
       if (Array.isArray(dayPlan[meal])) {
-        names = names.filter((name) => !dayPlan[meal].includes(name));
+        recipes = recipes.filter((r) => !dayPlan[meal].some((d: Recipe | null) => d && d.name === r.name));
       }
-      names = names.filter((name) => name.toLowerCase().includes(search.toLowerCase()));
-      result[meal] = names;
+      recipes = recipes.filter((r) => r.name.toLowerCase().includes(search.toLowerCase()));
+      result[meal] = recipes;
     });
     return result;
-  }, [allRecipesWithType, dayPlan, search]);
+  }, [allRecipes, dayPlan, search]);
 
   // Układ: śniadanie, obiad, kolacja od góry do dołu
-    const renderMealRow = (meal: keyof typeof dayPlan, label: string, color: string) => {
+  const renderMealRow = (meal: keyof typeof dayPlan, label: string, color: string) => {
     const recipes = availableRecipesMemo[meal] || [];
     // Kolory borderów i badge dla sekcji
     const scrollbarColors: Record<string, string> = {
@@ -119,17 +130,17 @@ const ModalBody = (props: { day: number }) => {
             )}
             {recipes.map((recipe, i) => {
               // Sprawdź, czy przepis jest już przypisany do wybranych
-              const isSelected = Array.isArray(dayPlan[meal]) && dayPlan[meal].includes(recipe);
+              const isSelected = Array.isArray(dayPlan[meal]) && dayPlan[meal].some((r: Recipe | null) => r && r.name === recipe.name);
               return (
                 <button
-                  key={recipe + "-add"}
+                  key={recipe.name + "-add"}
                   type="button"
                   className={`px-4 py-2 text-base font-semibold rounded-lg cursor-pointer transition-colors duration-150 ${badgeColor} hover:${badgeSelectedColor} ${isSelected ? 'opacity-50 pointer-events-none' : ''}`}
                   onClick={() => !isSelected && moveRecipe(meal, recipe, true)}
                   aria-disabled={isSelected}
                   title={isSelected ? 'Przepis już przypisany' : 'Dodaj do wybranych'}
                 >
-                  {recipe}
+                  {recipe.name}
                 </button>
               );
             })}
@@ -139,17 +150,19 @@ const ModalBody = (props: { day: number }) => {
             {Array.isArray(dayPlan[meal]) && dayPlan[meal].length === 0 && (
               <span className="text-gray-400 text-xs">Brak</span>
             )}
-            {Array.isArray(dayPlan[meal]) && dayPlan[meal].map((recipe, i) => (
-              <button
-                key={recipe + "-remove"}
-                type="button"
-                className={`px-4 py-2 text-base font-semibold rounded-lg cursor-pointer transition-colors duration-150 ${badgeSelectedColor} hover:bg-red-400 hover:text-white self-start`}
-                onClick={() => moveRecipe(meal, recipe, false)}
-                title="Usuń z wybranych"
-              >
-                {recipe}
-              </button>
-            ))}
+            {Array.isArray(dayPlan[meal]) && dayPlan[meal]
+              .filter((recipe: Recipe | null) => recipe && recipe.name)
+              .map((recipe: Recipe, i: number) => (
+                <button
+                  key={recipe.name + "-remove"}
+                  type="button"
+                  className={`px-4 py-2 text-base font-semibold rounded-lg cursor-pointer transition-colors duration-150 ${badgeSelectedColor} hover:bg-red-400 hover:text-white self-start`}
+                  onClick={() => moveRecipe(meal, recipe, false)}
+                  title="Usuń z wybranych"
+                >
+                  {recipe.name}
+                </button>
+              ))}
           </div>
         </div>
       </div>
