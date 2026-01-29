@@ -8,7 +8,7 @@ import { createIngredient, getIngredients } from "@core/entities/ingredients/ser
 import { ingredientsStore } from "@core/entities/ingredients/store";
 
 const categoryOptions = [
-  "Owoce", "Warzywa", "Zioła", "Pieczywo", "Pasty", "Słoiki", "Puszki", "Przyprawy", "Sosy", "Dania gotowe", "Nabiał", "Mięsko", "Mrożonki", "Suche", "Napoje", "Słodycze", "Snacki", "Chemia", "Inne"
+  "Owoce", "Warzywa", "Zioła", "Pieczywo", "Pasty", "Słoiki", "Puszki", "Przyprawy", "Sosy", "Dania gotowe", "Nabiał", "Mrożonki", "Suche", "Napoje", "Słodycze", "Snacki", "Chemia", "Inne"
 ];
 
 type Props = {

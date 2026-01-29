@@ -27,7 +27,6 @@ const List = async () => {
     "Sosy",
     "Dania gotowe",
     "Nabiał",
-    "Mięsko",
     "Mrożonki",
     "Suche",
     "Napoje",

@@ -50,7 +50,6 @@ export const sortListByCategory = (entry: CartEntry): CartEntry => {
     "Sosy",
     "Dania gotowe",
     "Nabiał",
-    "Mięsko",
     "Mrożonki",
     "Suche",
     "Napoje",
