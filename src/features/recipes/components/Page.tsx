@@ -18,6 +18,7 @@ const Page = () => {
         <SearchBar />
       </div>
       <SectionBox className="card p-3">
+        <h2 className="font-bold text-lg text-white mb-2">Wszystkie przepisy</h2>
         <div className={
           `flex flex-wrap gap-2 ${searchParam ? 'justify-start' : 'justify-between'}`
         }>

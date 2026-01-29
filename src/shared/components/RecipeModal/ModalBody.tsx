@@ -5,7 +5,7 @@ import type { Recipe } from "@features/recipes/model";
 import { plannerStore } from "@features/planner/store";
 import { recipesStore } from "@features/recipes/store";
 import React, { useState, useMemo } from "react";
-import Badge from "@shared/components/Badge";
+import MealSection from "@shared/components/MealSection";
 import SectionBox from "@shared/components/SectionBox";
 import Input from "@shared/components/Input";
 
@@ -75,94 +75,37 @@ const ModalBody = (props: { day: number }) => {
   }, [allRecipes, dayPlan, search]);
 
   // Układ: śniadanie, obiad, kolacja od góry do dołu
-  const renderMealRow = (meal: keyof typeof dayPlan, label: string, color: string) => {
-    const recipes = availableRecipesMemo[meal] || [];
-    // Kolory borderów i badge dla sekcji
-    const scrollbarColors: Record<string, string> = {
-      breakfast: 'scrollbar-yellow',
-      lunch: 'scrollbar-green',
-      dinner: 'scrollbar-blue',
-    };
-    const badgeColors: Record<string, string> = {
-      breakfast: 'bg-yellow-200 text-yellow-900',
-      lunch: 'bg-green-200 text-green-900',
-      dinner: 'bg-blue-200 text-blue-900',
-    };
-    const badgeSelectedColors: Record<string, string> = {
-      breakfast: 'bg-yellow-200 text-yellow-900',
-      lunch: 'bg-green-200 text-green-900',
-      dinner: 'bg-blue-200 text-blue-900',
-    };
-    const scrollbarColor = scrollbarColors[meal];
-    // Ustal kolory badge na podstawie meal przekazywanego do renderMealRow
-    let badgeColor = '';
-    let badgeSelectedColor = '';
-    if (meal === 'breakfast') {
-      badgeColor = badgeColors.breakfast;
-      badgeSelectedColor = badgeSelectedColors.breakfast;
-    } else if (meal === 'lunch') {
-      badgeColor = badgeColors.lunch;
-      badgeSelectedColor = badgeSelectedColors.lunch;
-    } else if (meal === 'dinner') {
-      badgeColor = badgeColors.dinner;
-      badgeSelectedColor = badgeSelectedColors.dinner;
-    }
-    return (
-      <div className="flex flex-col mb-4 w-full" key={meal}>
-        <div className="flex flex-row w-full items-center mb-1">
-          <span
-            className="font-bold text-lg min-w-[120px] text-left mr-16 select-none"
-            style={{ color }}
-          >
-            {label}
-          </span>
-          <div className="flex-1 text-xs text-gray-500 font-semibold text-left pl-2">Wszystkie przepisy</div>
-          <div className="flex-1 text-xs text-gray-500 font-semibold text-right pr-2">Wybrane przepisy</div>
-        </div>
-        <div className="flex flex-row w-full items-stretch">
-          {/* Dostępne przepisy */}
-          <div className={`flex-1 flex flex-wrap gap-2 justify-start pr-20 max-h-48 overflow-y-auto ${scrollbarColor}`}>
-            {recipes.map((recipe) => {
-              // Sprawdź, czy przepis jest już przypisany do wybranych
-              const isSelected = Array.isArray(dayPlan[meal]) && dayPlan[meal].some((r: Recipe | null) => r && r.name === recipe.name);
-              return (
-                <Badge
-                  key={recipe.name + "-add"}
-                  color={badgeColor}
-                  textColor={""}
-                  className={`cursor-pointer ${isSelected ? 'opacity-50 pointer-events-none' : ''} hover:${badgeSelectedColor}`}
-                  onClick={() => !isSelected && moveRecipe(meal, recipe, true)}
-                  title={isSelected ? 'Przepis już przypisany' : 'Dodaj do wybranych'}
-                >
-                  {recipe.name}
-                </Badge>
-              );
-            })}
-          </div>
-          {/* Przypisane przepisy */}
-          <div className={`flex-1 flex flex-wrap gap-2 justify-end pl-20 w-full content-start max-h-48 overflow-y-auto ${scrollbarColor}`}>
-            {Array.isArray(dayPlan[meal]) && dayPlan[meal].length === 0 && (
-              <span className="text-gray-400 text-xs">Brak</span>
-            )}
-            {Array.isArray(dayPlan[meal]) && dayPlan[meal]
-              .filter((recipe: Recipe | null) => recipe && recipe.name)
-              .map((recipe: Recipe) => (
-                <Badge
-                  key={recipe.name + "-remove"}
-                  color={badgeSelectedColor}
-                  textColor={""}
-                  className={"self-start cursor-pointer hover:bg-red-400 hover:text-white"}
-                  onClick={() => moveRecipe(meal, recipe, false)}
-                  title="Usuń z wybranych"
-                >
-                  {recipe.name}
-                </Badge>
-              ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
+
+  // Konfiguracja dla MealSection
+  const mealConfigs: Array<{
+    meal: keyof typeof dayPlan;
+    label: string;
+    color: string;
+    badgeColor: string;
+    badgeTextColor: string;
+  }> = [
+    {
+      meal: 'breakfast',
+      label: 'Śniadanie',
+      color: '#b59f3b',
+      badgeColor: 'bg-yellow-200',
+      badgeTextColor: 'text-yellow-900',
+    },
+    {
+      meal: 'lunch',
+      label: 'Obiad',
+      color: '#3bb54a',
+      badgeColor: 'bg-green-200',
+      badgeTextColor: 'text-green-900',
+    },
+    {
+      meal: 'dinner',
+      label: 'Kolacja',
+      color: '#3b6cb5',
+      badgeColor: 'bg-blue-200',
+      badgeTextColor: 'text-blue-900',
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -174,15 +117,33 @@ const ModalBody = (props: { day: number }) => {
         className="mb-4"
       />
       <div className="flex flex-col gap-4">
-        <SectionBox className="border border-yellow-400 rounded-md p-2 bg-yellow-50">
-          {renderMealRow("breakfast", "Śniadanie", "#b59f3b")}
-        </SectionBox>
-        <SectionBox className="border border-green-400 rounded-md p-2 bg-green-50">
-          {renderMealRow("lunch", "Obiad", "#3bb54a")}
-        </SectionBox>
-        <SectionBox className="border border-blue-400 rounded-md p-2 bg-blue-50">
-          {renderMealRow("dinner", "Kolacja", "#3b6cb5")}
-        </SectionBox>
+        {mealConfigs.map(({ meal, label, color, badgeColor, badgeTextColor }) => (
+          <SectionBox
+            key={meal}
+            className={`border rounded-md p-2 ${
+              meal === 'breakfast'
+                ? 'border-yellow-400 bg-yellow-50'
+                : meal === 'lunch'
+                ? 'border-green-400 bg-green-50'
+                : 'border-blue-400 bg-blue-50'
+            }`}
+          >
+            <MealSection
+              label={label}
+              recipes={availableRecipesMemo[meal] || []}
+              badgeColor={badgeColor}
+              badgeTextColor={badgeTextColor}
+              showTwoColumns={true}
+              leftTitle="Wszystkie przepisy"
+              rightTitle="Wybrane przepisy"
+              onBadgeClick={(recipe) => moveRecipe(meal, recipe, true)}
+              selectedRecipes={Array.isArray(dayPlan[meal]) ? dayPlan[meal] : []}
+              selectedBadgeColor={badgeColor}
+              selectedBadgeTextColor={badgeTextColor}
+              onSelectedBadgeClick={(recipe) => moveRecipe(meal, recipe, false)}
+            />
+          </SectionBox>
+        ))}
       </div>
     </div>
   );

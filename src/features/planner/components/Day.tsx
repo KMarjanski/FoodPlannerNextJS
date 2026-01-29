@@ -2,7 +2,7 @@ import React from "react";
 import { DaysOfTheWeek } from "@core/const/types";
 import OpenModalButton from "@/src/shared/components/RecipeModal/OpenModalButton";
 import Text from "@shared/components/topography/Text";
-import Badge from "@shared/components/Badge";
+import MealSection from "@shared/components/MealSection";
 import SectionBox from "@shared/components/SectionBox";
 import type { Recipe } from "@features/recipes/model";
 
@@ -36,51 +36,24 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
           </div>
         </div>
         <div className="flex flex-col gap-3 mt-2">
-          <div>
-            <span className="font-semibold text-base text-white/80">Śniadanie</span>
-            <div className="flex flex-wrap gap-2 justify-center mt-1">
-              {(breakfast.length > 0 ? breakfast : [null]).map((meal, i) => (
-                <Badge
-                  key={"breakfast-" + i}
-                  color={meal && meal.name ? "bg-yellow-200" : "bg-transparent border-none"}
-                  textColor={meal && meal.name ? "text-yellow-900" : ""}
-                  className="px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150"
-                >
-                  <Text>{meal && meal.name ? meal.name : ""}</Text>
-                </Badge>
-              ))}
-            </div>
-          </div>
-          <div>
-            <span className="font-semibold text-base text-white/80">Obiad</span>
-            <div className="flex flex-wrap gap-2 justify-center mt-1">
-              {(lunch.length > 0 ? lunch : [null]).map((meal, i) => (
-                <Badge
-                  key={"lunch-" + i}
-                  color={meal && meal.name ? "bg-green-200" : "bg-transparent border-none"}
-                  textColor={meal && meal.name ? "text-green-900" : ""}
-                  className="px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150"
-                >
-                  <Text>{meal && meal.name ? meal.name : ""}</Text>
-                </Badge>
-              ))}
-            </div>
-          </div>
-          <div>
-            <span className="font-semibold text-base text-white/80">Kolacja</span>
-            <div className="flex flex-wrap gap-2 justify-center mt-1">
-              {(dinner.length > 0 ? dinner : [null]).map((meal, i) => (
-                <Badge
-                  key={"dinner-" + i}
-                  color={meal && meal.name ? "bg-blue-200" : "bg-transparent border-none"}
-                  textColor={meal && meal.name ? "text-blue-900" : ""}
-                  className="px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150"
-                >
-                  <Text>{meal && meal.name ? meal.name : ""}</Text>
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <MealSection
+            label="Śniadanie"
+            recipes={breakfast}
+            badgeColor="bg-yellow-200"
+            badgeTextColor="text-yellow-900"
+          />
+          <MealSection
+            label="Obiad"
+            recipes={lunch}
+            badgeColor="bg-green-200"
+            badgeTextColor="text-green-900"
+          />
+          <MealSection
+            label="Kolacja"
+            recipes={dinner}
+            badgeColor="bg-blue-200"
+            badgeTextColor="text-blue-900"
+          />
         </div>
       </div>
     </SectionBox>
