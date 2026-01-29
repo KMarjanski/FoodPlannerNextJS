@@ -4,6 +4,7 @@ import { useState } from "react";
 import ListItemComponent from "./ListItemComponent";
 import { Ingredients } from "@core/entities/ingredients/model";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
 
 type ListCategoryProps = {
   categoryName: string;
@@ -38,7 +39,7 @@ export default function ListCategory({ categoryName, items }: ListCategoryProps)
       </div>
 
       {/* Items */}
-      <div className="space-y-0 bg-white/90 backdrop-blur-sm">
+      <SectionBox className="space-y-0 bg-white/90 backdrop-blur-sm">
         {/* Unchecked items first */}
         {uncheckedItems.length > 0 && (
           <div className="space-y-0">
@@ -68,7 +69,7 @@ export default function ListCategory({ categoryName, items }: ListCategoryProps)
             ))}
           </div>
         )}
-      </div>
+      </SectionBox>
     </div>
   );
 }

@@ -2,6 +2,8 @@ import { ingredientsStore } from "@/src/core/entities/ingredients/store";
 import React, { useState, useEffect } from "react";
 import LocalSearchBar from "./LocalSearchBar";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
+import Input from "@shared/components/Input";
 
 import { recipesStore } from "@features/recipes/store";
 
@@ -115,7 +117,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
             </button>
             {showDeleteConfirm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full">
+                <SectionBox className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full">
                   <h3 className="text-lg font-semibold mb-4">Potwierdź usunięcie</h3>
                   <p className="mb-6">Czy na pewno chcesz usunąć ten przepis?</p>
                   <div className="flex justify-end gap-2">
@@ -136,7 +138,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
                       Usuń
                     </button>
                   </div>
-                </div>
+                </SectionBox>
               </div>
             )}
             <button
@@ -218,10 +220,10 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
           </button>
         )}
       </div>
-      <input
+      <Input
         type="text"
         placeholder="Wpisz nazwę przepisu"
-        className="input input-bordered w-full"
+        className="w-full"
         value={recipeName}
         onChange={e => setRecipeName(e.target.value)}
       />

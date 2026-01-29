@@ -3,6 +3,7 @@ import { DaysOfTheWeek } from "@core/const/types";
 import OpenModalButton from "@/src/shared/components/RecipeModal/OpenModalButton";
 import Text from "@shared/components/topography/Text";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
 import type { Recipe } from "@features/recipes/model";
 
 type MealPlan = {
@@ -29,7 +30,7 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
   const badgeBase = 'px-4 py-2 text-base font-semibold rounded-lg transition-colors duration-150';
 
   return (
-    <div className="card glass">
+    <SectionBox className="card">
       <div className="card-body pt-2 pb-2 pl-3 pr-0 pt-0">
         <div className="flex items-center justify-between w-full mb-2 gap-2 relative">
           <div className="flex-1 flex">
@@ -89,7 +90,7 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
           </div>
         </div>
       </div>
-    </div>
+    </SectionBox>
   );
 });
 Day.displayName = "Day";

@@ -2,6 +2,7 @@ import { setPlanner } from "@features/planner/service";
 import { plannerStore } from "@features/planner/store";
 import React from "react";
 import Text from "../../topography/Text";
+import Input from "@shared/components/Input";
 
 const SetPlannerButtons = () => {
   const originalPlanner = plannerStore((state) => state.original);
@@ -24,7 +25,7 @@ const SetPlannerButtons = () => {
   return (
     <div className={`flex items-center gap-4 my-4 ${!displaySavePlanner && "mr-4"}`}>
       <label htmlFor="weeks" className="font-semibold">Ilość tygodni:</label>
-      <input
+      <Input
         id="weeks"
         type="number"
         min={1}
@@ -34,7 +35,7 @@ const SetPlannerButtons = () => {
           const val = Math.max(1, Math.min(4, Number(e.target.value)));
           setWeeks(val);
         }}
-        className="input input-bordered w-20 text-center font-bold text-lg"
+        className="w-20 text-center font-bold text-lg"
       />
       {displaySavePlanner && (
         <button className={`btn ${!displaySavePlanner && "mr-4"}`} onClick={() => refresh(originalPlanner)}>

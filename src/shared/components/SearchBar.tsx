@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React from "react";
+import Input from "@shared/components/Input";
 
 const SearchBar = () => {
   const searchParams = useSearchParams();
@@ -18,8 +19,7 @@ const SearchBar = () => {
     replace(`${pathname}?${params.toString()}`);
   };
   return (
-    <input
-      className="w-full py-3 px-4 mb-4 text-slate-700 placeholder-slate-400 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+    <Input
       type="text"
       onChange={(e) => handleSearch(e.target.value)}
       defaultValue={searchParams.get("search"?.toString()) || ""}

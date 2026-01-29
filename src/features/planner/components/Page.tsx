@@ -1,12 +1,10 @@
-
-
 import React, { useState, useCallback } from "react";
 import Day from "./Day";
 import { plannerStore } from "@features/planner/store";
 import { Planner } from "@features/planner/model";
 import AddRecipe from "@/src/shared/components/RecipeModal/AddRecipe";
 import { DaysOfTheWeek } from "@core/const/types";
-
+import SectionBox from "@shared/components/SectionBox";
 
 const MemoDay = React.memo(Day);
 const MemoAddRecipe = React.memo(AddRecipe);
@@ -40,7 +38,7 @@ const Page = () => {
       {modalDay !== null && (
         <MemoAddRecipe day={modalDay} onClose={() => setModalDay(null)} />
       )}
-      <div className="grid grid-cols-6 gap-4 p-4">
+      <SectionBox as="div" className="grid grid-cols-6 gap-4 p-4">
         {getDays().map(({ week, dayIndex, dayKey, globalIndex }) => {
           const typeKey = dayKey as keyof Planner;
           const getClassName = () => {
@@ -58,7 +56,7 @@ const Page = () => {
             </div>
           );
         })}
-      </div>
+      </SectionBox>
     </div>
   );
 };

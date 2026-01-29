@@ -6,6 +6,8 @@ import { plannerStore } from "@features/planner/store";
 import { recipesStore } from "@features/recipes/store";
 import React, { useState, useMemo } from "react";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
+import Input from "@shared/components/Input";
 
 const ModalBody = (props: { day: number }) => {
   const planner = plannerStore((state) => state.planner);
@@ -164,23 +166,23 @@ const ModalBody = (props: { day: number }) => {
 
   return (
     <div className="space-y-4">
-      <input
-        className="rounded w-full py-2 px-3 mb-4 text-gray-700 focus:outline-none focus:shadow-outline"
+      <Input
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         type="text"
         placeholder="Szukaj przepisu..."
+        className="mb-4"
       />
       <div className="flex flex-col gap-4">
-        <div className="border border-yellow-400 rounded-md p-2 bg-yellow-50">
+        <SectionBox className="border border-yellow-400 rounded-md p-2 bg-yellow-50">
           {renderMealRow("breakfast", "Śniadanie", "#b59f3b")}
-        </div>
-        <div className="border border-green-400 rounded-md p-2 bg-green-50">
+        </SectionBox>
+        <SectionBox className="border border-green-400 rounded-md p-2 bg-green-50">
           {renderMealRow("lunch", "Obiad", "#3bb54a")}
-        </div>
-        <div className="border border-blue-400 rounded-md p-2 bg-blue-50">
+        </SectionBox>
+        <SectionBox className="border border-blue-400 rounded-md p-2 bg-blue-50">
           {renderMealRow("dinner", "Kolacja", "#3b6cb5")}
-        </div>
+        </SectionBox>
       </div>
     </div>
   );

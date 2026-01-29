@@ -1,6 +1,7 @@
 import React from "react";
 import OpenModalButton from "./OpenModalButton";
 import ModalBody from "./ModalBody";
+import SectionBox from "@shared/components/SectionBox";
 
 
 
@@ -32,9 +33,9 @@ const NewRecipe = React.forwardRef(({ hideButton = false }: { hideButton?: boole
     <>
       {!hideButton && <OpenModalButton />}
       <dialog id={`new_recipe_modal`} className="modal" ref={dialogRef}>
-        <div className="modal-box">
+        <SectionBox as="div" className="modal-box">
           <ModalBody initialName={editRecipe?.name} initialIngredients={editRecipe?.ingredients} dialogRef={dialogRef} />
-        </div>
+        </SectionBox>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>

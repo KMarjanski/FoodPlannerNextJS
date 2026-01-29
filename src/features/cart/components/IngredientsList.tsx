@@ -7,6 +7,7 @@ import { useState } from "react";
 import { createIngredient, getIngredients } from "@core/entities/ingredients/service";
 import { ingredientsStore } from "@core/entities/ingredients/store";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
 
 const categoryOptions = [
   "Owoce", "Warzywa", "Zioła", "Pieczywo", "Pasty", "Słoiki", "Puszki", "Przyprawy", "Sosy", "Dania gotowe", "Nabiał", "Mrożonki", "Suche", "Napoje", "Słodycze", "Snacki", "Chemia", "Inne"
@@ -50,7 +51,7 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
   };
 
   return (
-    <div className="bg-gray-50 rounded-lg p-4 shadow-sm">
+    <SectionBox className="bg-gray-50">
       <div className="flex items-center justify-center mb-4 gap-2">
         <h3 className="text-lg font-bold text-emerald-700 text-center mb-0">Dodaj składniki</h3>
         {setEditMode && (
@@ -161,7 +162,7 @@ const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDe
           );
         })
       )}
-    </div>
+    </SectionBox>
   );
 };
 

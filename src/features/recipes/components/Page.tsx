@@ -5,6 +5,7 @@ import { recipesStore } from "@features/recipes/store";
 import SearchBar from "@/src/shared/components/SearchBar";
 import Text from "@/src/shared/components/topography/Text";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
 
 const Page = () => {
   const storeRecipes = recipesStore((state) => state.recipes);
@@ -16,7 +17,7 @@ const Page = () => {
       <div className="mx-4 mb-4 mt-2">
         <SearchBar />
       </div>
-      <div className="card glass p-3">
+      <SectionBox className="card p-3">
         <div className={
           `flex flex-wrap gap-2 ${searchParam ? 'justify-start' : 'justify-between'}`
         }>
@@ -84,7 +85,7 @@ const Page = () => {
               );
             })}
         </div>
-      </div>
+      </SectionBox>
       <NewRecipe ref={newRecipeRef} hideButton />
     </div>
   );

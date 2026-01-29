@@ -3,6 +3,7 @@ import { Ingredient } from "@core/entities/ingredients/model";
 import { capitalize, groupByCategory } from "@shared/lib/utils";
 import { useState } from "react";
 import Badge from "@shared/components/Badge";
+import SectionBox from "@shared/components/SectionBox";
 
 type Props = {
   cartItems: Ingredient[];
@@ -22,7 +23,7 @@ const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }:
   };
 
   return (
-    <div className="bg-gray-100 rounded-lg p-4 shadow-sm">
+    <SectionBox className="bg-gray-100">
       {editMode && (
         <div className="mb-2 text-red-700 font-semibold text-center">Tryb edycji: kliknij składnik, aby usunąć z bazy</div>
       )}
@@ -77,7 +78,7 @@ const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }:
           );
         })
       )}
-    </div>
+    </SectionBox>
   );
 };
 
