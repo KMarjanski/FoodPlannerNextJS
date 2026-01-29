@@ -14,10 +14,13 @@ const categoryOptions = [
 type Props = {
   // usuń: ingredients: Ingredient[];
   cartItems: Ingredient[];
-  onAdd: (id: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onAdd: (_id: string) => void;
   editMode?: boolean;
-  setEditMode?: (v: boolean) => void;
-  onDeleteIngredient?: (id: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  setEditMode?: (_v: boolean) => void;
+  // eslint-disable-next-line no-unused-vars
+  onDeleteIngredient?: (_id: string) => void;
 };
 
 const IngredientsList = ({ cartItems, onAdd, editMode = false, setEditMode, onDeleteIngredient }: Props) => {

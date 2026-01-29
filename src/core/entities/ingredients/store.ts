@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 import { Ingredients } from "@core/entities/ingredients/model";
 
 interface IngredientsState {
   ingredients: Ingredients;
-  setIngredients: (newIngredients: Ingredients) => void;
+  setIngredients: (_newIngredients: Ingredients) => void;
 }
 
 const ingredientsStore = create<IngredientsState>()((set) => ({

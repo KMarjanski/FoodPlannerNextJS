@@ -1,4 +1,3 @@
-
 import Text from "@/src/shared/components/topography/Text";
 import { Ingredient } from "@core/entities/ingredients/model";
 import { capitalize, groupByCategory } from "@shared/lib/utils";
@@ -6,9 +5,11 @@ import { useState } from "react";
 
 type Props = {
   cartItems: Ingredient[];
-  onRemove: (id: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onRemove: (_id: string) => void;
   editMode?: boolean;
-  onDeleteIngredient?: (id: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onDeleteIngredient?: (_id: string) => void;
 };
 
 const CartList = ({ cartItems, onRemove, editMode = false, onDeleteIngredient }: Props) => {

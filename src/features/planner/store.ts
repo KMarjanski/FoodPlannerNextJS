@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 import { Planner } from "@features/planner/model";
 import type { Recipe } from "@features/recipes/model";
@@ -6,11 +7,11 @@ import type { Recipe } from "@features/recipes/model";
 interface PlannerState {
   original: Planner;
   planner: Planner;
-  setPlanner: (newPlanner: Planner) => void;
-  initPlanner: (newPlanner: Planner) => void;
+  setPlanner: (_newPlanner: Planner) => void;
+  initPlanner: (_newPlanner: Planner) => void;
   resetPlanner: () => void;
   weeks: number;
-  setWeeks: (weeks: number) => void;
+  setWeeks: (_weeks: number) => void;
 }
 
 

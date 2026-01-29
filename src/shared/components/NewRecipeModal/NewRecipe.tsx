@@ -5,8 +5,7 @@ import ModalBody from "./ModalBody";
 
 
 import { Ingredient } from "@core/entities/ingredients/model";
-import { Recipe } from "@features/recipes/model";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState } from "react";
 
 type EditRecipe = {
   name: string;
@@ -43,5 +42,6 @@ const NewRecipe = React.forwardRef(({ hideButton = false }: { hideButton?: boole
     </>
   );
 });
+NewRecipe.displayName = "NewRecipe";
 
 export default NewRecipe;

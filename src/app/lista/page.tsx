@@ -2,9 +2,8 @@ import React from "react";
 import { getList } from "@features/list/service";
 import ListCategory from "@features/list/ListCategory";
 import { Cart, CartEntry } from "@features/cart/model";
-import { Ingredient, Ingredients } from "@core/entities/ingredients/model";
+import { Ingredients } from "@core/entities/ingredients/model";
 import { sortListByCategory } from "@/src/shared/lib/utils";
-import Heading from "@/src/shared/components/topography/Heading";
 
 export const dynamic = 'force-dynamic';
 

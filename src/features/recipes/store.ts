@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 import { Recipes } from "@features/recipes/model";
 
 interface RecipesState {
   original: Recipes;
   recipes: Recipes;
-  setRecipes: (newRecipes: Recipes) => void;
-  initRecipes: (newRecipes: Recipes) => void;
+  setRecipes: (_newRecipes: Recipes) => void;
+  initRecipes: (_newRecipes: Recipes) => void;
 }
 
 const recipesStore = create<RecipesState>()((set) => ({

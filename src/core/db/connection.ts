@@ -1,7 +1,9 @@
-import mongoose, { Mongoose } from "mongoose";
+/* eslint-disable no-unused-vars */
+import _mongoose from "mongoose";
+import type { Mongoose } from "mongoose";
 
 declare global {
-  var mongoose: {
+  var _mongoose: {
     promise: Promise<Mongoose> | null;
     conn: Mongoose | null;
   };
@@ -15,10 +17,11 @@ if (!MONGODB_URI) {
   );
 }
 
-let cached = global.mongoose;
+
+let cached = global._mongoose;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = global._mongoose = { conn: null, promise: null };
 }
 
 async function dbConnect() {
@@ -35,7 +38,7 @@ async function dbConnect() {
       retryWrites: true,
       maxPoolSize: 10,
     };
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = _mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log("✅ Database connected successfully");
       return mongoose;
     }).catch((error) => {

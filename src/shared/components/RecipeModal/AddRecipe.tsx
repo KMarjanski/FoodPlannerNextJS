@@ -22,5 +22,6 @@ const AddRecipe = React.memo((props: { day: number; onClose?: () => void }) => {
     </div>
   );
 });
+AddRecipe.displayName = "AddRecipe";
 
 export default AddRecipe;

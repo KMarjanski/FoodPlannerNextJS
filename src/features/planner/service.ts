@@ -1,7 +1,6 @@
 "use server";
 
 import Planner, { Planner as PlannerModel } from "@features/planner/model";
-import type { Recipe } from "@features/recipes/model";
 
 
 
@@ -36,6 +35,7 @@ function filterRecipesArray(arr: any[]): any[] {
         .filter(
           (item) => item && typeof item === 'object' && typeof item.name === 'string' && Array.isArray(item.ingredients)
         )
+        // eslint-disable-next-line no-unused-vars
         .map(({ _id, ...rest }) => rest)
     : [];
 }
@@ -63,8 +63,6 @@ const setPlanner = async (newPlanner: PlannerModel) => {
 
 // ...existing code...
 // ...istniejący kod, bez generateCartFromPlanner...
-  // Loguj co trafia do bazy
-  console.log('PLANNER TO SAVE:', JSON.stringify(sanitizedPlanner, null, 2));
   const doc = await Planner.findOneAndReplace({}, sanitizedPlanner, { returnNewDocument: false });
   if (!doc) return null;
   return JSON.parse(JSON.stringify(doc));

@@ -18,7 +18,6 @@ interface ModalBodyProps {
 const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef }: ModalBodyProps) => {
   const ingredients = ingredientsStore((state) => state.ingredients);
   const setRecipes = recipesStore((state) => state.setRecipes);
-  const recipes = recipesStore((state) => state.recipes);
   const [search, setSearch] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState<any[]>(initialIngredients);
   const [recipeName, setRecipeName] = useState(initialName);
@@ -35,7 +34,7 @@ const ModalBody = ({ onAdd, initialName = "", initialIngredients = [], dialogRef
     }
     // W trybie dodawania nie nadpisuj stanu (pozwól użytkownikowi dodawać składniki)
     // Stan jest już zainicjalizowany pustymi wartościami przez useState
-  }, [initialName, initialIngredients]);
+  }, [initialName, initialIngredients, recipeName, selectedIngredients]);
 
   // Helper to check if ingredient is already selected
   const isSelected = (ingredient: any) =>

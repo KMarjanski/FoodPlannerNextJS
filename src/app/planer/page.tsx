@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 const Planner = async () => {
   const plannerRaw = await getPlanner();
   if (!plannerRaw) throw new Error("Planner not found");
+  // eslint-disable-next-line no-unused-vars
   const { _id, ...planner } = plannerRaw;
   const newPlanner = JSON.parse(JSON.stringify(planner));
   const recipes = await getRecipes();

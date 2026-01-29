@@ -1,8 +1,10 @@
+
+/* eslint-disable no-unused-vars */
 import React from "react";
 
 interface LocalSearchBarProps {
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (_e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
 }
 

@@ -14,7 +14,6 @@ const MemoAddRecipe = React.memo(AddRecipe);
 const Page = () => {
   const storePlanner = plannerStore((state) => state.planner);
   const weeks = plannerStore((state) => state.weeks);
-  const setWeeks = plannerStore((state) => state.setWeeks);
   const [modalDay, setModalDay] = useState<number | null>(null);
 
   // Funkcja do generowania dni na podstawie liczby tygodni

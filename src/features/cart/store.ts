@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 import { Cart } from "@features/cart/model";
 
 interface CartState {
   original: Cart;
   cart: Cart;
-  setCart: (newCart: Cart) => void;
-  initCart: (newCart: Cart) => void;
+  setCart: (_newCart: Cart) => void;
+  initCart: (_newCart: Cart) => void;
   resetCart: () => void;
 }
 

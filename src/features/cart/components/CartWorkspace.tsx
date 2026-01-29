@@ -9,7 +9,7 @@ import { Ingredient, Ingredients } from "@core/entities/ingredients/types";
 import { Cart } from "@features/cart/types";
 import { ingredientsStore } from "@core/entities/ingredients/store";
 import { useSearchParams } from "next/navigation";
-import { createIngredient, getIngredients } from "@core/entities/ingredients/service";
+import { getIngredients } from "@core/entities/ingredients/service";
 
 type Props = {
   cart: Cart;
@@ -19,7 +19,6 @@ type Props = {
 const CartWorkspace = ({ cart, ingredients }: Props) => {
   const setCart = cartStore((state) => state.setCart);
   const cartState = cartStore((state) => state.cart);
-  const original = cartStore((state) => state.original);
   const initCart = cartStore((state) => state.initCart);
   const cartItems = (cartState && cartState[0] && cartState[0].cart) ? cartState[0].cart : [];
   const [editMode, setEditMode] = useState(false);
@@ -38,12 +37,13 @@ const CartWorkspace = ({ cart, ingredients }: Props) => {
   }, [cart, initCart, ingredients]);
 
   // Always fetch fresh ingredients on search param change (navigation/search)
+  const fetchFresh = async () => {
+    const fresh = await getIngredients();
+    ingredientsStore.getState().setIngredients(fresh);
+  };
   useEffect(() => {
-    const fetchFresh = async () => {
-      const fresh = await getIngredients();
-      ingredientsStore.getState().setIngredients(fresh);
-    };
     fetchFresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams?.get("search")]);
 
   // Usuń efekt synchronizujący po searchParams!

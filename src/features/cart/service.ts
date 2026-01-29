@@ -1,6 +1,6 @@
 "use server";
 
-import Cart, { Cart as CartModel } from "@/src/features/cart/model";
+import Cart from "@/src/features/cart/model";
 
 const getCart = async () => {
   const result = await Cart.find();

@@ -39,7 +39,6 @@ const ModalBody = (props: { day: number }) => {
 
   // Przypisanie domyślnego typu posiłku (obiad) jeśli nie istnieje
   // Zakładamy, że Recipe może mieć mealType: 'breakfast' | 'lunch' | 'dinner' | undefined
-  type RecipeWithType = { name: string; mealType: 'breakfast' | 'lunch' | 'dinner' | 'all' };
   const mapType = (type: string | undefined): 'breakfast' | 'lunch' | 'dinner' | 'all' => {
     if (!type) return 'lunch';
     // Usuwanie diakrytyków bez flagi 'u' (dla zgodności z ES5)
@@ -52,11 +51,6 @@ const ModalBody = (props: { day: number }) => {
     if (t.includes('obiad') || t.includes('lunch')) return 'lunch';
     return 'lunch'; // nieznany typ, domyślnie obiad
   };
-  const allRecipesWithType: RecipeWithType[] = allRecipes.map((r) => {
-    const typeField = (r as any).mealType || (r as any).type;
-    const mealType = mapType(typeField);
-    return { name: r.name, mealType };
-  });
 
   // Przepisy dostępne do dodania (nieprzypisane do danego posiłku)
   const availableRecipesMemo = useMemo(() => {
@@ -128,7 +122,7 @@ const ModalBody = (props: { day: number }) => {
             {recipes.length === 0 && (
               <span className="text-gray-400 text-xs">Brak</span>
             )}
-            {recipes.map((recipe, i) => {
+            {recipes.map((recipe) => {
               // Sprawdź, czy przepis jest już przypisany do wybranych
               const isSelected = Array.isArray(dayPlan[meal]) && dayPlan[meal].some((r: Recipe | null) => r && r.name === recipe.name);
               return (
@@ -152,7 +146,7 @@ const ModalBody = (props: { day: number }) => {
             )}
             {Array.isArray(dayPlan[meal]) && dayPlan[meal]
               .filter((recipe: Recipe | null) => recipe && recipe.name)
-              .map((recipe: Recipe, i: number) => (
+              .map((recipe: Recipe) => (
                 <button
                   key={recipe.name + "-remove"}
                   type="button"

@@ -92,5 +92,6 @@ const Day = React.memo((props: { day: number; meals?: MealPlan; onOpenModal?: ()
     </div>
   );
 });
+Day.displayName = "Day";
 
 export default Day;

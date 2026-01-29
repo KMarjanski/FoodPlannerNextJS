@@ -30,7 +30,6 @@ const SetCartButtons = () => {
     return true;
   }
   const displaySaveCart = !isCartEqual(cartArr, originalArr);
-  const resetCart = cartStore((state) => state.resetCart);
   const refresh = cartStore((state) => state.setCart);
   const handleSave = async () => {
     setLoading(true);
