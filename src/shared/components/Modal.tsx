@@ -44,7 +44,7 @@ const Modal: React.FC<ModalProps> = ({
       role="dialog"
     >
       <div
-        className={`relative bg-white rounded-lg shadow-lg p-6 max-w-[90vw] max-h-[90vh] overflow-y-auto ${className}`}
+        className={`relative bg-neutral-900 rounded-lg shadow-lg p-6 max-w-[90vw] max-h-[90vh] overflow-y-auto ${className}`}
         onClick={e => e.stopPropagation()}
       >
         {showCloseButton && (
