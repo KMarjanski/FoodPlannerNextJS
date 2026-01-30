@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { MealType } from "@/lib/meal-data"
-import { sampleRecipes, type Recipe } from "@/lib/recipes-data"
+import type { Recipe } from "@/lib/recipes-data"
 import type { DayMealsRecipes } from "./meal-planner-dashboard"
 import {
   Coffee,
@@ -86,23 +86,22 @@ const ingredientToFoodCategory: Record<string, FoodItem["category"]> = {
   other: "carb",
 }
 
-interface RecipePickerSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSelect: (recipe: Recipe) => void
-  mealType: MealType
-}
-
 function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePickerSheetProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [recipes, setRecipes] = useState<Recipe[]>([])
 
   useEffect(() => {
     if (!open) {
       setSearchQuery("")
+    } else {
+      fetch("/api/recipes")
+        .then((res) => res.json())
+        .then((data) => setRecipes(data))
+        .catch(() => setRecipes([]))
     }
   }, [open])
 
-  const filteredRecipes = sampleRecipes.filter((recipe) =>
+  const filteredRecipes = recipes.filter((recipe) =>
     recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 

@@ -16,39 +16,66 @@ import { AppLayout } from "@/components/meal-planner/app-layout"
 import { IngredientItem } from "./ingredient-item"
 import { useCart, CartProvider } from "@/lib/cart-context"
 import {
-  masterIngredients,
   ingredientCategories,
-  type IngredientCategory,
 } from "@/lib/recipes-data"
 
-function CartContent() {
+// Define IngredientCategory type based on ingredientCategories values
+type IngredientCategory = (typeof ingredientCategories)[number]["value"];
+
+import type { Ingredient } from "@/lib/types"
+interface CartContentProps {
+  ingredients: Ingredient[]
+}
+function CartContent({ ingredients }: CartContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, isInCart } = useCart();
   const filteredIngredients = useMemo(() => {
-    return masterIngredients.filter((ing) => {
+    return ingredients.filter((ing) => {
       const matchesSearch = ing.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === "all" || ing.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [ingredients, searchQuery, selectedCategory]);
   const groupedCartItems = useMemo(() => {
-    const groups: Record<IngredientCategory, typeof cartItems> = {
-      vegetables: [],
-      fruits: [],
-      dairy: [],
-      meat: [],
-      seafood: [],
-      grains: [],
-      spices: [],
-      other: [],
-    };
+    const groups: Record<IngredientCategory, typeof cartItems> = ingredientCategories.reduce((acc, cat) => {
+      acc[cat.value as IngredientCategory] = [];
+      return acc;
+    }, {} as Record<IngredientCategory, typeof cartItems>);
     cartItems.forEach((item) => {
-      groups[item.category].push(item);
+      if (groups[item.category]) {
+        groups[item.category].push(item);
+      }
     });
     return groups;
   }, [cartItems]);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  // Formularz dodawania składnika
+  const [newName, setNewName] = useState("");
+  const [newCategory, setNewCategory] = useState<IngredientCategory>(ingredientCategories[0]?.value || "fruits");
+  const [adding, setAdding] = useState(false);
+  const [error, setError] = useState("");
+  async function handleAddIngredient(e: React.FormEvent) {
+    e.preventDefault();
+    setAdding(true);
+    setError("");
+    try {
+      const res = await fetch("/api/master-ingredients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName, category: newCategory }),
+      });
+      if (!res.ok) throw new Error("Failed to add ingredient");
+      setNewName("");
+      setNewCategory(ingredientCategories[0]?.value || "fruits");
+      // Można dodać odświeżenie listy składników po stronie serwera lub przez re-fetch
+      window.location.reload();
+    } catch (err: any) {
+      setError(err.message || "Error");
+    } finally {
+      setAdding(false);
+    }
+  }
   return (
     <>
       <header className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-10">
@@ -95,6 +122,32 @@ function CartContent() {
                 <Package className="h-4 w-4 text-primary" />
                 All Ingredients
               </CardTitle>
+              {/* Formularz dodawania składnika */}
+              <form onSubmit={handleAddIngredient} className="flex flex-col gap-2 mt-4">
+                <div className="flex gap-2">
+                  <Input
+                    value={newName}
+                    onChange={e => setNewName(e.target.value)}
+                    placeholder="Ingredient name"
+                    required
+                    className="bg-secondary/50 border-border/50"
+                  />
+                  <select
+                    value={newCategory}
+                    onChange={e => setNewCategory(e.target.value as IngredientCategory)}
+                    className="px-2 py-1 rounded border border-border/50 bg-secondary/50 text-sm"
+                  >
+                    {ingredientCategories.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                  <Button type="submit" size="sm" disabled={adding || !newName}>
+                    {adding ? "Adding..." : "Add"}
+                  </Button>
+                </div>
+                {error && <div className="text-xs text-destructive">{error}</div>}
+              </form>
+              {/* ...istniejący kod... */}
               <div className="space-y-3 mt-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -141,11 +194,11 @@ function CartContent() {
                 ) : (
                   filteredIngredients.map((ing) => (
                     <IngredientItem
-                      key={ing.id}
+                      key={ing._id ?? ing.name}
                       ingredient={ing}
-                      isInCart={isInCart(ing.id)}
+                      isInCart={isInCart(ing._id ?? ing.name)}
                       onAdd={() => addToCart(ing)}
-                      onRemove={() => removeFromCart(ing.id)}
+                      onRemove={() => removeFromCart(ing._id ?? ing.name)}
                     />
                   ))
                 )}
@@ -210,12 +263,12 @@ function CartContent() {
                         <div className="space-y-2">
                           {items.map((item) => (
                             <IngredientItem
-                              key={item.id}
+                              key={item._id ?? item.name}
                               ingredient={item}
                               quantity={item.quantity}
                               showQuantityControls
                               onQuantityChange={(qty) =>
-                                updateQuantity(item.id, qty)
+                                updateQuantity(item._id ?? item.name, qty)
                               }
                             />
                           ))}
@@ -230,13 +283,19 @@ function CartContent() {
         </div>
       </div>
     </>
+
   )
 }
 
-export function CartView() {
+export { CartContent }
+
+interface CartViewProps {
+  ingredients: Ingredient[]
+}
+export function CartView({ ingredients }: CartViewProps) {
   return (
     <CartProvider>
-      <CartContent />
+      <CartContent ingredients={ingredients} />
     </CartProvider>
   )
 }

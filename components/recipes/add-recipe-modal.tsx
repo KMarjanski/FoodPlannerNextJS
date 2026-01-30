@@ -15,7 +15,6 @@ import { Label } from "@/components/ui/label"
 import {
   type Recipe,
   type Ingredient,
-  masterIngredients,
   ingredientCategories,
 } from "@/lib/recipes-data"
 import { cn } from "@/lib/utils"
@@ -81,6 +80,14 @@ export function AddRecipeModal({
     setCustomIngredientCategory("other")
     setShowCustomForm(false)
   }
+
+  const [masterIngredients, setMasterIngredients] = useState<Ingredient[]>([])
+  useEffect(() => {
+    fetch("/api/master-ingredients")
+      .then((res) => res.json())
+      .then((data) => setMasterIngredients(data))
+      .catch(() => setMasterIngredients([]))
+  }, [])
 
   const filteredIngredients = masterIngredients.filter(
     (ing) =>

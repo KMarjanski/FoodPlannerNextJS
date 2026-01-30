@@ -1,3 +1,9 @@
+export interface Ingredient {
+  _id?: string
+  name: string
+  amount?: string
+  category: IngredientCategory
+}
 // Główne typy dla aplikacji FoodPlanner
 
 export type IngredientCategory =
@@ -20,7 +26,7 @@ export type IngredientCategory =
   | 'household'
 
 export interface Ingredient {
-  id: string
+  // id usunięte, używamy tylko _id z MongoDB
   name: string
   category: IngredientCategory
 }

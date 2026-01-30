@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mealData as initialMealData } from "@/lib/meal-data"
+// Pobieranie danych przez API
 import type { Recipe } from "@/lib/recipes-data"
 
 // Local types for recipe-based planner
@@ -42,7 +42,14 @@ function generateEmptyWeek(weekNumber: number): WeekDataRecipes {
 
 export function MealPlannerDashboard() {
   const { weeksCount, t } = useSettings()
-  const [mealData, setMealData] = useState<WeekDataRecipes[]>(initialMealData as any)
+  const [mealData, setMealData] = useState<WeekDataRecipes[]>([])
+    // Pobierz dane z API na start
+    useEffect(() => {
+      fetch("/api/meal-data")
+        .then((res) => res.json())
+        .then((data) => setMealData(data))
+        .catch(() => setMealData([]))
+    }, [])
   const [activeWeek, setActiveWeek] = useState(mealData[0]?.id || "week-1")
   const [editingDay, setEditingDay] = useState<DayMealsRecipes | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)

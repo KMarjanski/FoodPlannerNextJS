@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+
 import { Plus, Search, Filter, Grid3X3, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,10 +15,19 @@ import {
 import { AppLayout } from "@/components/meal-planner/app-layout"
 import { RecipeCard } from "./recipe-card"
 import { AddRecipeModal } from "./add-recipe-modal"
-import { type Recipe, sampleRecipes, recipeCategories } from "@/lib/recipes-data"
+import type { Recipe } from "@/lib/recipes-data"
+import { recipeCategories } from "@/lib/recipes-data"
 
 export function RecipesView() {
-  const [recipes, setRecipes] = useState<Recipe[]>(sampleRecipes)
+
+  const [recipes, setRecipes] = useState<Recipe[]>([])
+  // Pobierz przepisy przez API
+  useEffect(() => {
+    fetch("/api/recipes")
+      .then((res) => res.json())
+      .then((data) => setRecipes(data))
+      .catch(() => setRecipes([]))
+  }, [])
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -30,7 +40,7 @@ export function RecipesView() {
       const matchesSearch =
         recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        recipe.tags.some((tag) =>
+        recipe.tags.some((tag: string) =>
           tag.toLowerCase().includes(searchQuery.toLowerCase())
         )
       const matchesCategory =
@@ -116,7 +126,7 @@ export function RecipesView() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    {recipeCategories.map((cat) => (
+                    {recipeCategories.map((cat: string) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
                       </SelectItem>

@@ -13,7 +13,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { AppLayout } from "@/components/meal-planner/app-layout"
-import { ingredientCategories, type IngredientCategory } from "@/lib/recipes-data"
+import type { IngredientCategory } from "@/lib/recipes-data"
+import { ingredientCategories } from "@/lib/recipes-data"
 import { useCart } from "@/lib/cart-context"
 
 interface ShoppingItem {
@@ -24,24 +25,6 @@ interface ShoppingItem {
   checked: boolean
 }
 
-const sampleShoppingList: ShoppingItem[] = [
-  { id: "s1", name: "Chicken Breast", quantity: 2, category: "meat", checked: false },
-  { id: "s2", name: "Salmon Fillet", quantity: 1, category: "seafood", checked: false },
-  { id: "s3", name: "Broccoli", quantity: 3, category: "vegetables", checked: true },
-  { id: "s4", name: "Spinach", quantity: 1, category: "vegetables", checked: false },
-  { id: "s5", name: "Bell Peppers", quantity: 4, category: "vegetables", checked: false },
-  { id: "s6", name: "Tomatoes", quantity: 6, category: "vegetables", checked: true },
-  { id: "s7", name: "Avocado", quantity: 3, category: "fruits", checked: false },
-  { id: "s8", name: "Bananas", quantity: 1, category: "fruits", checked: false },
-  { id: "s9", name: "Greek Yogurt", quantity: 2, category: "dairy", checked: true },
-  { id: "s10", name: "Milk", quantity: 1, category: "dairy", checked: false },
-  { id: "s11", name: "Eggs", quantity: 12, category: "dairy", checked: false },
-  { id: "s12", name: "Rice", quantity: 1, category: "grains", checked: false },
-  { id: "s13", name: "Pasta", quantity: 2, category: "grains", checked: true },
-  { id: "s14", name: "Olive Oil", quantity: 1, category: "other", checked: false },
-  { id: "s15", name: "Garlic", quantity: 1, category: "spices", checked: false },
-  { id: "s16", name: "Black Pepper", quantity: 1, category: "spices", checked: true },
-]
 
 const categoryColors: Record<IngredientCategory, string> = {
   vegetables: "bg-green-500/15 text-green-400 border-green-500/30",
