@@ -27,7 +27,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeCardProps) {
   return (
-    <Card className="group h-full bg-card/50 border-border/50 hover:border-primary/30 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5">
+    <Card className="group h-full flex flex-col bg-card/50 border-border/50 hover:border-primary/30 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
@@ -41,7 +41,7 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0 space-y-4">
+      <CardContent className="pt-0 space-y-4 flex flex-col flex-1">
         {/* Ingredients preview */}
         <div className="flex flex-wrap gap-1.5">
           {recipe.ingredients.slice(0, 4).map((ing) => (
@@ -62,7 +62,7 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
           )}
         </div>
 
-        <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+        <div className="flex items-center gap-2 pt-2 border-t border-border/50 mt-auto">
           <Button
             variant="ghost"
             size="sm"
