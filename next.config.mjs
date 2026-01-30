@@ -5,7 +5,6 @@
 import dns from 'dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
-import nextI18NextConfig from './next-i18next.config.js';
 
 const nextConfig = {
   typescript: {
@@ -15,7 +14,8 @@ const nextConfig = {
     unoptimized: true,
   },
   turbopack: {},
-  ...nextI18NextConfig,
+  // allowedDevOrigins: configure CORS for dev
+  allowedDevOrigins: ["http://192.168.0.44:3000"],
 };
 
 export default nextConfig;
