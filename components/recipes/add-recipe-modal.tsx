@@ -233,7 +233,6 @@ export function AddRecipeModal({
                           )}
                         >
                           {t(ing.category)}
-                          {console.log(ing.category)}
                         </span>
                         <span className="text-sm text-foreground">{ing.name}</span>
                       </button>

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { type Language } from "./translations"
+type Language = 'en' | 'pl'
 import { useTranslation } from "../lib/i18n"
 
 type Theme = "light" | "dark"
