@@ -18,6 +18,7 @@ import {
   ingredientCategories,
 } from "@/lib/recipes-data"
 import { cn } from "@/lib/utils"
+import { t } from "i18next"
 
 interface AddRecipeModalProps {
   open: boolean
@@ -128,12 +129,12 @@ export function AddRecipeModal({
   }, [customIngredientName, customIngredientAmount, customIngredientCategory])
 
   const handleRemoveIngredient = (id: string) => {
-    setIngredients((prev) => prev.filter((ing) => ing.id !== id))
+    setIngredients((prev) => prev.filter((ing) => ing._id !== id))
   }
 
   const handleUpdateAmount = (id: string, amount: string) => {
     setIngredients((prev) =>
-      prev.map((ing) => (ing.id === id ? { ...ing, amount } : ing))
+      prev.map((ing) => (ing._id === id ? { ...ing, amount } : ing))
     )
   }
 
@@ -171,7 +172,7 @@ export function AddRecipeModal({
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50">
           <DialogTitle className="text-lg font-semibold text-foreground">
-            {editRecipe ? "Edit Recipe" : "New Recipe"}
+            {editRecipe ? t('Edit Recipe') : t('New Recipe')}
           </DialogTitle>
         </DialogHeader>
 
@@ -179,14 +180,14 @@ export function AddRecipeModal({
           {/* Recipe Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium text-foreground">
-              Recipe Name
+              {t('Recipe Name')}
             </Label>
             <Input
               ref={nameInputRef}
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter recipe name"
+              placeholder={t('Enter recipe name')}
               className="bg-secondary/50 border-border/50 focus:border-primary h-10"
             />
           </div>
@@ -194,7 +195,7 @@ export function AddRecipeModal({
           {/* Ingredients */}
           <div className="space-y-3">
             <Label className="text-sm font-medium text-foreground">
-              Ingredients ({ingredients.length})
+              {t('Ingredients')} ({ingredients.length})
             </Label>
 
             {/* Ingredient Search */}
@@ -209,7 +210,7 @@ export function AddRecipeModal({
                     setShowSuggestions(true)
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  placeholder="Search ingredients..."
+                  placeholder={t('Search ingredients...')}
                   className="pl-10 bg-secondary/50 border-border/50 focus:border-primary h-10"
                 />
               </div>
@@ -220,7 +221,7 @@ export function AddRecipeModal({
                   {filteredIngredients.length > 0 ? (
                     filteredIngredients.slice(0, 8).map((ing) => (
                       <button
-                        key={ing.id}
+                        key={ing._id}
                         type="button"
                         onClick={() => handleAddIngredient(ing)}
                         className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-accent/50 transition-colors"
@@ -231,14 +232,15 @@ export function AddRecipeModal({
                             categoryColors[ing.category]
                           )}
                         >
-                          {ing.category}
+                          {t(ing.category)}
+                          {console.log(ing.category)}
                         </span>
                         <span className="text-sm text-foreground">{ing.name}</span>
                       </button>
                     ))
                   ) : (
                     <div className="px-3 py-3 text-sm text-muted-foreground">
-                      No ingredients found.{" "}
+                      {t('No ingredients found.')}{" "}
                       <button
                         type="button"
                         onClick={() => {
@@ -248,7 +250,7 @@ export function AddRecipeModal({
                         }}
                         className="text-primary hover:underline"
                       >
-                        Add custom
+                        {t('Add custom')}
                       </button>
                     </div>
                   )}
@@ -263,14 +265,14 @@ export function AddRecipeModal({
                   <Input
                     value={customIngredientName}
                     onChange={(e) => setCustomIngredientName(e.target.value)}
-                    placeholder="Ingredient name"
+                    placeholder={t('Ingredient name')}
                     className="flex-1 bg-background/50 border-border/50 h-9"
                     autoFocus
                   />
                   <Input
                     value={customIngredientAmount}
                     onChange={(e) => setCustomIngredientAmount(e.target.value)}
-                    placeholder="Amount"
+                    placeholder={t('Amount')}
                     className="w-24 bg-background/50 border-border/50 h-9"
                   />
                 </div>
@@ -322,7 +324,7 @@ export function AddRecipeModal({
             <div className="space-y-1.5 max-h-48 overflow-y-auto">
               {ingredients.map((ing) => (
                 <div
-                  key={ing.id}
+                  key={ing._id}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/30 border border-border/30 group"
                 >
                   <span
@@ -331,20 +333,20 @@ export function AddRecipeModal({
                       categoryColors[ing.category]
                     )}
                   >
-                    {ing.category}
+                    {t(ing.category)}
                   </span>
                   <span className="flex-1 text-sm text-foreground truncate">
-                    {ing.name}
+                    {t(ing.name)}
                   </span>
                   <Input
                     value={ing.amount}
-                    onChange={(e) => handleUpdateAmount(ing.id, e.target.value)}
+                    onChange={(e) => handleUpdateAmount(ing.id!, e.target.value)}
                     className="w-20 h-7 text-xs bg-background/50 border-border/50 text-center"
                   />
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleRemoveIngredient(ing.id)}
+                    onClick={() => handleRemoveIngredient(ing.id!)}
                     className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   >
                     <X className="h-3 w-3" />
@@ -353,7 +355,7 @@ export function AddRecipeModal({
               ))}
               {ingredients.length === 0 && (
                 <div className="text-center py-6 text-sm text-muted-foreground">
-                  Search and add ingredients above
+                  {t('Search and add ingredients above')}
                 </div>
               )}
             </div>
@@ -362,7 +364,7 @@ export function AddRecipeModal({
 
         <div className="px-6 py-4 border-t border-border/50 flex items-center justify-between bg-secondary/10">
           <span className="text-[10px] text-muted-foreground">
-            Ctrl + Enter to save
+            {t('Cmd/Ctrl + S to save')}
           </span>
           <div className="flex items-center gap-2">
             <Button
@@ -371,7 +373,7 @@ export function AddRecipeModal({
               onClick={() => onOpenChange(false)}
               className="h-8 px-3 text-xs text-muted-foreground hover:text-foreground"
             >
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               size="sm"
@@ -380,7 +382,7 @@ export function AddRecipeModal({
               className="h-8 px-4 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Check className="h-3.5 w-3.5 mr-1.5" />
-              {editRecipe ? "Save" : "Create Recipe"}
+              {editRecipe ? t('Save') : t('Create Recipe')}
             </Button>
           </div>
         </div>

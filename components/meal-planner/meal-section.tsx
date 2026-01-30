@@ -2,6 +2,7 @@
 
 import type { MealType } from "@/lib/meal-data"
 import type { Recipe } from "@/lib/recipes-data"
+import { t } from "i18next"
 import { ChevronDown, ChevronUp, Coffee, Sun, Moon } from "lucide-react"
 import { useState } from "react"
 
@@ -38,12 +39,12 @@ export function MealSection({ type, recipes }: MealSectionProps) {
       <div className="flex items-center gap-2">
         <Icon className={`h-3.5 w-3.5 ${config.iconColor}`} />
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          {config.label}
+          {t(config.label)}
         </span>
       </div>
       <div className="flex flex-col gap-2">
         {safeRecipes.length === 0 && (
-          <span className="text-xs text-muted-foreground">No recipes</span>
+          <span className="text-xs text-muted-foreground">{t('No recipes')}</span>
         )}
         {safeRecipes.map((recipe) => (
           <div key={recipe.id} className="border rounded-lg bg-secondary/40 px-3 py-2">

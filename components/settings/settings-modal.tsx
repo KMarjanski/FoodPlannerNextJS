@@ -25,7 +25,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
       <DialogContent className="sm:max-w-md bg-card/95 backdrop-blur-xl border-border/50 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-foreground">
-            {t.settings.title}
+            {t('App settings')}
           </DialogTitle>
         </DialogHeader>
 
@@ -34,11 +34,8 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
           <div className="space-y-3">
             <div>
               <h3 className="text-sm font-medium text-foreground">
-                {t.settings.appearance}
+                {t('Appearance')}
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {t.settings.appearanceDesc}
-              </p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -52,7 +49,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                 )}
               >
                 <Sun className="h-4 w-4" />
-                <span className="text-sm font-medium">{t.settings.light}</span>
+                <span className="text-sm font-medium">{t('Light')}</span>
               </button>
               <button
                 onClick={() => setTheme("dark")}
@@ -64,7 +61,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                 )}
               >
                 <Moon className="h-4 w-4" />
-                <span className="text-sm font-medium">{t.settings.dark}</span>
+                <span className="text-sm font-medium">{t('Dark')}</span>
               </button>
             </div>
           </div>
@@ -78,11 +75,8 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               <Languages className="h-4 w-4 text-muted-foreground" />
               <div>
                 <h3 className="text-sm font-medium text-foreground">
-                  {t.settings.language}
+                  {t('Language')}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {t.settings.languageDesc}
-                </p>
               </div>
             </div>
 
@@ -123,11 +117,8 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <div>
                 <h3 className="text-sm font-medium text-foreground">
-                  {t.settings.weeksCount}
+                  {t('Weeks Count')}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {t.settings.weeksCountDesc}
-                </p>
               </div>
             </div>
 
@@ -144,7 +135,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                   )}
                 >
                   <span className="text-lg font-semibold">{count}</span>
-                  <span className="text-xs">{count === 1 ? t.settings.week : t.settings.weeks}</span>
+                        <span className="text-xs">{count === 1 ? t('Week') : t('Weeks')}</span>
                 </button>
               ))}
             </div>

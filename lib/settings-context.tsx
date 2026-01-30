@@ -1,10 +1,12 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { translations, type Language } from "./translations"
+import { type Language } from "./translations"
+import { useTranslation } from "../lib/i18n"
 
 type Theme = "light" | "dark"
 type WeeksCount = 1 | 2 | 3 | 4
+
 
 interface SettingsContextType {
   theme: Theme
@@ -13,16 +15,18 @@ interface SettingsContextType {
   setLanguage: (language: Language) => void
   weeksCount: WeeksCount
   setWeeksCount: (count: WeeksCount) => void
-  t: typeof translations.en
+  t: any // z useTranslation
 }
+
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark")
-  const [language, setLanguageState] = useState<Language>("en")
+  const [language, setLanguageState] = useState<Language>("pl")
   const [weeksCount, setWeeksCountState] = useState<WeeksCount>(2)
   const [mounted, setMounted] = useState(false)
+  const { t, i18n } = useTranslation("common")
 
   // Load preferences from localStorage on mount
   useEffect(() => {
@@ -42,14 +46,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setWeeksCountState(parsed)
       }
     }
-
     setMounted(true)
   }, [])
 
   // Apply theme to document
   useEffect(() => {
     if (!mounted) return
-
     const root = document.documentElement
     if (theme === "dark") {
       root.classList.add("dark")
@@ -66,14 +68,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage)
     localStorage.setItem("language", newLanguage)
+    i18n.changeLanguage(newLanguage)
   }
 
   const setWeeksCount = (count: WeeksCount) => {
     setWeeksCountState(count)
     localStorage.setItem("weeksCount", String(count))
   }
-
-  const t = translations[language]
 
   // Prevent hydration mismatch
   if (!mounted) {
@@ -86,19 +87,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           setLanguage,
           weeksCount: 2,
           setWeeksCount,
-          t: translations.en,
+          t,
         }}
       >
         {children}
       </SettingsContext.Provider>
-    )
+    );
   }
 
   return (
     <SettingsContext.Provider value={{ theme, setTheme, language, setLanguage, weeksCount, setWeeksCount, t }}>
       {children}
     </SettingsContext.Provider>
-  )
+  );
 }
 
 export function useSettings() {

@@ -53,5 +53,6 @@ export const recipeTags = [
 ]
 
 
-// Zamiast mocków eksportuj funkcje fetchujące
+
+export type { Ingredient, IngredientCategory } from "./types"
 

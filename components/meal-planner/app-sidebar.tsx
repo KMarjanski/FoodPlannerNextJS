@@ -24,16 +24,16 @@ import {
 import { EggplantIcon } from "@/components/ui/eggplant-icon"
 
 interface NavItem {
-  key: "lista" | "planer" | "przepisy" | "koszyk"
+  key: "List" | "Planner" | "Recipes" | "Cart"
   icon: React.ComponentType<{ className?: string }>
   href: string
 }
 
 const navItems: NavItem[] = [
-  { key: "lista", icon: ListTodo, href: "/lista" },
-  { key: "planer", icon: CalendarDays, href: "/" },
-  { key: "przepisy", icon: ChefHat, href: "/przepisy" },
-  { key: "koszyk", icon: ShoppingCart, href: "/koszyk" },
+  { key: "List", icon: ListTodo, href: "/lista" },
+  { key: "Planner", icon: CalendarDays, href: "/" },
+  { key: "Recipes", icon: ChefHat, href: "/przepisy" },
+  { key: "Cart", icon: ShoppingCart, href: "/koszyk" },
 ]
 
 interface AppSidebarProps {
@@ -73,10 +73,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             )}
           >
             <span className="text-base font-semibold text-foreground whitespace-nowrap">
-              {t.app.name}
-            </span>
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
-              {t.app.tagline}
+              {t('MealPlan')}
             </span>
           </div>
         </Link>
@@ -86,7 +83,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
-            const label = t.nav[item.key]
+            const label = t(`${item.key}`)
 
             const navLink = (
               <Link

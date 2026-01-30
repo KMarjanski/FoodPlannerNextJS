@@ -16,7 +16,7 @@ export function DashboardHeader() {
         <div className="px-6 py-3">
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground">
-              {t.planner.title}
+              {t('Weekly Meal Planner')}
             </h1>
             <Button
               variant="ghost"

@@ -105,7 +105,7 @@ export function MealPlannerDashboard() {
                   value={week.id}
                   className="px-4 py-2 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm rounded-md transition-all"
                 >
-                  {t.planner[`week${index + 1}` as keyof typeof t.planner] || `Week ${index + 1}`}
+                  {`${t('Week')} ${index + 1}`}
                 </TabsTrigger>
               ))}
             </TabsList>

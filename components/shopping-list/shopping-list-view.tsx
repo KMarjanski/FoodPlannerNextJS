@@ -13,9 +13,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { AppLayout } from "@/components/meal-planner/app-layout"
-import type { IngredientCategory } from "@/lib/recipes-data"
 import { ingredientCategories } from "@/lib/recipes-data"
-import { useCart } from "@/lib/cart-context"
+import type { IngredientCategory } from "@/lib/types"
+import { t } from "i18next"
 
 interface ShoppingItem {
   id: string
@@ -25,16 +25,24 @@ interface ShoppingItem {
   checked: boolean
 }
 
-
 const categoryColors: Record<IngredientCategory, string> = {
-  vegetables: "bg-green-500/15 text-green-400 border-green-500/30",
   fruits: "bg-pink-500/15 text-pink-400 border-pink-500/30",
-  dairy: "bg-sky-500/15 text-sky-400 border-sky-500/30",
-  meat: "bg-red-500/15 text-red-400 border-red-500/30",
-  seafood: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
-  grains: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  vegetables: "bg-green-500/15 text-green-400 border-green-500/30",
+  herbs: "bg-lime-500/15 text-lime-400 border-lime-500/30",
+  bread: "bg-yellow-700/15 text-yellow-700 border-yellow-700/30",
+  pastes: "bg-orange-300/15 text-orange-300 border-orange-300/30",
+  jars: "bg-amber-700/15 text-amber-700 border-amber-700/30",
+  cans: "bg-gray-400/15 text-gray-400 border-gray-400/30",
   spices: "bg-orange-500/15 text-orange-400 border-orange-500/30",
-  other: "bg-gray-500/15 text-gray-400 border-gray-500/30",
+  sauces: "bg-red-300/15 text-red-300 border-red-300/30",
+  "ready-meals": "bg-purple-500/15 text-purple-400 border-purple-500/30",
+  dairy: "bg-sky-500/15 text-sky-400 border-sky-500/30",
+  frozen: "bg-blue-800/15 text-blue-800 border-blue-800/30",
+  "dry-goods": "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  beverages: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+  sweets: "bg-pink-300/15 text-pink-300 border-pink-300/30",
+  snacks: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
+  household: "bg-gray-500/15 text-gray-400 border-gray-500/30",
 }
 
 interface ShoppingItemRowProps {
@@ -147,30 +155,30 @@ function CategorySection({
 }
 
 export function ShoppingListView() {
-  const { cartItems } = useCart()
+  const [items, setItems] = useState<ShoppingItem[]>([])
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set(ingredientCategories.map((c) => c.value))
   )
 
-  // Transform cartItems to ShoppingItem[] (read-only, checked always false)
-  const items: ShoppingItem[] = useMemo(() =>
-    cartItems.map((item) => ({
-      ...item,
-      checked: false,
-    })),
-    [cartItems]
-  )
-
   const groupedItems = useMemo(() => {
     const groups: Record<IngredientCategory, ShoppingItem[]> = {
-      vegetables: [],
       fruits: [],
-      dairy: [],
-      meat: [],
-      seafood: [],
-      grains: [],
+      vegetables: [],
+      herbs: [],
+      bread: [],
+      pastes: [],
+      jars: [],
+      cans: [],
       spices: [],
-      other: [],
+      sauces: [],
+      "ready-meals": [],
+      dairy: [],
+      frozen: [],
+      "dry-goods": [],
+      beverages: [],
+      sweets: [],
+      snacks: [],
+      household: [],
     }
     items.forEach((item) => {
       groups[item.category].push(item)
@@ -182,8 +190,14 @@ export function ShoppingListView() {
   const completedItems = items.filter((item) => item.checked).length
   const progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0
 
-  // Read-only: no toggling, no clear/reset
-  const handleToggleItem = () => {}
+  const handleToggleItem = (id: string) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    )
+  }
+
   const handleToggleCategory = (category: string) => {
     setExpandedCategories((prev) => {
       const next = new Set(prev)
@@ -196,58 +210,67 @@ export function ShoppingListView() {
     })
   }
 
+  const handleClearCompleted = () => {
+    setItems((prev) => prev.filter((item) => !item.checked))
+  }
+
+  const handleResetAll = () => {
+    setItems((prev) => prev.map((item) => ({ ...item, checked: false })))
+  }
+
   return (
-    <>
-      {/* Sticky Header */}
-      <header className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-10">
-        <div className="px-6 py-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                <ListChecks className="h-5 w-5 text-primary" />
-                Shopping List
-              </h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {completedItems} of {totalItems} items completed
-              </p>
+    <AppLayout>
+      <div className="min-h-screen bg-background">
+        {/* Sticky Header */}
+        <header className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-10">
+          <div className="px-6 py-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                  <ListChecks className="h-5 w-5 text-primary" />
+                  {t('Shopping List')}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {completedItems} of {totalItems} {t('items completed')}
+                </p>
+              </div>
+
             </div>
 
+            {/* Progress Bar */}
+            <div className="mt-4">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                <span>{t('Progress')}</span>
+                <span>{Math.round(progress)}%</span>
+              </div>
+              <div className="h-2 rounded-full bg-secondary/50 overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
           </div>
+        </header>
 
-          {/* Progress Bar */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-              <span>Progress</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            <div className="h-2 rounded-full bg-secondary/50 overflow-hidden">
-              <div
-                className="h-full bg-primary transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="px-6 py-6">
-        {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-20 h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
-              <ShoppingBag className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">
-              Your list is empty
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-                Add items from the cart builder to get started
+        <main className="px-6 py-6">
+          {items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-20 h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
+                <ShoppingBag className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium text-foreground mb-2">
+                {t('Your list is empty')}
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {t('Add items from the cart builder to get started')}
               </p>
               <Button
                 variant="default"
                 onClick={() => (window.location.href = "/koszyk")}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Go to Cart Builder
+                {t('Go to Cart')}
               </Button>
             </div>
           ) : (
@@ -267,7 +290,8 @@ export function ShoppingListView() {
               })}
             </div>
           )}
-        </div>
-      </>
+        </main>
+      </div>
+    </AppLayout>
   )
 }

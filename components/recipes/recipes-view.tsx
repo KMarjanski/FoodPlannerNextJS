@@ -17,6 +17,7 @@ import { RecipeCard } from "./recipe-card"
 import { AddRecipeModal } from "./add-recipe-modal"
 import type { Recipe } from "@/lib/recipes-data"
 import { recipeCategories } from "@/lib/recipes-data"
+import { t } from "i18next"
 
 export function RecipesView() {
 
@@ -91,9 +92,9 @@ export function RecipesView() {
           <div className="px-6 py-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-xl font-semibold text-foreground">Recipes</h1>
+                <h1 className="text-xl font-semibold text-foreground">{t('Recipes')}</h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  {filteredRecipes.length} recipes available
+                  {filteredRecipes.length} {t('recipes available')}
                 </p>
               </div>
               <Button
@@ -104,7 +105,7 @@ export function RecipesView() {
                 className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add New Recipe
+                {t('Add New Recipe')}
               </Button>
             </div>
 
@@ -114,7 +115,7 @@ export function RecipesView() {
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search recipes..."
+                  placeholder={t('Search recipes...')}
                   className="pl-9 bg-secondary/50 border-border/50"
                 />
               </div>
@@ -122,13 +123,13 @@ export function RecipesView() {
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-[140px] bg-secondary/50 border-border/50">
                     <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
-                    <SelectValue placeholder="Category" />
+                    <SelectValue placeholder={t('Category')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="all">{t('All Categories')}</SelectItem>
                     {recipeCategories.map((cat: string) => (
                       <SelectItem key={cat} value={cat}>
-                        {cat}
+                        {t(cat)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -171,10 +172,10 @@ export function RecipesView() {
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-medium text-foreground mb-2">
-                No recipes found
+                {t('No recipes')}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Try adjusting your search or filter criteria
+                {t('Try adjusting your search or filter criteria')}
               </p>
               <Button
                 variant="outline"
@@ -184,7 +185,7 @@ export function RecipesView() {
                 }}
                 className="border-border/50"
               >
-                Clear Filters
+                {t('Clear Filters')}
               </Button>
             </div>
           ) : (

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { MealType } from "@/lib/meal-data"
+import type { FoodItem, MealType } from "@/lib/meal-data"
 import type { Recipe } from "@/lib/recipes-data"
 import type { DayMealsRecipes } from "./meal-planner-dashboard"
 import {
@@ -33,6 +33,16 @@ import {
   ArrowRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+import { t } from "i18next"
+
+// Define missing RecipePickerSheetProps interface
+interface RecipePickerSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSelect: (recipe: Recipe) => void;
+  mealType: MealType;
+}
 
 interface DayEditModalProps {
   open: boolean
@@ -105,7 +115,7 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
     recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const config = mealConfig[mealType]
+  const config = mealConfig[mealType as MealType]
   const Icon = config.icon
 
   return (
@@ -167,7 +177,7 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
                       <div className="flex flex-wrap gap-1.5 mt-3">
                         {recipe.ingredients.slice(0, 5).map((ing) => (
                           <span
-                            key={ing.id}
+                            key={ing._id}
                             className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded-md"
                           >
                             {ing.name}
@@ -394,10 +404,10 @@ export function DayEditModal({
               </div>
               <div>
                 <DialogTitle className="text-lg font-semibold text-foreground">
-                  {editedMeals.day}
+                  {t(editedMeals.day)}
                 </DialogTitle>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Plan your meals for the day
+                  {t('Plan your meals for the day')}
                 </p>
               </div>
             </div>
@@ -409,7 +419,7 @@ export function DayEditModal({
 
           <div className="px-6 py-4 border-t border-border/50 bg-secondary/20 flex items-center justify-between">
             <span className="text-[10px] text-muted-foreground">
-              Cmd/Ctrl + S to save
+              {t('Cmd/Ctrl + S to save')}
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -418,7 +428,7 @@ export function DayEditModal({
                 onClick={() => onOpenChange(false)}
                 className="h-8 px-3 text-xs text-muted-foreground hover:text-foreground"
               >
-                Cancel
+                {t('Cancel')}
               </Button>
               <Button
                 size="sm"
@@ -426,7 +436,7 @@ export function DayEditModal({
                 className="h-8 px-4 text-xs bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
               >
                 <Check className="h-3.5 w-3.5 mr-1.5" />
-                Save Changes
+                {t('Save Changes')}
               </Button>
             </div>
           </div>

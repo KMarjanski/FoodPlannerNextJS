@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import type { Recipe } from "@/lib/recipes-data"
 import { MealSection } from "./meal-section"
 import { Plus } from "lucide-react"
+import { t } from "i18next"
 
 
 interface DayMealsRecipes {
@@ -33,11 +34,11 @@ export function DayCard({ dayMeals, isToday = false, onEdit }: DayCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-sm text-foreground">
-              {dayMeals.day}
+              {t(dayMeals.day)}
             </h3>
             {isToday && (
               <span className="text-[10px] font-medium uppercase tracking-wider text-primary bg-primary/15 px-2 py-0.5 rounded-full">
-                Today
+                {t('Today')}
               </span>
             )}
           </div>
