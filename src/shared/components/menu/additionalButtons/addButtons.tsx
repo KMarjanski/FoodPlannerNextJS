@@ -15,20 +15,14 @@ const AddButtons = () => {
   return (
     <>
       {path === "/planer" && (
-        <div className="absolute right-0">
-          <SetPlannerButtons />
-        </div>
+        <SetPlannerButtons />
       )}
       {path === "/koszyk" && (
-        <div className="absolute right-0">
-          <SetCartButtons />
-        </div>
+        <SetCartButtons />
       )}
       {path === "/przepisy" && (
         <>
-          <div className="absolute right-0">
-            <SetRecipeButton newRecipeRef={newRecipeRef} />
-          </div>
+          <SetRecipeButton newRecipeRef={newRecipeRef} />
           <NewRecipe ref={newRecipeRef} hideButton={true} />
         </>
       )}

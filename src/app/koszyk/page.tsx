@@ -1,4 +1,3 @@
-import { Ingredients } from "@core/entities/ingredients/types";
 import type { Cart } from "@features/cart/types";
 import { getCart } from "@/src/features/cart/service";
 import { getIngredients } from "@/src/core/entities/ingredients/service";

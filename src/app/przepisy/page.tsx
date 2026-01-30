@@ -13,9 +13,7 @@ const Recipes = async () => {
   const newIngredients = JSON.parse(
     JSON.stringify(ingredients)
   ) as IngredientsModel;
-  return (
-    <RecipesInitializer ingredients={newIngredients} recipes={newRecipes} />
-  );
+  return <RecipesInitializer ingredients={newIngredients} recipes={newRecipes} />;
 };
 
 export default Recipes;

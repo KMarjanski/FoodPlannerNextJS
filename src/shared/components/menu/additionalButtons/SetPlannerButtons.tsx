@@ -20,12 +20,20 @@ const SetPlannerButtons = () => {
   const weeks = plannerStore((state) => state.weeks);
   const setWeeks = plannerStore((state) => state.setWeeks);
   // Sprawdź czy wszystkie posiłki w każdym dniu są puste
-  const isEmpty = Object.values(planner).every((day) =>
-    Object.values(day).every((meals) => meals.length === 0)
+  // Sprawdź czy wszystkie posiłki w każdym dniu są puste (dla wszystkich tygodni)
+  const isEmpty = planner.weeks.every((week) =>
+    Object.values(week).every((meals) =>
+      Array.isArray(meals.breakfast) && meals.breakfast.length === 0 &&
+      Array.isArray(meals.lunch) && meals.lunch.length === 0 &&
+      Array.isArray(meals.dinner) && meals.dinner.length === 0
+    )
   );
+  const handleGenerateRandom = () => {
+    alert("Losowanie planu jeszcze niezaimplementowane.");
+  };
   return (
-    <div className={`flex items-center gap-4 my-4 ${!displaySavePlanner && "mr-4"}`}>
-      <label htmlFor="weeks" className="font-semibold">Ilość tygodni:</label>
+    <div className={`flex items-center gap-2 ${!displaySavePlanner ? "mr-4" : ""}`}>
+      <label htmlFor="weeks" className="font-semibold text-xs">Ilość tygodni:</label>
       <Input
         id="weeks"
         type="number"
@@ -36,40 +44,35 @@ const SetPlannerButtons = () => {
           const val = Math.max(1, Math.min(4, Number(e.target.value)));
           setWeeks(val);
         }}
-        className="w-20 text-center font-bold text-lg"
+        className="w-14 h-7 text-center font-semibold text-xs py-1 px-2"
       />
       {displaySavePlanner && (
         <Button
           variant="outline"
-          size="md"
-          className={`${!displaySavePlanner ? "mr-4" : ""}`}
+          size="sm"
           onClick={() => refresh(originalPlanner)}
         >
-          <Text>Cofnij zmiany</Text>
+          Cofnij zmiany
         </Button>
       )}
-      {!isEmpty && (
-        <Button
-          variant="outline"
-          size="md"
-          className={`${!displaySavePlanner ? "mr-4" : ""}`}
-          onClick={resetPlanner}
-        >
-          <Text>Wyczyść planer</Text>
-        </Button>
-      )}
-      {displaySavePlanner && (
-        <Button
-          variant="success"
-          size="md"
-          className="mr-4"
-          onClick={() => handleSave()}
-        >
-          <Text>Zapisz planer</Text>
-        </Button>
-      )}
+      <Button
+        variant="primary"
+        size="sm"
+        onClick={handleSave}
+        disabled={isEmpty || !displaySavePlanner}
+      >
+        Zapisz plan
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={resetPlanner}
+        disabled={isEmpty}
+      >
+        Wyczyść planer
+      </Button>
     </div>
   );
-};
+}
 
 export default SetPlannerButtons;

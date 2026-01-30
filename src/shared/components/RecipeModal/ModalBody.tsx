@@ -9,16 +9,34 @@ import MealSection from "@shared/components/MealSection";
 import SectionBox from "@shared/components/SectionBox";
 import Input from "@shared/components/Input";
 
-const ModalBody = (props: { day: number }) => {
+
+const ModalBody = (props: { week: number; day: number }) => {
   const planner = plannerStore((state) => state.planner);
   const setPlannerStore = plannerStore((state) => state.setPlanner);
   const allRecipes = recipesStore((state) => state.recipes);
   const [search, setSearch] = useState("");
-  const dayKey = Object.keys(planner)[props.day] as keyof Planner;
-  const dayPlan = planner[dayKey];
+  let safeWeeks = Array.isArray(planner.weeks) ? planner.weeks : [];
+  // Jeśli nie ma żadnego tygodnia, automatycznie dodaj pusty tydzień
+  if (safeWeeks.length === 0) {
+    const emptyDay = { breakfast: [], lunch: [], dinner: [] };
+    const emptyWeek = {
+      MON: { ...emptyDay },
+      TUE: { ...emptyDay },
+      WED: { ...emptyDay },
+      THU: { ...emptyDay },
+      FRI: { ...emptyDay },
+      SAT: { ...emptyDay },
+      SUN: { ...emptyDay },
+    };
+    safeWeeks = [emptyWeek];
+  }
+  const weekPlan = safeWeeks[props.week] || safeWeeks[0];
+  const dayKey = weekPlan ? Object.keys(weekPlan)[props.day] as keyof typeof weekPlan : undefined;
+  const dayPlan = weekPlan && dayKey ? weekPlan[dayKey] : { breakfast: [], lunch: [], dinner: [] };
 
   // Funkcja do przerzucania przepisów
   const moveRecipe = (meal: keyof typeof dayPlan, recipe: Recipe, add: boolean) => {
+    if (!weekPlan || !dayKey) return;
     const newDay = { ...dayPlan };
     if (!Array.isArray(newDay[meal])) {
       newDay[meal] = [];
@@ -36,7 +54,25 @@ const ModalBody = (props: { day: number }) => {
     } else {
       newDay[meal] = newDay[meal].filter((r: Recipe) => r.name !== recipeObj!.name);
     }
-    const newPlanner = { ...planner, [dayKey]: newDay };
+    // Zaktualizuj planner dla odpowiedniego tygodnia i dnia
+    let baseWeeks = Array.isArray(planner.weeks) && planner.weeks.length > 0
+      ? planner.weeks
+      : [
+          {
+            MON: { breakfast: [], lunch: [], dinner: [] },
+            TUE: { breakfast: [], lunch: [], dinner: [] },
+            WED: { breakfast: [], lunch: [], dinner: [] },
+            THU: { breakfast: [], lunch: [], dinner: [] },
+            FRI: { breakfast: [], lunch: [], dinner: [] },
+            SAT: { breakfast: [], lunch: [], dinner: [] },
+            SUN: { breakfast: [], lunch: [], dinner: [] },
+          },
+        ];
+    const newWeeks = baseWeeks.map((w, idx) => {
+      if (idx !== props.week) return w;
+      return { ...w, [dayKey]: newDay };
+    });
+    const newPlanner = { ...planner, weeks: newWeeks };
     setPlannerStore(newPlanner);
   };
 
@@ -107,6 +143,12 @@ const ModalBody = (props: { day: number }) => {
     },
   ];
 
+  // Jeśli weekPlan nadal nie istnieje, pokaż komunikat (to fallback, nie powinno się zdarzyć)
+  if (!weekPlan) {
+    return (
+      <div className="p-4 text-red-600">Brak danych dla wybranego tygodnia. Dodaj tydzień lub odśwież stronę.</div>
+    );
+  }
   return (
     <div className="space-y-4">
       <Input

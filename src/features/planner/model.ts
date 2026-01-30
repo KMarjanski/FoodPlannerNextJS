@@ -17,7 +17,8 @@ const mealSchema = new mongoose.Schema({
   dinner: [recipeSchema],
 }, { _id: false });
 
-const plannerSchema = new mongoose.Schema({
+
+const weekSchema = new mongoose.Schema({
   MON: { type: mealSchema, default: () => ({ breakfast: [], lunch: [], dinner: [] }) },
   TUE: { type: mealSchema, default: () => ({ breakfast: [], lunch: [], dinner: [] }) },
   WED: { type: mealSchema, default: () => ({ breakfast: [], lunch: [], dinner: [] }) },
@@ -25,7 +26,11 @@ const plannerSchema = new mongoose.Schema({
   FRI: { type: mealSchema, default: () => ({ breakfast: [], lunch: [], dinner: [] }) },
   SAT: { type: mealSchema, default: () => ({ breakfast: [], lunch: [], dinner: [] }) },
   SUN: { type: mealSchema, default: () => ({ breakfast: [], lunch: [], dinner: [] }) },
-});
+}, { _id: false });
+
+const plannerSchema = new mongoose.Schema({
+  weeks: { type: [weekSchema], default: [] },
+}, { strict: false });
 
 
 
@@ -37,7 +42,8 @@ export type MealPlan = {
   dinner: Recipe[];
 };
 
-export type Planner = {
+
+export type WeekPlan = {
   MON: MealPlan;
   TUE: MealPlan;
   WED: MealPlan;
@@ -45,6 +51,10 @@ export type Planner = {
   FRI: MealPlan;
   SAT: MealPlan;
   SUN: MealPlan;
+};
+
+export type Planner = {
+  weeks: WeekPlan[];
 };
 
 export default mongoose.models?.planner ||

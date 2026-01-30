@@ -39,18 +39,18 @@ const List = async () => {
     const cat = ing.category || "Inne";
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(ing);
-    return acc;
-  }, {});
-
-  // Sort categories by categoryOrder
-  const sortedCategories = categoryOrder.filter(cat => grouped[cat]);
-
-  return (
-    <div className="p-6 max-w-4xl mx-auto">
-      {sortedCategories.map((category) => (
-        <ListCategory
-          key={category}
-          categoryName={category}
+    return (
+      <>
+        {Object.entries(groupedByCategory).map(([category, ingredients]) => (
+          <ListCategory
+            key={category}
+            category={category}
+            ingredients={ingredients}
+            categoryOrder={categoryOrder}
+          />
+        ))}
+      </>
+    );
           items={grouped[category]}
         />
       ))}

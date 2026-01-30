@@ -4,6 +4,7 @@ import { getRecipes } from "@features/recipes/service";
 
 export const dynamic = 'force-dynamic';
 
+
 const Planner = async () => {
   const plannerRaw = await getPlanner();
   if (!plannerRaw) throw new Error("Planner not found");

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { create } from "zustand";
-import { Planner } from "@features/planner/model";
+import { Planner, WeekPlan } from "@features/planner/model";
 import type { Recipe } from "@features/recipes/model";
 
 
@@ -15,8 +15,9 @@ interface PlannerState {
 }
 
 
+
 const emptyDay = { breakfast: [] as Recipe[], lunch: [] as Recipe[], dinner: [] as Recipe[] };
-const emptyPlanner = {
+const emptyWeek: WeekPlan = {
   MON: { ...emptyDay },
   TUE: { ...emptyDay },
   WED: { ...emptyDay },
@@ -25,17 +26,43 @@ const emptyPlanner = {
   SAT: { ...emptyDay },
   SUN: { ...emptyDay },
 };
+const emptyPlanner: Planner = {
+  weeks: [ { ...emptyWeek } ]
+};
+
 
 
 const plannerStore = create<PlannerState>()((set) => ({
   original: { ...emptyPlanner },
   planner: { ...emptyPlanner },
-  weeks: 1,
-  setWeeks: (weeks: number) => set({ weeks }),
+  weeks: emptyPlanner.weeks.length,
+  setWeeks: (weeks: number) => set((state) => {
+    // Dodaj lub usuń tygodnie w plannerze
+    let baseWeeks = Array.isArray(state.planner.weeks) ? state.planner.weeks : [];
+    let newWeeks = [...baseWeeks];
+    if (weeks > newWeeks.length) {
+      // Dodaj nowe puste tygodnie
+      for (let i = newWeeks.length; i < weeks; i++) {
+        newWeeks.push({ ...emptyWeek });
+      }
+    } else if (weeks < newWeeks.length) {
+      // Usuń nadmiarowe tygodnie
+      newWeeks = newWeeks.slice(0, weeks);
+    }
+    // Jeśli po wszystkim weeks jest puste, dodaj jeden tydzień
+    if (newWeeks.length === 0) {
+      newWeeks = [{ ...emptyWeek }];
+    }
+    return { weeks, planner: { ...state.planner, weeks: newWeeks } };
+  }),
   initPlanner: (newPlanner: Planner) =>
-    set(() => ({ planner: newPlanner, original: newPlanner })),
+    set(() => ({
+      planner: newPlanner,
+      original: newPlanner,
+      weeks: Array.isArray(newPlanner.weeks) ? newPlanner.weeks.length : 1,
+    })),
   setPlanner: (newPlanner: Planner) => set(() => ({ planner: newPlanner })),
-  resetPlanner: () => set({ planner: { ...emptyPlanner } }),
+  resetPlanner: () => set({ planner: { ...emptyPlanner }, weeks: emptyPlanner.weeks.length }),
 }));
 
 export { plannerStore };

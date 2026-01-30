@@ -6,8 +6,9 @@ import Planner, { Planner as PlannerModel } from "@features/planner/model";
 
 
 // Pusty planner zgodny ze schematem
+
 const emptyDay = { breakfast: [], lunch: [], dinner: [] };
-const emptyPlanner = {
+const emptyWeek = {
   MON: { ...emptyDay },
   TUE: { ...emptyDay },
   WED: { ...emptyDay },
@@ -15,6 +16,9 @@ const emptyPlanner = {
   FRI: { ...emptyDay },
   SAT: { ...emptyDay },
   SUN: { ...emptyDay },
+};
+const emptyPlanner = {
+  weeks: [ { ...emptyWeek } ]
 };
 
 const getPlanner = async () => {
@@ -41,31 +45,37 @@ function filterRecipesArray(arr: any[]): any[] {
 }
 
 function sanitizePlanner(planner: PlannerModel): PlannerModel {
-  // Kopiuj tylko dni tygodnia, pomiń __v i inne klucze
-  const dayKeys = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
-  const sanitized: any = {};
-  for (const day of dayKeys) {
-    const meals = planner[day];
-    sanitized[day] = {
-      breakfast: filterRecipesArray(meals?.breakfast),
-      lunch: filterRecipesArray(meals?.lunch),
-      dinner: filterRecipesArray(meals?.dinner),
-    };
+  // Nowa struktura: kopiuj tylko pole weeks (tablica tygodni)
+  if (!Array.isArray((planner as any).weeks)) {
+    return { weeks: [] } as any;
   }
-  return sanitized;
+  // Dla każdego tygodnia przefiltruj posiłki
+  const dayKeys = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
+  const sanitizedWeeks = (planner as any).weeks.map((week: any) => {
+    const sanitizedWeek: any = {};
+    for (const day of dayKeys) {
+      const meals = week[day] || {};
+      sanitizedWeek[day] = {
+        breakfast: filterRecipesArray(meals.breakfast),
+        lunch: filterRecipesArray(meals.lunch),
+        dinner: filterRecipesArray(meals.dinner),
+      };
+    }
+    return sanitizedWeek;
+  });
+  return { weeks: sanitizedWeeks } as any;
 }
+
 
 const setPlanner = async (newPlanner: PlannerModel) => {
   // Filtruj planner przed zapisem
   const sanitizedPlanner = sanitizePlanner(newPlanner);
-
-
-
-// ...existing code...
-// ...istniejący kod, bez generateCartFromPlanner...
-  const doc = await Planner.findOneAndReplace({}, sanitizedPlanner, { returnNewDocument: false });
-  if (!doc) return null;
-  return JSON.parse(JSON.stringify(doc));
+  console.log('PLANNER ZAPISYWANY DO BAZY:', JSON.stringify(sanitizedPlanner, null, 2));
+  // Usuń wszystkie stare dokumenty (jeśli masz tylko jeden planer)
+  await Planner.deleteMany({});
+  // Utwórz nowy dokument z czystą strukturą
+  const created = await Planner.create(sanitizedPlanner);
+  return JSON.parse(JSON.stringify(created));
 };
 
 export { getPlanner, setPlanner };
