@@ -19,6 +19,7 @@ export interface WeekDataRecipes {
   id: string
   label: string
   days: DayMealsRecipes[]
+  lastModified?: string | Date
 }
 import { DashboardHeader } from "./dashboard-header"
 import { WeekGrid } from "./week-grid"
@@ -39,6 +40,7 @@ function generateEmptyWeek(weekNumber: number): WeekDataRecipes {
       lunch: [],
       dinner: [],
     })),
+    lastModified: new Date().toISOString(),
   }
 }
 
@@ -95,6 +97,20 @@ export function MealPlannerDashboard() {
       .then(data => setMealData(data))
       .catch(() => {})
   }, [])
+          // Wyznacz, w którym tygodniu powinien być Today
+          const todayWeekIndex = useMemo(() => {
+            if (!displayedWeeks.length) return -1;
+            const firstWeek = displayedWeeks[0];
+            if (!firstWeek.lastModified) return -1;
+            const lastMod = new Date(firstWeek.lastModified as string);
+            const now = new Date();
+            lastMod.setHours(0,0,0,0);
+            now.setHours(0,0,0,0);
+            const diffDays = Math.floor((now.getTime() - lastMod.getTime()) / (1000 * 60 * 60 * 24));
+            const weekIdx = Math.floor(diffDays / 7);
+            if (weekIdx < 0 || weekIdx >= displayedWeeks.length) return -1;
+            return weekIdx;
+          }, [displayedWeeks]);
 
   // Resetuje wszystkie dni w każdym tygodniu
   useEffect(() => {
@@ -150,6 +166,7 @@ export function MealPlannerDashboard() {
                         <WeekGrid 
                           weekData={week} 
                           onEditDay={(day) => handleEditDay(day, week.id, `${t('Week')} ${index + 1}`)} 
+                          showToday={index === todayWeekIndex}
                         />
                       </section>
                     </TabsContent>
@@ -164,6 +181,7 @@ export function MealPlannerDashboard() {
                 <WeekGrid 
                   weekData={week} 
                   onEditDay={(day) => handleEditDay(day, week.id, `${t('Week')} ${index + 1}`)} 
+                  showToday={index === todayWeekIndex}
                 />
               </section>
             ))
@@ -179,5 +197,5 @@ export function MealPlannerDashboard() {
         onSave={handleSaveDay}
       />
     </AppLayout>
-  )
+  );
 }

@@ -1,9 +1,11 @@
 
-export async function updateWeekData(id: string, days: any[]) {
+export async function updateWeekData(id: string, days: any[], label?: string) {
   await dbConnect();
+  const updateObj: any = { days, lastModified: new Date() };
+  if (label) updateObj.label = label;
   const updated = await WeekDataModel.findOneAndUpdate(
     { id },
-    { $set: { days } },
+    { $set: updateObj },
     { new: true, upsert: true }
   ).lean();
   return updated;
@@ -41,6 +43,7 @@ const weekDataSchema = new mongoose.Schema({
       ],
     },
   ],
+  lastModified: { type: Date, default: Date.now },
 })
 
 const WeekDataModel = mongoose.models.WeekData || mongoose.model("WeekData", weekDataSchema)

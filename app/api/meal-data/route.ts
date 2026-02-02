@@ -15,11 +15,11 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, days } = body;
+    const { id, days, label } = body;
     if (!id || !days) {
       return NextResponse.json({ error: "Missing id or days" }, { status: 400 });
     }
-    const updated = await updateWeekData(id, days);
+    const updated = await updateWeekData(id, days, label);
     return NextResponse.json(updated);
   } catch (e) {
     return NextResponse.json({ error: "Database error", details: e }, { status: 500 });

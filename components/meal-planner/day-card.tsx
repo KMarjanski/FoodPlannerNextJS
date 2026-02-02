@@ -6,6 +6,7 @@ import type { Recipe } from "@/lib/recipes-data"
 import { MealSection } from "./meal-section"
 import { Plus } from "lucide-react"
 import { t } from "i18next"
+import React, { useEffect } from "react"
 
 
 interface DayMealsRecipes {
@@ -15,13 +16,17 @@ interface DayMealsRecipes {
   dinner: Recipe[]
 }
 
-  interface DayCardProps {
-    dayMeals: DayMealsRecipes
-    isToday?: boolean
-    onEdit?: () => void
-  }
+interface DayCardProps {
+  dayMeals: DayMealsRecipes
+  isToday?: boolean
+  onEdit?: () => void
+}
 
 export function DayCard({ dayMeals, isToday = false, onEdit }: DayCardProps) {
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log("DayCard isToday:", { dayName: dayMeals.day, isToday });
+  }, [dayMeals.day, isToday]);
   return (
     <Card
       className={`h-full transition-all duration-200 hover:border-primary/30 group ${
@@ -60,5 +65,5 @@ export function DayCard({ dayMeals, isToday = false, onEdit }: DayCardProps) {
         <MealSection type="dinner" recipes={dayMeals.dinner} />
       </CardContent>
     </Card>
-  )
+  );
 }

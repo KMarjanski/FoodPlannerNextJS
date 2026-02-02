@@ -17,6 +17,7 @@ export interface WeekData {
   id: string
   label: string
   days: DayMeals[]
+  lastModified?: string | Date
 }
 
 
