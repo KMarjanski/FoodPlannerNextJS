@@ -162,7 +162,7 @@ export function IngredientItem({
         <Button
           variant="ghost"
           size="icon"
-          onClick={onRemove}
+          onClick={() => onRemove(ingredient._id)}
           className={cn(
             "h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
           )}
