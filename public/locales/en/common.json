@@ -9,7 +9,9 @@
 	"Cart saved!": "Cart saved!",
 	"Save cart": "Save cart",
 	"Saving...": "Saving...",
-	"Recipe Category": "Recipe Category"
-	,
-	"Collapse": "Collapse"
+	"Recipe Category": "Recipe Category",
+	"Collapse": "Collapse",
+	"Are you sure you want to clear all days?": "Are you sure you want to clear all days?",
+	"This action cannot be undone.": "This action cannot be undone.",
+	"Clear All": "Clear All"
 }

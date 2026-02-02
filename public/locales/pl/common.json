@@ -123,5 +123,7 @@
     "Clear All": "Wyczyść wszystko",
     "No ingredients found": "Nie znaleziono składników",
     "All": "Wszystko",
-    "Collapse": "Zwiń"
+    "Collapse": "Zwiń",
+    "Are you sure you want to clear all days?": "Czy na pewno chcesz wyczyścić wszystkie dni?",
+    "This action cannot be undone.": "Tej operacji nie można cofnąć."
 }

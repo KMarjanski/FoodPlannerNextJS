@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useMemo, useEffect } from "react"
+import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/components/ui/use-mobile"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Pobieranie danych przez API
@@ -58,6 +59,7 @@ export function MealPlannerDashboard() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingWeekId, setEditingWeekId] = useState<string>("")
 
+
   // Generate weeks based on setting
   const displayedWeeks = useMemo(() => {
     const weeks: WeekDataRecipes[] = []
@@ -94,10 +96,38 @@ export function MealPlannerDashboard() {
       .catch(() => {})
   }, [])
 
+  // Resetuje wszystkie dni w każdym tygodniu
+  useEffect(() => {
+    const onResetAllDays = async () => {
+      const emptyWeeks = displayedWeeks.map((week, i) => ({
+        ...week,
+        days: week.days.map(day => ({
+          ...day,
+          breakfast: [],
+          lunch: [],
+          dinner: [],
+        }))
+      }))
+      await Promise.all(
+        emptyWeeks.map(week =>
+          fetch("/api/meal-data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: week.id, days: week.days })
+          })
+        )
+      )
+      setMealData(emptyWeeks)
+    }
+    window.addEventListener('resetAllDays', onResetAllDays)
+    return () => window.removeEventListener('resetAllDays', onResetAllDays)
+  }, [displayedWeeks])
+
   return (
     <AppLayout>
       <div className="min-h-screen bg-background">
         <DashboardHeader />
+        {/* Przycisk resetowania przeniesiony do DashboardHeader */}
         <main className="px-6 py-6 space-y-10">
           {isMobile ? (
             <>
