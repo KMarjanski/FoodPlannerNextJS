@@ -19,18 +19,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { FoodItem, MealType } from "@/lib/meal-data"
 import type { Recipe } from "@/lib/recipes-data"
-import type { DayMealsRecipes } from "./meal-planner-dashboard"
+import type { DayMealsRecipes, WeekDataRecipes } from "./meal-planner-dashboard"
 import {
   Coffee,
   Sun,
   Moon,
   X,
   GripVertical,
-  Check,
   Utensils,
   Search,
   ChefHat,
   ArrowRight,
+  Check,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -42,6 +42,7 @@ interface RecipePickerSheetProps {
   onOpenChange: (open: boolean) => void;
   onSelect: (recipe: Recipe) => void;
   mealType: MealType;
+  weekIdProp?: string
 }
 
 interface DayEditModalProps {
@@ -49,7 +50,8 @@ interface DayEditModalProps {
   onOpenChange: (open: boolean) => void
   dayMeals: DayMealsRecipes | null
   weekLabel?: string
-  onSave: (dayMeals: DayMealsRecipes) => void
+  weekIdProp?: string
+  onSave: () => void
 }
 
 const mealConfig: Record<
@@ -132,10 +134,10 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
             </div>
             <div>
               <SheetTitle className="text-lg font-semibold text-foreground">
-                Select Recipe
+                {t('Select Recipe')}
               </SheetTitle>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Add a recipe to {config.label.toLowerCase()}
+                {t('Add a recipe to')} {t(config.label.toLowerCase())}
               </p>
             </div>
           </div>
@@ -147,7 +149,7 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search recipes..."
+              placeholder={t("Search recipes...")}
               className="pl-10 h-10 bg-secondary/50 border-border/50"
               autoFocus
             />
@@ -173,7 +175,7 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
                         {recipe.name}
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
-                        {recipe.ingredients.length} ingredients
+                        {recipe.ingredients.length} {t('ingredients')}
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-3">
                         {recipe.ingredients.slice(0, 5).map((ing) => (
@@ -186,14 +188,14 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
                         ))}
                         {recipe.ingredients.length > 5 && (
                           <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded-md">
-                            +{recipe.ingredients.length - 5} more
+                            +{recipe.ingredients.length - 5} {t('more')}
                           </span>
                         )}
                       </div>
                     </div>
                     <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="flex items-center gap-1 text-xs font-medium text-primary">
-                        Insert
+                        {t('Insert')}
                         <ArrowRight className="h-3.5 w-3.5" />
                       </div>
                     </div>
@@ -204,8 +206,8 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
               <ChefHat className="h-12 w-12 mb-3 opacity-30" />
-              <span className="text-sm font-medium">No recipes found</span>
-              <span className="text-xs mt-1 opacity-70">Try a different search term</span>
+              <span className="text-sm font-medium">{t('No recipes found')}</span>
+              <span className="text-xs mt-1 opacity-70">{t('Try a different search term')}</span>
             </div>
           )}
         </div>
@@ -275,7 +277,7 @@ function EditableMealList({ type, items, onUpdate, onOpenRecipePicker }: Editabl
           className="h-7 px-2.5 text-xs text-primary hover:text-primary hover:bg-primary/10 gap-1.5"
         >
           <ChefHat className="h-3.5 w-3.5" />
-          Recipe
+          {t('Recipe')} 
         </Button>
       </div>
 
@@ -334,6 +336,7 @@ export function DayEditModal({
   onOpenChange,
   dayMeals,
   weekLabel,
+  weekIdProp,
   onSave,
 }: DayEditModalProps) {
   const [editedMeals, setEditedMeals] = useState<DayMealsRecipes | null>(null)
@@ -373,12 +376,81 @@ export function DayEditModal({
     [editedMeals, recipePickerMealType]
   )
 
-  const handleSave = useCallback(() => {
-    if (editedMeals) {
-      onSave(editedMeals)
-      onOpenChange(false)
+  // Dodaj stan ładowania i błąd
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  // Potrzebujemy id tygodnia do POST
+  const weekId = React.useMemo(() => {
+    if (!dayMeals) return null
+    // Szukamy w globalnym stanie tygodnia, do którego należy ten dzień
+    // Ale tu nie mamy globalnego mealData, więc przekazujemy id przez dayMeals lub weekLabel
+    // Zakładamy, że weekLabel ma postać "Tydzień 1" lub "Week 1"
+    // Wyciągamy numer tygodnia
+    if (weekIdProp) return weekIdProp;
+    if (weekLabel) {
+      const match = weekLabel.match(/(\d+)/)
+      if (match) {
+        return `week-${match[1]}`
+      }
     }
-  }, [editedMeals, onSave, onOpenChange])
+    return null
+  }, [dayMeals, weekLabel])
+
+  const handleSave = useCallback(async () => {
+    if (!editedMeals) {
+      setSaveError('Brak danych do zapisania (editedMeals=null)')
+      return
+    }
+    if (!weekId) {
+      setSaveError('Brak weekId – nie można zapisać tygodnia')
+      return
+    }
+    // Debug logi
+    // eslint-disable-next-line no-console
+    console.log('ZAPIS:', { weekId, editedMeals, weekLabel })
+    setIsSaving(true)
+    setSaveError(null)
+    try {
+      // Pobierz aktualne dni tygodnia z API, zaktualizuj tylko wybrany dzień
+      const res = await fetch(`/api/meal-data`)
+      const weeks: WeekDataRecipes[] = await res.json()
+      let week = weeks.find(w => w.id === weekId)
+      let newDays
+      let label = weekLabel || weekId
+      if (!week) {
+        // Tworzymy nowy tydzień z wszystkimi dniami tygodnia
+        const dayNames = [
+          'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+        ];
+        newDays = dayNames.map(dayName =>
+          dayName === editedMeals.day
+            ? editedMeals
+            : { day: dayName, breakfast: [], lunch: [], dinner: [] }
+        );
+        // label: np. "Week 1" lub "Tydzień 1"
+        if (!label.startsWith('Week') && !label.startsWith('Tydzień')) {
+          label = `Week ${weekId.replace('week-', '')}`;
+        }
+      } else {
+        newDays = week.days.map(day => day.day === editedMeals.day ? editedMeals : day)
+        label = week.label
+      }
+      // Wyślij POST do API
+      const postRes = await fetch('/api/meal-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: weekId, label, days: newDays })
+      })
+      if (!postRes.ok) throw new Error('Błąd zapisu do bazy')
+      onSave()
+      onOpenChange(false)
+    } catch (e: any) {
+      setSaveError(e.message || 'Błąd zapisu')
+    } finally {
+      setIsSaving(false)
+    }
+  }, [editedMeals, weekId, onSave, onOpenChange])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -421,16 +493,60 @@ export function DayEditModal({
           </DialogHeader>
 
           <div className="px-6 py-5 space-y-6 max-h-[60vh] overflow-y-auto">
-            {/* TODO: Replace EditableMealList with a RecipeEditableMealList that works with Recipe[] */}
+            {(['breakfast', 'lunch', 'dinner'] as MealType[]).map((mealType) => {
+              const recipes = editedMeals[mealType] as Recipe[]
+              const config = mealConfig[mealType]
+              const Icon = config.icon
+              return (
+                <div key={mealType} className="space-y-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className={cn('p-1.5 rounded-md', config.bgColor)}>
+                      <Icon className={cn('h-4 w-4', config.iconColor)} />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{t(config.label)}</span>
+                  </div>
+                  <div className="space-y-1.5 min-h-[40px]">
+                    {recipes.length > 0 ? (
+                      recipes.map((recipe, idx) => (
+                        <div key={recipe.id || idx} className="group flex items-center gap-2 px-2 py-1.5 rounded-lg bg-secondary/30 hover:bg-secondary/50 border border-transparent hover:border-border/50 transition-all">
+                          <span className="flex-1 text-sm text-foreground">{recipe.name}</span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditedMeals((prev) => prev ? { ...prev, [mealType]: prev[mealType].filter((r: Recipe) => r.id !== recipe.id) } : prev)
+                            }}
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenRecipePicker(mealType)}
+                        className="w-full flex items-center justify-center gap-2 py-4 text-muted-foreground text-sm rounded-lg border border-dashed border-border/50 hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-all"
+                      >
+                        <ChefHat className="h-4 w-4" />
+                        {t('Add Recipe')}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
-          <div className="px-6 py-4 border-t border-border/50 bg-secondary/20 flex items-center justify-end">
+          <div className="px-6 py-4 border-t border-border/50 bg-secondary/20 flex flex-col items-end gap-2">
+            {saveError && <span className="text-xs text-destructive mb-1">{saveError}</span>}
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => onOpenChange(false)}
                 className="h-8 px-3 text-xs text-muted-foreground hover:text-foreground"
+                disabled={isSaving}
               >
                 {t('Cancel')}
               </Button>
@@ -438,9 +554,9 @@ export function DayEditModal({
                 size="sm"
                 onClick={handleSave}
                 className="h-8 px-4 text-xs bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+                disabled={isSaving}
               >
-                <Check className="h-3.5 w-3.5 mr-1.5" />
-                {t('Save Changes')}
+                {isSaving ? t('Saving...') : <><Check className="h-3.5 w-3.5 mr-1.5" />{t('Save Changes')}</>}
               </Button>
             </div>
           </div>

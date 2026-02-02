@@ -56,6 +56,7 @@ export function MealPlannerDashboard() {
   const [editingDay, setEditingDay] = useState<DayMealsRecipes | null>(null)
   const [editingWeekLabel, setEditingWeekLabel] = useState<string>("")
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingWeekId, setEditingWeekId] = useState<string>("")
 
   // Generate weeks based on setting
   const displayedWeeks = useMemo(() => {
@@ -78,29 +79,19 @@ export function MealPlannerDashboard() {
     }
   }, [displayedWeeks, activeWeek])
 
-  const handleEditDay = useCallback((day: DayMealsRecipes) => {
+  const handleEditDay = useCallback((day: DayMealsRecipes, weekId: string, weekLabel: string) => {
     setEditingDay(day)
-    // znajdź tydzień, do którego należy ten dzień
-    const week = displayedWeeks.find(w => w.days.some(d => d.day === day.day))
-    // tłumacz label tygodnia
-    let label = week ? week.label : ""
-    if (label.startsWith("Week ")) {
-      const nr = label.replace("Week ", "")
-      label = `${t('Week')} ${nr}`
-    }
-    setEditingWeekLabel(label)
+    setEditingWeekLabel(weekLabel)
+    setEditingWeekId(weekId)
     setIsEditModalOpen(true)
-  }, [displayedWeeks, t])
+  }, [])
 
-  const handleSaveDay = useCallback((updatedDay: DayMealsRecipes) => {
-    setMealData((prevData) =>
-      prevData.map((week) => ({
-        ...week,
-        days: week.days.map((day) =>
-          day.day === updatedDay.day ? updatedDay : day
-        ),
-      }))
-    )
+  const handleSaveDay = useCallback(async () => {
+    // Po zamknięciu modalu pobierz świeże dane z API
+    await fetch('/api/meal-data')
+      .then(res => res.json())
+      .then(data => setMealData(data))
+      .catch(() => {})
   }, [])
 
   return (
@@ -123,10 +114,13 @@ export function MealPlannerDashboard() {
                       </TabsTrigger>
                     ))}
                   </TabsList>
-                  {displayedWeeks.map((week) => (
+                  {displayedWeeks.map((week, index) => (
                     <TabsContent key={week.id} value={week.id} className="mt-0">
                       <section className="mb-8">
-                        <WeekGrid weekData={week} onEditDay={handleEditDay} />
+                        <WeekGrid 
+                          weekData={week} 
+                          onEditDay={(day) => handleEditDay(day, week.id, `${t('Week')} ${index + 1}`)} 
+                        />
                       </section>
                     </TabsContent>
                   ))}
@@ -137,7 +131,10 @@ export function MealPlannerDashboard() {
             displayedWeeks.map((week, index) => (
               <section key={week.id} className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">{`${t('Week')} ${index + 1}`}</h2>
-                <WeekGrid weekData={week} onEditDay={handleEditDay} />
+                <WeekGrid 
+                  weekData={week} 
+                  onEditDay={(day) => handleEditDay(day, week.id, `${t('Week')} ${index + 1}`)} 
+                />
               </section>
             ))
           )}
@@ -148,6 +145,7 @@ export function MealPlannerDashboard() {
         onOpenChange={setIsEditModalOpen}
         dayMeals={editingDay}
         weekLabel={editingWeekLabel}
+        weekIdProp={editingWeekId}
         onSave={handleSaveDay}
       />
     </AppLayout>

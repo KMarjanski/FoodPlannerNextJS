@@ -1,3 +1,13 @@
+
+export async function updateWeekData(id: string, days: any[]) {
+  await dbConnect();
+  const updated = await WeekDataModel.findOneAndUpdate(
+    { id },
+    { $set: { days } },
+    { new: true, upsert: true }
+  ).lean();
+  return updated;
+}
 import dbConnect from "./mongodb"
 import type { WeekData } from "./meal-data"
 import mongoose from "mongoose"
