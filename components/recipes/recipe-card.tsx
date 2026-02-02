@@ -5,6 +5,18 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { Recipe } from "@/lib/recipes-data"
 import { cn } from "@/lib/utils"
+import { t } from "i18next"
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
 
 const categoryColors: Record<string, string> = {
   vegetables: "bg-green-500/15 text-green-400",
@@ -31,12 +43,17 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-foreground text-base leading-tight truncate">
-              {recipe.name}
-            </h3>
+            <div className="flex items-center gap-2 justify-between">
+              <h3 className="font-semibold text-foreground text-base leading-tight truncate">
+                {recipe.name}
+              </h3>
+              <span className="inline-block px-2 py-0.5 rounded bg-secondary/40 border border-border/40 font-medium text-xs whitespace-nowrap ml-2">
+                {t(recipe.category)}
+              </span>
+            </div>
             <div className="flex items-center gap-1.5 mt-1.5 text-xs text-muted-foreground">
               <ChefHat className="h-3.5 w-3.5" />
-              <span>{recipe.ingredients.length} ingredients</span>
+              <span>{recipe.ingredients.length} {t('Ingredients')}</span>
             </div>
           </div>
         </div>
@@ -46,7 +63,7 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
         <div className="flex flex-wrap gap-1.5">
           {recipe.ingredients.slice(0, 4).map((ing) => (
             <span
-              key={ing.id}
+              key={ing.id || ing._id || ing.name}
               className={cn(
                 "inline-flex px-2 py-0.5 text-[10px] font-medium rounded-full",
                 categoryColors[ing.category] || categoryColors.other
@@ -70,7 +87,7 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
             className="flex-1 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-accent/50"
           >
             <Pencil className="h-3.5 w-3.5 mr-1.5" />
-            Edit
+            {t('Edit')}
           </Button>
           <Button
             variant="ghost"
@@ -79,19 +96,34 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
             className="flex-1 h-8 text-xs text-primary hover:text-primary hover:bg-primary/10"
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            Copy
+            {t('Copy')}
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onDelete}
-            className="flex-1 h-8 text-xs text-red-500 hover:text-white hover:bg-red-500/80"
-            type="button"
-            aria-label="Delete recipe"
-          >
-            <Trash className="h-3.5 w-3.5 mr-1.5" />
-            Delete
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 h-8 text-xs text-red-500 hover:text-white hover:bg-red-500/80"
+                type="button"
+                aria-label="Delete recipe"
+              >
+                <Trash className="h-3.5 w-3.5 mr-1.5" />
+                {t('Delete')}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t('Delete recipe?')}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t('Are you sure you want to delete this recipe? This action cannot be undone.')}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardContent>
     </Card>

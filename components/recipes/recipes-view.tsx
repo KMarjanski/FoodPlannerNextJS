@@ -50,19 +50,43 @@ export function RecipesView() {
     })
   }, [recipes, searchQuery, categoryFilter])
 
-  const handleSaveRecipe = (recipe: Recipe) => {
+  const handleSaveRecipe = async (recipe: Recipe) => {
     if (copyingRecipe) {
-      setRecipes((prev) => [...prev, recipe])
+      try {
+        const res = await fetch("/api/recipes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipe),
+        })
+        const saved = await res.json()
+        setRecipes((prev) => [...prev, saved])
+      } catch (e) {}
       setCopyingRecipe(null)
       setEditingRecipe(null)
       return
     }
     if (editingRecipe) {
-      setRecipes((prev) =>
-        prev.map((r) => (r.id === recipe.id ? recipe : r))
-      )
+      // Update recipe in DB
+      try {
+        const res = await fetch("/api/recipes", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipe),
+        })
+        const updated = await res.json()
+        setRecipes((prev) => prev.map((r) => (r.id === updated.id ? updated : r)))
+      } catch (e) {}
     } else {
-      setRecipes((prev) => [...prev, recipe])
+      // Save new recipe to DB
+      try {
+        const res = await fetch("/api/recipes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipe),
+        })
+        const saved = await res.json()
+        setRecipes((prev) => [...prev, saved])
+      } catch (e) {}
     }
     setEditingRecipe(null)
   }
@@ -79,7 +103,7 @@ export function RecipesView() {
     const copied: Recipe = {
       ...recipe,
       id: newId,
-      name: recipe.name + " (Copy)",
+      name: "",
     }
     setCopyingRecipe(copied)
     setIsAddModalOpen(true)
@@ -203,7 +227,16 @@ export function RecipesView() {
                   onView={() => {}}
                   onEdit={() => handleEditRecipe(recipe)}
                   onAddToPlanner={() => copyRecipe(recipe)}
-                  onDelete={() => setRecipes((prev) => prev.filter((r) => r.id !== recipe.id))}
+                  onDelete={async () => {
+                    try {
+                      await fetch("/api/recipes", {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: recipe.id }),
+                      })
+                      setRecipes((prev) => prev.filter((r) => r.id !== recipe.id))
+                    } catch (e) {}
+                  }}
                 />
               ))}
             </div>
@@ -219,6 +252,7 @@ export function RecipesView() {
         }}
         onSave={handleSaveRecipe}
         editRecipe={copyingRecipe || editingRecipe}
+        originalRecipe={copyingRecipe && editingRecipe == null ? recipes.find(r => r.id === copyingRecipe.id.split('-copy-')[0]) : null}
       />
     </AppLayout>
   )

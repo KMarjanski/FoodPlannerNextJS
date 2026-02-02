@@ -16,6 +16,7 @@ import {
   type Recipe,
   type Ingredient,
   ingredientCategories,
+  recipeCategories,
 } from "@/lib/recipes-data"
 import { cn } from "@/lib/utils"
 import { t } from "i18next"
@@ -25,6 +26,7 @@ interface AddRecipeModalProps {
   onOpenChange: (open: boolean) => void
   onSave: (recipe: Recipe) => void
   editRecipe?: Recipe | null
+  originalRecipe?: Recipe | null
 }
 
 const categoryColors: Record<string, string> = {
@@ -43,6 +45,7 @@ export function AddRecipeModal({
   onOpenChange,
   onSave,
   editRecipe,
+  originalRecipe,
 }: AddRecipeModalProps) {
   const [name, setName] = useState("")
   const [ingredients, setIngredients] = useState<Ingredient[]>([])
@@ -51,6 +54,7 @@ export function AddRecipeModal({
   const [customIngredientName, setCustomIngredientName] = useState("")
   const [customIngredientAmount, setCustomIngredientAmount] = useState("")
   const [customIngredientCategory, setCustomIngredientCategory] = useState("other")
+  const [category, setCategory] = useState(recipeCategories[0])
   const [showCustomForm, setShowCustomForm] = useState(false)
   
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -60,10 +64,17 @@ export function AddRecipeModal({
     if (editRecipe) {
       setName(editRecipe.name)
       setIngredients(editRecipe.ingredients)
+      setCategory(editRecipe.category || recipeCategories[0])
     } else {
       resetForm()
     }
   }, [editRecipe, open])
+
+  // For copy: if originalRecipe is provided, compare name and ingredients
+  const isCopy = !!originalRecipe
+  const isNameDifferent = isCopy ? name.trim() !== originalRecipe.name.trim() : true
+  const areIngredientsDifferent = isCopy ? JSON.stringify(ingredients.map(i => ({ name: i.name, amount: i.amount, category: i.category }))) !== JSON.stringify(originalRecipe.ingredients.map(i => ({ name: i.name, amount: i.amount, category: i.category }))) : true
+  const canSave = name.trim().length >= 3 && ingredients.length >= 2 && (!isCopy || (isNameDifferent && areIngredientsDifferent))
 
   useEffect(() => {
     if (open && nameInputRef.current) {
@@ -80,6 +91,7 @@ export function AddRecipeModal({
     setCustomIngredientAmount("")
     setCustomIngredientCategory("other")
     setShowCustomForm(false)
+    setCategory(recipeCategories[0])
   }
 
   const [masterIngredients, setMasterIngredients] = useState<Ingredient[]>([])
@@ -94,10 +106,8 @@ export function AddRecipeModal({
     (ing) =>
       ing.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       !ingredients.some((i) => i.name === ing.name) &&
-      ing.category !== 'Chemia' &&
-      ing.category !== 'household' &&
-      ing.category.toLowerCase() !== 'chemia' &&
-      ing.category.toLowerCase() !== 'household'
+      typeof ing.category === 'string' &&
+      !['chemia', 'household'].includes(ing.category.toLowerCase())
   )
 
   const handleAddIngredient = useCallback((ingredient: Ingredient) => {
@@ -106,7 +116,6 @@ export function AddRecipeModal({
       {
         ...ingredient,
         id: `ing-${Date.now()}`,
-        amount: ingredient.amount || "1",
       },
     ])
     setSearchQuery("")
@@ -121,7 +130,6 @@ export function AddRecipeModal({
         {
           id: `custom-${Date.now()}`,
           name: customIngredientName.trim(),
-          amount: customIngredientAmount.trim() || "1",
           category: customIngredientCategory as Ingredient["category"],
         },
       ])
@@ -133,14 +141,10 @@ export function AddRecipeModal({
   }, [customIngredientName, customIngredientAmount, customIngredientCategory])
 
   const handleRemoveIngredient = (id: string) => {
-    setIngredients((prev) => prev.filter((ing) => ing._id !== id))
+    setIngredients((prev) => prev.filter((ing) => (ing.id || ing._id) !== id))
   }
 
-  const handleUpdateAmount = (id: string, amount: string) => {
-    setIngredients((prev) =>
-      prev.map((ing) => (ing._id === id ? { ...ing, amount } : ing))
-    )
-  }
+  // removed handleUpdateAmount, not needed
 
   const handleSave = () => {
     if (!name.trim()) return
@@ -149,7 +153,7 @@ export function AddRecipeModal({
       id: editRecipe?.id || `recipe-${Date.now()}`,
       name: name.trim(),
       description: "",
-      category: "Dinner",
+      category,
       tags: [],
       ingredients,
       steps: [],
@@ -165,6 +169,17 @@ export function AddRecipeModal({
     if (e.key === "Enter" && e.ctrlKey) {
       e.preventDefault()
       handleSave()
+      return
+    }
+    // Add ingredient on Enter if only one suggestion
+    if (
+      e.key === "Enter" &&
+      showSuggestions &&
+      filteredIngredients.length === 1 &&
+      searchQuery.trim().length > 0
+    ) {
+      e.preventDefault()
+      handleAddIngredient(filteredIngredients[0])
     }
   }
 
@@ -196,12 +211,33 @@ export function AddRecipeModal({
             />
           </div>
 
+          {/* Recipe Category */}
+          <div className="space-y-2">
+            <Label htmlFor="category" className="text-sm font-medium text-foreground">
+              {t('Recipe Category')}
+            </Label>
+            <select
+              id="category"
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              className="w-full bg-secondary/50 border border-border/50 focus:border-primary h-10 rounded px-3 text-foreground"
+            >
+              {recipeCategories.map(cat => (
+                <option key={cat} value={cat}>{t(cat)}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Ingredients */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium text-foreground">
-              {t('Ingredients')} ({ingredients.length})
+            <Label className="text-sm font-medium text-foreground flex items-center gap-2">
+              {t('Ingredients')}
+              {ingredients.length > 0 && (
+                <span className="inline-block min-w-5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold text-center">
+                  {ingredients.length}
+                </span>
+              )}
             </Label>
-
             {/* Ingredient Search */}
             <div className="relative">
               <div className="relative">
@@ -236,7 +272,7 @@ export function AddRecipeModal({
                             categoryColors[ing.category]
                           )}
                         >
-                          {t(ing.category)}
+                          {t(ing.category ? String(ing.category) : '')}
                         </span>
                         <span className="text-sm text-foreground">{ing.name}</span>
                       </button>
@@ -324,10 +360,10 @@ export function AddRecipeModal({
             )}
 
             {/* Added Ingredients List */}
-            <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            <div className="space-y-1.5 max-h-80 overflow-y-auto">
               {ingredients.map((ing) => (
                 <div
-                  key={ing._id}
+                  key={ing.id || ing._id}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/30 border border-border/30 group"
                 >
                   <span
@@ -339,21 +375,17 @@ export function AddRecipeModal({
                     {t(ing.category)}
                   </span>
                   <span className="flex-1 text-sm text-foreground truncate">
-                    {t(ing.name)}
+                    {t(String(ing.name))}
                   </span>
-                  <Input
-                    value={ing.amount}
-                    onChange={(e) => handleUpdateAmount(ing.id!, e.target.value)}
-                    className="w-20 h-7 text-xs bg-background/50 border-border/50 text-center"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemoveIngredient(ing.id!)}
-                    className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  {/* Removed input for ingredient amount */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveIngredient(ing.id || ing._id || "")}
+                    className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center rounded"
+                    aria-label="Usuń składnik"
                   >
                     <X className="h-3 w-3" />
-                  </Button>
+                  </button>
                 </div>
               ))}
               {ingredients.length === 0 && (
@@ -378,7 +410,7 @@ export function AddRecipeModal({
             <Button
               size="sm"
               onClick={handleSave}
-              disabled={name.trim().length < 3 || ingredients.length < 2}
+              disabled={!canSave}
               className="h-8 px-4 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Check className="h-3.5 w-3.5 mr-1.5" />

@@ -1,7 +1,13 @@
 {
+	"ingredient": "ingredient",
+	"ingredients": "ingredients",
+	"Edit": "Edit",
+	"Copy": "Copy",
+	"Delete": "Delete",
+	"Delete recipe?": "Delete recipe?",
+	"Are you sure you want to delete this recipe? This action cannot be undone.": "Are you sure you want to delete this recipe? This action cannot be undone.",
 	"Cart saved!": "Cart saved!",
 	"Save cart": "Save cart",
-	"Saving...": "Saving..."
-}
-{
+	"Saving...": "Saving...",
+	"Recipe Category": "Recipe Category"
 }
