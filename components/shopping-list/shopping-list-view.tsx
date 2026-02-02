@@ -182,16 +182,12 @@ interface CategorySectionProps {
   category: IngredientCategory
   items: ShoppingItem[]
   onToggleItem: (id: string) => void
-  isExpanded: boolean
-  onToggleExpand: () => void
 }
 
 function CategorySection({
   category,
   items,
   onToggleItem,
-  isExpanded,
-  onToggleExpand,
 }: CategorySectionProps) {
   const completedCount = items.filter((item) => item.checked).length
   const categoryLabelRaw = ingredientCategories.find((c) => c.value === category)?.label
@@ -201,17 +197,8 @@ function CategorySection({
   return (
     <Card className={cn("border transition-all duration-200", categoryColors[category])}>
       <CardHeader className="p-0">
-        <button
-          type="button"
-          onClick={onToggleExpand}
-          className="w-full flex items-center justify-between p-4 hover:bg-accent/20 transition-colors rounded-t-lg"
-        >
+        <div className="w-full flex items-center justify-between p-4 rounded-t-lg">
           <div className="flex items-center gap-3">
-            {isExpanded ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            )}
             <span className="font-semibold text-foreground">{categoryLabel}</span>
             <Badge
               variant="secondary"
@@ -226,19 +213,17 @@ function CategorySection({
               style={{ width: `${(completedCount / items.length) * 100}%` }}
             />
           </div>
-        </button>
+        </div>
       </CardHeader>
-      {isExpanded && (
-        <CardContent className="p-4 pt-0 space-y-2">
-          {items.map((item) => (
-            <ShoppingItemRow
-              key={item.id}
-              item={item}
-              onToggle={() => onToggleItem(item.id)}
-            />
-          ))}
-        </CardContent>
-      )}
+      <CardContent className="p-4 pt-0 space-y-2">
+        {items.map((item) => (
+          <ShoppingItemRow
+            key={item.id}
+            item={item}
+            onToggle={() => onToggleItem(item.id)}
+          />
+        ))}
+      </CardContent>
     </Card>
   )
 }
@@ -270,9 +255,7 @@ export function ShoppingListView() {
     }
     fetchShoppingList()
   }, [])
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(ingredientCategories.map((c) => c.value))
-  )
+  // All categories always expanded, so no state needed
 
   const groupedItems = useMemo(() => {
     const groups: Record<IngredientCategory, ShoppingItem[]> = {
@@ -312,17 +295,7 @@ export function ShoppingListView() {
     );
   };
 
-  const handleToggleCategory = (category: string) => {
-    setExpandedCategories((prev) => {
-      const next = new Set(prev)
-      if (next.has(category)) {
-        next.delete(category)
-      } else {
-        next.add(category)
-      }
-      return next
-    })
-  }
+  // No expand/collapse logic needed
 
   const handleClearCompleted = () => {
     setItems((prev) => prev.filter((item) => !item.checked))
@@ -393,8 +366,6 @@ export function ShoppingListView() {
                   category={category as IngredientCategory}
                   items={categoryItems}
                   onToggleItem={handleToggleItem}
-                  isExpanded={expandedCategories.has(category)}
-                  onToggleExpand={() => handleToggleCategory(category)}
                 />
               )
             })}
