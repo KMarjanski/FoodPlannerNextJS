@@ -128,6 +128,8 @@
     "This action cannot be undone.": "Tej operacji nie można cofnąć.",
     "Are you sure?": "Czy na pewno?",
     "Generate cart": "Generuj koszyk",
+    "cart.items_count": "{{count}} z {{total}}",
+    "shoppingList.completed_count": "{{count}} z {{total}} ukończonych",
     "This will remove all items from your cart.": "To usunie wszystkie produkty z koszyka.",
     "Yes, clear all": "Tak, wyczyść wszystko",
     "Cancel": "Anuluj"

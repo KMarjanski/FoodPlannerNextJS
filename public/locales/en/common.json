@@ -18,5 +18,7 @@
 	"This will remove all items from your cart.": "This will remove all items from your cart.",
 	"Yes, clear all": "Yes, clear all",
 	"Cancel": "Cancel",
-	"Generate cart": "Generate cart"
+	"Generate cart": "Generate cart",
+	"cart.items_count": "{{count}} of {{total}}",
+	"shoppingList.completed_count": "{{count}} of {{total}} completed"
 }

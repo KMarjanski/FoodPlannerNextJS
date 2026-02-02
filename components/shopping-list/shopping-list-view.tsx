@@ -281,7 +281,7 @@ export function ShoppingListView() {
                 {t('Shopping List')}
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {completedItems} of {totalItems} {t('items completed')}
+                {t('shoppingList.completed_count', { count: completedItems, total: totalItems, defaultValue: `${completedItems} z ${totalItems} ukończonych` })}
               </p>
             </div>
           </div>

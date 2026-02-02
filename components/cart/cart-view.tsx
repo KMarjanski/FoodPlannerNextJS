@@ -273,7 +273,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                 className="text-sm py-1.5 px-3 bg-secondary/80"
               >
                 <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
-                {totalItems} {polishItemLabel(totalItems)}
+                {t("cart.items_count", { count: totalItems, total: cartItems.length, defaultValue: `${totalItems} z ${cartItems.length}` })}
               </Badge>
               {/* Go to List button removed as requested */}
             </div>
