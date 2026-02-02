@@ -21,6 +21,7 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
+
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark")
   const [language, setLanguageState] = useState<Language>("pl")
@@ -28,25 +29,26 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
   const { t, i18n } = useTranslation("common")
 
-  // Load preferences from localStorage on mount
+  // Pobierz ustawienia z API na start
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme | null
-    const savedLanguage = localStorage.getItem("language") as Language | null
-    const savedWeeksCount = localStorage.getItem("weeksCount")
-
-    if (savedTheme) {
-      setThemeState(savedTheme)
-    }
-    if (savedLanguage) {
-      setLanguageState(savedLanguage)
-    }
-    if (savedWeeksCount) {
-      const parsed = Number.parseInt(savedWeeksCount, 10) as WeeksCount
-      if ([1, 2, 3, 4].includes(parsed)) {
-        setWeeksCountState(parsed)
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/settings")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.theme) setThemeState(data.theme)
+          if (data.language) {
+            setLanguageState(data.language)
+            i18n.changeLanguage(data.language)
+          }
+          if (data.weeksCount && [1,2,3,4].includes(data.weeksCount)) setWeeksCountState(data.weeksCount)
+        }
+      } catch (e) {
+        // fallback: nie zmieniaj domyślnych
       }
+      setMounted(true)
     }
-    setMounted(true)
+    fetchSettings()
   }, [])
 
   // Apply theme to document
@@ -60,20 +62,35 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [theme, mounted])
 
+  // Zapisz ustawienia do API
+  const saveSettings = async (next: Partial<{theme: Theme, language: Language, weeksCount: WeeksCount}>) => {
+    try {
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          theme: next.theme ?? theme,
+          language: next.language ?? language,
+          weeksCount: next.weeksCount ?? weeksCount
+        })
+      })
+    } catch (e) {}
+  }
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
-    localStorage.setItem("theme", newTheme)
+    saveSettings({ theme: newTheme })
   }
 
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage)
-    localStorage.setItem("language", newLanguage)
     i18n.changeLanguage(newLanguage)
+    saveSettings({ language: newLanguage })
   }
 
   const setWeeksCount = (count: WeeksCount) => {
     setWeeksCountState(count)
-    localStorage.setItem("weeksCount", String(count))
+    saveSettings({ weeksCount: count })
   }
 
   // Prevent hydration mismatch

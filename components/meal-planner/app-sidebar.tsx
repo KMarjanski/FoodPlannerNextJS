@@ -5,6 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useSettings } from "@/lib/settings-context"
+import { Settings } from "lucide-react"
+import { SettingsModal } from "@/components/settings/settings-modal"
 import {
   ListTodo,
   CalendarDays,
@@ -44,6 +46,7 @@ interface AppSidebarProps {
 export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const pathname = usePathname()
   const { t } = useSettings()
+  const [settingsOpen, setSettingsOpen] = React.useState(false)
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -144,8 +147,23 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           })}
         </nav>
 
-        {/* Collapse Toggle */}
+        {/* Settings Button */}
         <div className="p-3 border-t border-border/50">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSettingsOpen(true)}
+            className={cn(
+              "w-full h-9 justify-center gap-2 mb-2",
+              "text-muted-foreground hover:text-foreground",
+              "hover:bg-accent/50 transition-all duration-200"
+            )}
+          >
+            <Settings className="w-4 h-4" />
+            {!collapsed && <span className="text-xs">{t('App settings')}</span>}
+          </Button>
+
+          {/* Collapse Toggle */}
           <Button
             variant="ghost"
             size="sm"
@@ -161,11 +179,13 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             ) : (
               <>
                 <ChevronLeft className="w-4 h-4" />
-                <span className="text-xs">Collapse</span>
+                <span className="text-xs">{t('Collapse')}</span>
               </>
             )}
           </Button>
         </div>
+
+        <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       </aside>
     </TooltipProvider>
   )
