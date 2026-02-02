@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import {
   Check,
   ChevronDown,
@@ -53,16 +53,62 @@ interface ShoppingItemRowProps {
 }
 
 function ShoppingItemRow({ item, onToggle }: ShoppingItemRowProps) {
+  const [showDetails, setShowDetails] = useState(false);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const longPressTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const touchActive = useRef(false);
+  function handleTouchStart(e: React.TouchEvent) {
+    if (!isMobile) return;
+    touchActive.current = true;
+    longPressTimeout.current = setTimeout(() => {
+      setShowDetails(true);
+      touchActive.current = false;
+    }, 500); // 500ms for long press
+  }
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (!isMobile) return;
+    if (longPressTimeout.current) {
+      clearTimeout(longPressTimeout.current);
+      longPressTimeout.current = null;
+    }
+    // Jeśli long press był aktywny, nie odhaczaj
+    if (touchActive.current) {
+      // Jeśli szczegóły nie są pokazane, to był zwykły tap
+      if (!showDetails) {
+        onToggle();
+      }
+    }
+    touchActive.current = false;
+    setTimeout(() => setShowDetails(false), 300);
+  }
+  function handleTouchMove() {
+    if (!isMobile) return;
+    if (longPressTimeout.current) {
+      clearTimeout(longPressTimeout.current);
+      longPressTimeout.current = null;
+    }
+    touchActive.current = false;
+  }
+
   return (
-    <div className="relative group">
+    <div
+      className={cn("relative group")}
+      onTouchStart={isMobile ? handleTouchStart : undefined}
+      onTouchEnd={isMobile ? handleTouchEnd : undefined}
+      onTouchMove={isMobile ? handleTouchMove : undefined}
+      style={isMobile ? { WebkitUserSelect: "none", userSelect: "none" } : undefined}
+    >
       <button
         type="button"
-        onClick={onToggle}
+        // onClick={onToggle} // obsługa tapu przez touchEnd na mobile
+        onClick={!isMobile ? onToggle : undefined}
         className={cn(
           "w-full flex items-center gap-4 p-4 rounded-lg border transition-all duration-200",
           "bg-card/30 border-border/30 hover:border-primary/30",
           item.checked && "opacity-60"
         )}
+        style={isMobile ? { WebkitUserSelect: "none", userSelect: "none" } : undefined}
       >
         <div
           className={cn(
@@ -71,6 +117,7 @@ function ShoppingItemRow({ item, onToggle }: ShoppingItemRowProps) {
               ? "bg-primary border-primary"
               : "border-border/50 hover:border-primary/50"
           )}
+          style={isMobile ? { WebkitUserSelect: "none", userSelect: "none" } : undefined}
         >
           {item.checked && <Check className="h-4 w-4 text-primary-foreground" />}
         </div>
@@ -79,33 +126,53 @@ function ShoppingItemRow({ item, onToggle }: ShoppingItemRowProps) {
             "flex-1 text-left text-sm font-medium transition-all duration-200",
             item.checked ? "text-muted-foreground line-through" : "text-foreground"
           )}
+          style={isMobile ? { WebkitUserSelect: "none", userSelect: "none" } : undefined}
         >
           {item.name}
         </span>
         <Badge
           variant="secondary"
           className="text-xs bg-secondary/80 text-secondary-foreground"
+          style={isMobile ? { WebkitUserSelect: "none", userSelect: "none" } : undefined}
         >
           {item.quantity}
         </Badge>
       </button>
+      {/* Tooltip on desktop, long press info on mobile */}
       {item.recipes && item.recipes.length > 0 && (
-        <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden group-hover:block bg-popover text-popover-foreground border border-border rounded shadow-lg px-3 py-2 text-xs min-w-[180px] max-w-xs whitespace-pre-wrap">
-          <div className="font-semibold mb-1">Przepisy:</div>
-          {(() => {
-            // Zlicz wystąpienia każdego przepisu
-            const counts: Record<string, number> = {};
-            item.recipes.forEach((r: string) => {
-              counts[r] = (counts[r] || 0) + 1;
-            });
-            // Wyświetl unikalne przepisy z liczbą powtórzeń
-            return Object.entries(counts).map(([r, count]) => (
-              <div key={r}>
-                {r} {count > 1 ? <span className="text-muted-foreground">x{count}</span> : null}
-              </div>
-            ));
-          })()}
-        </div>
+        isMobile ? (
+          showDetails && (
+            <div className="absolute left-1/2 -translate-x-1/2 z-10 bg-popover text-popover-foreground border border-border rounded shadow-lg px-3 py-2 text-xs min-w-[180px] max-w-xs whitespace-pre-wrap" style={{ WebkitUserSelect: "none", userSelect: "none" }}>
+              <div className="font-semibold mb-1">Przepisy:</div>
+              {(() => {
+                const counts: Record<string, number> = {};
+                item.recipes.forEach((r: string) => {
+                  counts[r] = (counts[r] || 0) + 1;
+                });
+                return Object.entries(counts).map(([r, count]) => (
+                  <div key={r} style={{ WebkitUserSelect: "none", userSelect: "none" }}>
+                    {r} {count > 1 ? <span className="text-muted-foreground">x{count}</span> : null}
+                  </div>
+                ));
+              })()}
+            </div>
+          )
+        ) : (
+          <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden group-hover:block bg-popover text-popover-foreground border border-border rounded shadow-lg px-3 py-2 text-xs min-w-[180px] max-w-xs whitespace-pre-wrap">
+            <div className="font-semibold mb-1">Przepisy:</div>
+            {(() => {
+              const counts: Record<string, number> = {};
+              item.recipes.forEach((r: string) => {
+                counts[r] = (counts[r] || 0) + 1;
+              });
+              return Object.entries(counts).map(([r, count]) => (
+                <div key={r}>
+                  {r} {count > 1 ? <span className="text-muted-foreground">x{count}</span> : null}
+                </div>
+              ));
+            })()}
+          </div>
+        )
       )}
     </div>
   )
