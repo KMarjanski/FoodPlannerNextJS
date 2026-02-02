@@ -1,6 +1,8 @@
 "use client"
 
-import { Plus, Minus, GripVertical } from "lucide-react"
+import React from "react"
+import { Plus, Minus, Trash2 } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Ingredient, IngredientCategory } from "@/lib/recipes-data"
@@ -10,11 +12,12 @@ interface IngredientItemProps {
   ingredient: Ingredient
   quantity?: number
   onAdd?: () => void
-  onRemove?: () => void
+  onRemove?: (id?: string) => void
   onQuantityChange?: (quantity: number) => void
   isInCart?: boolean
   isDragging?: boolean
   showQuantityControls?: boolean
+  isMobile?: boolean
 }
 
 const categoryColors: Record<IngredientCategory, string> = {
@@ -46,18 +49,68 @@ export function IngredientItem({
   isInCart,
   isDragging,
   showQuantityControls,
+  isMobile,
 }: IngredientItemProps) {
+  const [showConfirm, setShowConfirm] = React.useState(false);
+  const [swipeStartX, setSwipeStartX] = React.useState<number | null>(null);
+  const [swiped, setSwiped] = React.useState(false);
+
+  // Obsługa gestu przesunięcia w lewo na mobile
+  function handleTouchStart(e: React.TouchEvent) {
+    if (!isMobile) return;
+    setSwipeStartX(e.touches[0].clientX);
+  }
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!isMobile || swipeStartX === null) return;
+    const deltaX = e.touches[0].clientX - swipeStartX;
+    if (deltaX < -60) setSwiped(true);
+    else setSwiped(false);
+  }
+  function handleTouchEnd() {
+    setSwipeStartX(null);
+    // Po puszczeniu palca, jeśli był swipe, pokaż przycisk kosza
+  }
+
+  function handleDeleteClick(e?: React.MouseEvent) {
+    setShowConfirm(true);
+    setSwiped(false);
+  }
+  async function handleConfirmDelete() {
+    setShowConfirm(false);
+    if (ingredient._id) {
+      try {
+        const res = await fetch("/api/master-ingredients", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: ingredient._id })
+        });
+        if (!res.ok) throw new Error("Delete failed");
+        if (onRemove) onRemove(ingredient._id); // usuń z UI
+      } catch (err) {
+        // Możesz dodać toast z błędem
+      }
+    } else {
+      if (onRemove) onRemove();
+    }
+  }
+  function handleCancelDelete() {
+    setShowConfirm(false);
+    setSwiped(false);
+  }
+
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 rounded-lg border transition-all duration-200",
+        "flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 relative",
         "bg-card/50 border-border/50",
         isDragging && "opacity-50 scale-95",
-        isInCart && "border-primary/30 bg-primary/5"
+        isInCart && "border-primary/30 bg-primary/5",
+        !isInCart && swiped && isMobile && "bg-destructive/10 border-destructive/40"
       )}
+      onTouchStart={!isInCart ? handleTouchStart : undefined}
+      onTouchMove={!isInCart ? handleTouchMove : undefined}
+      onTouchEnd={!isInCart ? handleTouchEnd : undefined}
     >
-      {/* GripVertical ikonka usunięta */}
-      
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground truncate">
           {ingredient.name}
@@ -72,7 +125,55 @@ export function IngredientItem({
         </span>
       </div>
 
-      {showQuantityControls && onQuantityChange ? (
+      {/* Ikona kosza i gest swipe tylko na Wszystkie składniki (nie w koszyku) */}
+      {!isInCart && onRemove && (
+        <>
+          {(isMobile ? swiped : true) && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDeleteClick}
+              className={cn(
+                "h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+              )}
+              aria-label={t("Delete ingredient")}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </>
+      )}
+
+      {/* Przerzucanie składników między listami */}
+      {onAdd && !isInCart && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onAdd}
+          className={cn(
+            "h-8 w-8 shrink-0 text-primary hover:text-primary hover:bg-primary/10"
+          )}
+          aria-label={t("Add to cart")}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      )}
+      {onRemove && isInCart && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          className={cn(
+            "h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+          )}
+          aria-label={t("Remove from cart")}
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+      )}
+
+      {/* Kontrolki ilości */}
+      {showQuantityControls && onQuantityChange && (
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -94,31 +195,21 @@ export function IngredientItem({
             <Plus className="h-3 w-3" />
           </Button>
         </div>
-      ) : (onAdd || onRemove ? (
-        isInCart ? (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onRemove}
-            className={cn(
-              "h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-            )}
-          >
-            <Minus className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onAdd}
-            className={cn(
-              "h-8 w-8 shrink-0 text-primary hover:text-primary hover:bg-primary/10"
-            )}
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
-        )
-      ) : null)}
+      )}
+
+      {/* Modal potwierdzenia usunięcia */}
+      <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("ingredient.delete_title", "Usuń składnik?")}</DialogTitle>
+            <DialogDescription>{t("ingredient.delete_confirm", "Czy na pewno chcesz usunąć ten składnik?")}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="destructive" onClick={handleConfirmDelete}>{t("ingredient.delete", "Usuń")}</Button>
+            <Button variant="outline" onClick={handleCancelDelete}>{t("ingredient.cancel", "Anuluj")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

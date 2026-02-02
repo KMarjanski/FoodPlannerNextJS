@@ -1,3 +1,17 @@
+import { deleteMasterIngredient } from "@/lib/recipes-data-service"
+
+export async function DELETE(req: Request) {
+  try {
+    const { id } = await req.json();
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
+    await deleteMasterIngredient(id);
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Error" }, { status: 500 });
+  }
+}
 
 import { NextResponse } from "next/server"
 import { fetchMasterIngredients, addMasterIngredient } from "@/lib/recipes-data-service"

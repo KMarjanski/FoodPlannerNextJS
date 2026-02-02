@@ -386,7 +386,11 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                         ingredient={ing}
                         isInCart={isInCart(key)}
                         onAdd={() => addToCart(ing)}
-                        onRemove={() => removeFromCart(key)}
+                        onRemove={(id) => {
+                          if (id) setIngredients(prev => prev.filter(i => i._id !== id));
+                          else removeFromCart(key);
+                        }}
+                        isMobile={isMobile}
                       />
                     );
                   })
@@ -470,6 +474,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                                 ingredient={item}
                                 onRemove={() => removeFromCart(key)}
                                 isInCart={true}
+                                isMobile={isMobile}
                               />
                             );
                           })}

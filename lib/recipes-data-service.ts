@@ -1,3 +1,7 @@
+export async function deleteMasterIngredient(id: string) {
+  await dbConnect();
+  await MasterIngredientModel.deleteOne({ _id: id });
+}
 import dbConnect from "./mongodb"
 import type { Recipe, Ingredient } from "./recipes-data"
 import mongoose from "mongoose"
