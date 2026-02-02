@@ -378,22 +378,24 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                     {t("No ingredients found")}
                   </div>
                 ) : (
-                  filteredIngredients.map((ing) => {
-                    const key = ing._id || ing.name;
-                    return (
-                      <IngredientItem
-                        key={key}
-                        ingredient={ing}
-                        isInCart={isInCart(key)}
-                        onAdd={() => addToCart(ing)}
-                        onRemove={(id) => {
-                          if (id) setIngredients(prev => prev.filter(i => i._id !== id));
-                          else removeFromCart(key);
-                        }}
-                        isMobile={isMobile}
-                      />
-                    );
-                  })
+                  [...filteredIngredients]
+                    .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+                    .map((ing) => {
+                      const key = ing._id || ing.name;
+                      return (
+                        <IngredientItem
+                          key={key}
+                          ingredient={ing}
+                          isInCart={isInCart(key)}
+                          onAdd={() => addToCart(ing)}
+                          onRemove={(id) => {
+                            if (id) setIngredients(prev => prev.filter(i => i._id !== id));
+                            else removeFromCart(key);
+                          }}
+                          isMobile={isMobile}
+                        />
+                      );
+                    })
                 )}
               </div>
             </CardContent>
