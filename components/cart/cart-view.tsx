@@ -71,10 +71,32 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
     setSaveMsg(null);
     setShowSaveMsg(false);
     try {
+      // Pobierz aktualny stan z API, aby zachować checked jeśli istnieje
+      let checkedMap: Record<string, boolean> = {};
+      try {
+        const res = await fetch("/api/cart");
+        const data = await res.json();
+        if (data.success && data.cart && Array.isArray(data.cart.items)) {
+          for (const item of data.cart.items) {
+            const key = item._id || item.id || item.name;
+            if (typeof item.checked === "boolean") checkedMap[key] = item.checked;
+          }
+        }
+      } catch {}
+
+      // Przygotuj dane do zapisu, zachowując checked jeśli istnieje
+      const itemsToSave = cartItems.map(item => {
+        const key = item._id || item.id || item.name;
+        return {
+          ...item,
+          checked: typeof checkedMap[key] === "boolean" ? checkedMap[key] : false,
+        };
+      });
+
       const res = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: cartItems }),
+        body: JSON.stringify({ items: itemsToSave }),
       });
       const data = await res.json();
       if (data.success) {
@@ -360,7 +382,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                <div className="space-y-4 max-h-[610px] overflow-y-auto pr-2">
                   {Object.entries(groupedCartItems).map(([category, items]) => {
                     if (items.length === 0) return null
                     const categoryLabel = ingredientCategories.find(

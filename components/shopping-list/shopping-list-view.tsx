@@ -220,12 +220,29 @@ export function ShoppingListView() {
       const updated = prev.map((item) =>
         item.id === id ? { ...item, checked: !item.checked } : item
       );
-      // Zapisz do API
-      fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: updated }),
-      });
+      // Pobierz aktualny stan z API, zaktualizuj tylko checked
+      (async () => {
+        try {
+          const res = await fetch('/api/cart');
+          const data = await res.json();
+          if (data.success && data.cart && Array.isArray(data.cart.items)) {
+            const itemsFromApi = data.cart.items;
+            // Zaktualizuj checked tylko dla danego id
+            const itemsToSave = itemsFromApi.map((item: any) => {
+              const key = item._id || item.id || item.name;
+              if (key === id) {
+                return { ...item, checked: !item.checked };
+              }
+              return item;
+            });
+            await fetch('/api/cart', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items: itemsToSave }),
+            });
+          }
+        } catch {}
+      })();
       return updated;
     });
   }
