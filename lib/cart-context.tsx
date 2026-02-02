@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useCallback } from "react"
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react"
 import type { Ingredient } from "./types"
 
 export interface CartItem extends Ingredient {
@@ -20,6 +20,21 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+
+  // Pobierz koszyk z API przy starcie
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/cart");
+        const data = await res.json();
+        if (data.success && data.cart && Array.isArray(data.cart.items)) {
+          setCartItems(data.cart.items);
+        }
+      } catch (e) {
+        // błąd pobierania koszyka ignorujemy
+      }
+    })();
+  }, []);
 
   const addToCart = useCallback((ingredient: Ingredient & { _id?: string }) => {
     setCartItems((prev) => {

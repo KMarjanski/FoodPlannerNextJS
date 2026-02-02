@@ -56,7 +56,7 @@ export function IngredientItem({
         isInCart && "border-primary/30 bg-primary/5"
       )}
     >
-      <GripVertical className="h-4 w-4 text-muted-foreground/50 cursor-grab active:cursor-grabbing shrink-0" />
+      {/* GripVertical ikonka usunięta */}
       
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground truncate">
@@ -94,21 +94,31 @@ export function IngredientItem({
             <Plus className="h-3 w-3" />
           </Button>
         </div>
-      ) : (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={isInCart ? onRemove : onAdd}
-          className={cn(
-            "h-8 w-8 shrink-0",
-            isInCart
-              ? "text-destructive hover:text-destructive hover:bg-destructive/10"
-              : "text-primary hover:text-primary hover:bg-primary/10"
-          )}
-        >
-          {isInCart ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-        </Button>
-      )}
+      ) : (onAdd || onRemove ? (
+        isInCart ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onRemove}
+            className={cn(
+              "h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+            )}
+          >
+            <Minus className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onAdd}
+            className={cn(
+              "h-8 w-8 shrink-0 text-primary hover:text-primary hover:bg-primary/10"
+            )}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        )
+      ) : null)}
     </div>
   )
 }

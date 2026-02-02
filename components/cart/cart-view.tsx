@@ -1,4 +1,5 @@
-"use client"
+
+"use client";
 
 import { useState, useMemo, useRef, useEffect } from "react"
 import {
@@ -28,6 +29,50 @@ interface CartContentProps {
   ingredients: Ingredient[]
 }
 function CartContent({ ingredients }: CartContentProps) {
+    const [saving, setSaving] = useState(false);
+    const [saveMsg, setSaveMsg] = useState<string | null>(null);
+    // showSaveMsg: false | true | 'fading'
+    const [showSaveMsg, setShowSaveMsg] = useState<false | true | 'fading'>(false);
+    async function handleSaveCart() {
+      setSaving(true);
+      setSaveMsg(null);
+      setShowSaveMsg(false);
+      try {
+        const res = await fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: cartItems }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setSaveMsg(t("Cart saved!"));
+          setShowSaveMsg(true);
+        } else {
+          setSaveMsg("Błąd zapisu: " + (data.error || ""));
+          setShowSaveMsg(true);
+        }
+      } catch (e: any) {
+        setSaveMsg("Błąd zapisu: " + (e.message || ""));
+      } finally {
+        setSaving(false);
+      }
+    }
+  // Fade out komunikatu: najpierw 1s pełna widoczność, potem 1.2s ease-in do 0, potem usunięcie
+  useEffect(() => {
+    if (showSaveMsg === true) {
+      const fadeTimeout = setTimeout(() => setShowSaveMsg('fading'), 1000); // po 1s zaczyna znikać
+      return () => clearTimeout(fadeTimeout);
+    }
+    if (showSaveMsg === 'fading') {
+      // po zakończeniu animacji fade-out (1200ms), ustaw na false
+      const removeTimeout = setTimeout(() => {
+        setShowSaveMsg(false);
+        setSaveMsg(null);
+      }, 1200);
+      return () => clearTimeout(removeTimeout);
+    }
+  }, [showSaveMsg]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, isInCart } = useCart();
@@ -100,6 +145,22 @@ function CartContent({ ingredients }: CartContentProps) {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSaveCart}
+                disabled={cartItems.length === 0 || saving}
+                className="mr-2"
+              >
+                {saving ? t("Saving...") : t("Save cart")}
+              </Button>
+              {(showSaveMsg === true || showSaveMsg === 'fading') && (
+                <span
+                  className={`text-xs ml-2 text-muted-foreground transition-opacity ${showSaveMsg === true ? 'opacity-100 duration-0' : showSaveMsg === 'fading' ? 'opacity-0 duration-[1200ms] ease-in' : 'opacity-0 duration-200'}`}
+                >
+                  {saveMsg}
+                </span>
+              )}
               <Badge
                 variant="secondary"
                 className="text-sm py-1.5 px-3 bg-secondary/80"
@@ -227,14 +288,6 @@ function CartContent({ ingredients }: CartContentProps) {
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <ShoppingCart className="h-4 w-4 text-primary" />
                   {t("Shopping Cart")}
-                  {cartItems.length > 0 && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-2 text-xs bg-primary/15 text-primary"
-                    >
-                      {totalItems}
-                    </Badge>
-                  )}
                 </CardTitle>
                 {cartItems.length > 0 && (
                   <Button
@@ -279,11 +332,8 @@ function CartContent({ ingredients }: CartContentProps) {
                             <IngredientItem
                               key={item._id ?? item.name}
                               ingredient={item}
-                              quantity={item.quantity}
-                              showQuantityControls
-                              onQuantityChange={(qty) =>
-                                updateQuantity(item._id ?? item.name, qty)
-                              }
+                              onRemove={() => removeFromCart(item._id ?? item.name)}
+                              isInCart={true}
                             />
                           ))}
                         </div>
