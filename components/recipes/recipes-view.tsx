@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 
-import { Plus, Search, Filter, Grid3X3, List } from "lucide-react"
+import { Plus, Search, Filter, Grid3X3, List, ChefHat } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -116,7 +116,10 @@ export function RecipesView() {
           <div className="px-6 py-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-xl font-semibold text-foreground">{t('Recipes')}</h1>
+                <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                  <ChefHat className="h-5 w-5 text-primary" />
+                  {t('Recipes')}
+                </h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
                   {filteredRecipes.length} {t('recipes available')}
                 </p>
