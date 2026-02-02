@@ -48,6 +48,7 @@ interface DayEditModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   dayMeals: DayMealsRecipes | null
+  weekLabel?: string
   onSave: (dayMeals: DayMealsRecipes) => void
 }
 
@@ -332,6 +333,7 @@ export function DayEditModal({
   open,
   onOpenChange,
   dayMeals,
+  weekLabel,
   onSave,
 }: DayEditModalProps) {
   const [editedMeals, setEditedMeals] = useState<DayMealsRecipes | null>(null)
@@ -403,8 +405,13 @@ export function DayEditModal({
                 <Utensils className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-lg font-semibold text-foreground">
+                <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                   {t(editedMeals.day)}
+                  {weekLabel && (
+                    <span className="text-xs font-normal text-muted-foreground bg-secondary/50 rounded px-2 py-0.5 ml-2">
+                      {weekLabel}
+                    </span>
+                  )}
                 </DialogTitle>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {t('Plan your meals for the day')}
@@ -417,10 +424,7 @@ export function DayEditModal({
             {/* TODO: Replace EditableMealList with a RecipeEditableMealList that works with Recipe[] */}
           </div>
 
-          <div className="px-6 py-4 border-t border-border/50 bg-secondary/20 flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">
-              {t('Cmd/Ctrl + S to save')}
-            </span>
+          <div className="px-6 py-4 border-t border-border/50 bg-secondary/20 flex items-center justify-end">
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"

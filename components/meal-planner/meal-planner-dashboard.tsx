@@ -54,6 +54,7 @@ export function MealPlannerDashboard() {
     }, [])
   const [activeWeek, setActiveWeek] = useState(mealData[0]?.id || "week-1")
   const [editingDay, setEditingDay] = useState<DayMealsRecipes | null>(null)
+  const [editingWeekLabel, setEditingWeekLabel] = useState<string>("")
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   // Generate weeks based on setting
@@ -79,8 +80,17 @@ export function MealPlannerDashboard() {
 
   const handleEditDay = useCallback((day: DayMealsRecipes) => {
     setEditingDay(day)
+    // znajdź tydzień, do którego należy ten dzień
+    const week = displayedWeeks.find(w => w.days.some(d => d.day === day.day))
+    // tłumacz label tygodnia
+    let label = week ? week.label : ""
+    if (label.startsWith("Week ")) {
+      const nr = label.replace("Week ", "")
+      label = `${t('Week')} ${nr}`
+    }
+    setEditingWeekLabel(label)
     setIsEditModalOpen(true)
-  }, [])
+  }, [displayedWeeks, t])
 
   const handleSaveDay = useCallback((updatedDay: DayMealsRecipes) => {
     setMealData((prevData) =>
@@ -137,6 +147,7 @@ export function MealPlannerDashboard() {
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         dayMeals={editingDay}
+        weekLabel={editingWeekLabel}
         onSave={handleSaveDay}
       />
     </AppLayout>
