@@ -1,4 +1,5 @@
 
+
 import { ShoppingListView } from "@/components/shopping-list/shopping-list-view"
 import { AppLayout } from "@/components/meal-planner/app-layout"
 

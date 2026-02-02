@@ -93,7 +93,11 @@ export function AddRecipeModal({
   const filteredIngredients = masterIngredients.filter(
     (ing) =>
       ing.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !ingredients.some((i) => i.name === ing.name)
+      !ingredients.some((i) => i.name === ing.name) &&
+      ing.category !== 'Chemia' &&
+      ing.category !== 'household' &&
+      ing.category.toLowerCase() !== 'chemia' &&
+      ing.category.toLowerCase() !== 'household'
   )
 
   const handleAddIngredient = useCallback((ingredient: Ingredient) => {
@@ -167,7 +171,7 @@ export function AddRecipeModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col bg-card border-border/50 shadow-2xl p-0 gap-0"
+        className="max-w-2xl min-h-[800px] max-h-[99vh] overflow-hidden flex flex-col bg-card border-border/50 shadow-2xl p-0 gap-0"
         onKeyDown={handleKeyDown}
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50">
@@ -361,10 +365,7 @@ export function AddRecipeModal({
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-border/50 flex items-center justify-between bg-secondary/10">
-          <span className="text-[10px] text-muted-foreground">
-            {t('Cmd/Ctrl + S to save')}
-          </span>
+        <div className="px-6 py-4 border-t border-border/50 flex items-center justify-end bg-secondary/10">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -377,7 +378,7 @@ export function AddRecipeModal({
             <Button
               size="sm"
               onClick={handleSave}
-              disabled={!name.trim()}
+              disabled={name.trim().length < 3 || ingredients.length < 2}
               className="h-8 px-4 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Check className="h-3.5 w-3.5 mr-1.5" />

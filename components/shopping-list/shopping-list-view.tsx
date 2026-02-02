@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import {
   Check,
   ChevronDown,
@@ -17,7 +17,8 @@ import { ingredientCategories } from "@/lib/recipes-data"
 import type { IngredientCategory } from "@/lib/types"
 import { t } from "i18next"
 
-interface ShoppingItem {
+
+export interface ShoppingItem {
   id: string
   name: string
   quantity: number
@@ -154,8 +155,32 @@ function CategorySection({
   )
 }
 
+
+// ...existing code...
+
 export function ShoppingListView() {
   const [items, setItems] = useState<ShoppingItem[]>([])
+
+  useEffect(() => {
+    async function fetchCart() {
+      try {
+        const res = await fetch("/api/cart")
+        const data = await res.json()
+        if (data.success && data.cart && Array.isArray(data.cart.items)) {
+          setItems(
+            data.cart.items.map((item: any) => ({
+              id: item._id || item.id || item.name,
+              name: item.name,
+              quantity: item.quantity || 1,
+              category: item.category,
+              checked: false,
+            }))
+          )
+        }
+      } catch {}
+    }
+    fetchCart()
+  }, [])
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set(ingredientCategories.map((c) => c.value))
   )
@@ -219,79 +244,74 @@ export function ShoppingListView() {
   }
 
   return (
-    <AppLayout>
-      <div className="min-h-screen bg-background">
-        {/* Sticky Header */}
-        <header className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-10">
-          <div className="px-6 py-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <ListChecks className="h-5 w-5 text-primary" />
-                  {t('Shopping List')}
-                </h1>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {completedItems} of {totalItems} {t('items completed')}
-                </p>
-              </div>
-
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                <span>{t('Progress')}</span>
-                <span>{Math.round(progress)}%</span>
-              </div>
-              <div className="h-2 rounded-full bg-secondary/50 overflow-hidden">
-                <div
-                  className="h-full bg-primary transition-all duration-500 ease-out"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+    <div className="min-h-screen bg-background">
+      {/* Sticky Header */}
+      <header className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-10">
+        <div className="px-6 py-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-primary" />
+                {t('Shopping List')}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {completedItems} of {totalItems} {t('items completed')}
+              </p>
             </div>
           </div>
-        </header>
-
-        <main className="px-6 py-6">
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-20 h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
-                <ShoppingBag className="h-10 w-10 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">
-                {t('Your list is empty')}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                {t('Add items from the cart builder to get started')}
-              </p>
-              <Button
-                variant="default"
-                onClick={() => (window.location.href = "/koszyk")}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                {t('Go to Cart')}
-              </Button>
+          {/* Progress Bar */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+              <span>{t('Progress')}</span>
+              <span>{Math.round(progress)}%</span>
             </div>
-          ) : (
-            <div className="space-y-4 max-w-2xl mx-auto">
-              {Object.entries(groupedItems).map(([category, categoryItems]) => {
-                if (categoryItems.length === 0) return null
-                return (
-                  <CategorySection
-                    key={category}
-                    category={category as IngredientCategory}
-                    items={categoryItems}
-                    onToggleItem={handleToggleItem}
-                    isExpanded={expandedCategories.has(category)}
-                    onToggleExpand={() => handleToggleCategory(category)}
-                  />
-                )
-              })}
+            <div className="h-2 rounded-full bg-secondary/50 overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
             </div>
-          )}
-        </main>
-      </div>
-    </AppLayout>
+          </div>
+        </div>
+      </header>
+      <main className="px-6 py-6">
+        {items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-20 h-20 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
+              <ShoppingBag className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              {t('Your list is empty')}
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {t('Add items from the cart builder to get started')}
+            </p>
+            <Button
+              variant="default"
+              onClick={() => (window.location.href = "/koszyk")}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {t('Go to Cart')}
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4 max-w-2xl mx-auto">
+            {Object.entries(groupedItems).map(([category, categoryItems]) => {
+              if (categoryItems.length === 0) return null
+              return (
+                <CategorySection
+                  key={category}
+                  category={category as IngredientCategory}
+                  items={categoryItems}
+                  onToggleItem={handleToggleItem}
+                  isExpanded={expandedCategories.has(category)}
+                  onToggleExpand={() => handleToggleCategory(category)}
+                />
+              )
+            })}
+          </div>
+        )}
+      </main>
+    </div>
   )
 }
