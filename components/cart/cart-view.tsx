@@ -35,9 +35,10 @@ function polishItemLabel(count: number) {
 interface CartContentProps {
   ingredients: Ingredient[]
 }
-function CartContent({ ingredients }: CartContentProps) {
+function CartContent({ ingredients: initialIngredients }: CartContentProps) {
   // HOOKS: useIsMobile musi być zawsze na górze!
   const isMobile = useIsMobile();
+  const [ingredients, setIngredients] = useState<Ingredient[]>(initialIngredients);
   const [lastSavedCart, setLastSavedCart] = useState<any>(null);
   // Pobierz ostatni koszyk z bazy przy starcie
   useEffect(() => {
@@ -107,6 +108,11 @@ function CartContent({ ingredients }: CartContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, isInCart } = useCart();
+
+  // Synchronizuj ingredients po każdej zmianie koszyka, by wymusić rerender i poprawne zaznaczenie
+  useEffect(() => {
+    setIngredients((prev) => [...prev]);
+  }, [cartItems]);
   const filteredIngredients = useMemo(() => {
     return ingredients.filter((ing) => {
       const matchesSearch = ing.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -302,15 +308,18 @@ function CartContent({ ingredients }: CartContentProps) {
                     {t("No ingredients found")}
                   </div>
                 ) : (
-                  filteredIngredients.map((ing) => (
-                    <IngredientItem
-                      key={ing._id ?? ing.name}
-                      ingredient={ing}
-                      isInCart={isInCart(ing._id ?? ing.name)}
-                      onAdd={() => addToCart(ing)}
-                      onRemove={() => removeFromCart(ing._id ?? ing.name)}
-                    />
-                  ))
+                  filteredIngredients.map((ing) => {
+                    const key = ing._id || ing.name;
+                    return (
+                      <IngredientItem
+                        key={key}
+                        ingredient={ing}
+                        isInCart={isInCart(key)}
+                        onAdd={() => addToCart(ing)}
+                        onRemove={() => removeFromCart(key)}
+                      />
+                    );
+                  })
                 )}
               </div>
             </CardContent>
@@ -363,14 +372,17 @@ function CartContent({ ingredients }: CartContentProps) {
                           {t(categoryLabel ?? "")}
                         </h4>
                         <div className="space-y-2">
-                          {items.map((item) => (
-                            <IngredientItem
-                              key={item._id ?? item.name}
-                              ingredient={item}
-                              onRemove={() => removeFromCart(item._id ?? item.name)}
-                              isInCart={true}
-                            />
-                          ))}
+                          {items.map((item) => {
+                            const key = item._id || item.name;
+                            return (
+                              <IngredientItem
+                                key={key}
+                                ingredient={item}
+                                onRemove={() => removeFromCart(key)}
+                                isInCart={true}
+                              />
+                            );
+                          })}
                         </div>
                       </div>
                     )

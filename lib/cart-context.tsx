@@ -36,18 +36,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
+  const getIngredientKey = (ingredient: Ingredient & { _id?: string }) => ingredient._id || ingredient.name;
+
   const addToCart = useCallback((ingredient: Ingredient & { _id?: string }) => {
     setCartItems((prev) => {
-      const id = ingredient._id || '';
-      const existing = prev.find((item) => item._id === id);
+      const key = ingredient._id || ingredient.name;
+      const existing = prev.find((item) => (item._id || item.name) === key);
       if (existing) {
-        return prev.map((item) =>
-          item._id === id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+        // Nie dodawaj ponownie, nie zwiększaj quantity, tylko ignoruj
+        return prev;
       }
-      return [...prev, { ...ingredient, _id: id, quantity: 1 }];
+      return [...prev, { ...ingredient, _id: ingredient._id || ingredient.name, quantity: 1 }];
     });
   }, []);
 
@@ -70,7 +69,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const isInCart = useCallback(
-    (id: string) => cartItems.some((item) => item._id === id),
+    (id: string) => cartItems.some((item) => (item._id || item.name) === id),
     [cartItems]
   );
 

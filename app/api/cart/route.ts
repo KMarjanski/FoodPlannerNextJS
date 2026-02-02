@@ -18,8 +18,13 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
     const collection = await getCartCollection();
-    const result = await collection.insertOne({ ...data, createdAt: new Date() });
-    return NextResponse.json({ success: true, id: result.insertedId });
+    // Upsert: zawsze jeden dokument w kolekcji
+    const result = await collection.updateOne(
+      {},
+      { $set: { ...data, updatedAt: new Date() } },
+      { upsert: true }
+    );
+    return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ success: false, error: error?.toString() });
   }

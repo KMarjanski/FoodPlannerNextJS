@@ -173,7 +173,7 @@ export function ShoppingListView() {
               name: item.name,
               quantity: item.quantity || 1,
               category: item.category,
-              checked: false,
+              checked: typeof item.checked === 'boolean' ? item.checked : false,
             }))
           )
         }
@@ -215,12 +215,19 @@ export function ShoppingListView() {
   const completedItems = items.filter((item) => item.checked).length
   const progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0
 
-  const handleToggleItem = (id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
+  const handleToggleItem = async (id: string) => {
+    setItems((prev) => {
+      const updated = prev.map((item) =>
         item.id === id ? { ...item, checked: !item.checked } : item
-      )
-    )
+      );
+      // Zapisz do API
+      fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: updated }),
+      });
+      return updated;
+    });
   }
 
   const handleToggleCategory = (category: string) => {
