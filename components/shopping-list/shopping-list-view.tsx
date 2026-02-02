@@ -24,6 +24,7 @@ export interface ShoppingItem {
   quantity: number
   category: IngredientCategory
   checked: boolean
+  recipes?: string[]
 }
 
 const categoryColors: Record<IngredientCategory, string> = {
@@ -53,42 +54,60 @@ interface ShoppingItemRowProps {
 
 function ShoppingItemRow({ item, onToggle }: ShoppingItemRowProps) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={cn(
-        "w-full flex items-center gap-4 p-4 rounded-lg border transition-all duration-200",
-        "bg-card/30 border-border/30 hover:border-primary/30",
-        item.checked && "opacity-60"
+    <div className="relative group">
+      <button
+        type="button"
+        onClick={onToggle}
+        className={cn(
+          "w-full flex items-center gap-4 p-4 rounded-lg border transition-all duration-200",
+          "bg-card/30 border-border/30 hover:border-primary/30",
+          item.checked && "opacity-60"
+        )}
+      >
+        <div
+          className={cn(
+            "flex items-center justify-center h-6 w-6 rounded-md border-2 transition-all duration-200 shrink-0",
+            item.checked
+              ? "bg-primary border-primary"
+              : "border-border/50 hover:border-primary/50"
+          )}
+        >
+          {item.checked && <Check className="h-4 w-4 text-primary-foreground" />}
+        </div>
+        <span
+          className={cn(
+            "flex-1 text-left text-sm font-medium transition-all duration-200",
+            item.checked ? "text-muted-foreground line-through" : "text-foreground"
+          )}
+        >
+          {item.name}
+        </span>
+        <Badge
+          variant="secondary"
+          className="text-xs bg-secondary/80 text-secondary-foreground"
+        >
+          {item.quantity}
+        </Badge>
+      </button>
+      {item.recipes && item.recipes.length > 0 && (
+        <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden group-hover:block bg-popover text-popover-foreground border border-border rounded shadow-lg px-3 py-2 text-xs min-w-[180px] max-w-xs whitespace-pre-wrap">
+          <div className="font-semibold mb-1">Przepisy:</div>
+          {(() => {
+            // Zlicz wystąpienia każdego przepisu
+            const counts: Record<string, number> = {};
+            item.recipes.forEach((r: string) => {
+              counts[r] = (counts[r] || 0) + 1;
+            });
+            // Wyświetl unikalne przepisy z liczbą powtórzeń
+            return Object.entries(counts).map(([r, count]) => (
+              <div key={r}>
+                {r} {count > 1 ? <span className="text-muted-foreground">x{count}</span> : null}
+              </div>
+            ));
+          })()}
+        </div>
       )}
-    >
-      <div
-        className={cn(
-          "flex items-center justify-center h-6 w-6 rounded-md border-2 transition-all duration-200 shrink-0",
-          item.checked
-            ? "bg-primary border-primary"
-            : "border-border/50 hover:border-primary/50"
-        )}
-      >
-        {item.checked && <Check className="h-4 w-4 text-primary-foreground" />}
-      </div>
-
-      <span
-        className={cn(
-          "flex-1 text-left text-sm font-medium transition-all duration-200",
-          item.checked ? "text-muted-foreground line-through" : "text-foreground"
-        )}
-      >
-        {item.name}
-      </span>
-
-      <Badge
-        variant="secondary"
-        className="text-xs bg-secondary/80 text-secondary-foreground"
-      >
-        {item.quantity}
-      </Badge>
-    </button>
+    </div>
   )
 }
 
@@ -164,24 +183,25 @@ export function ShoppingListView() {
   const [items, setItems] = useState<ShoppingItem[]>([])
 
   useEffect(() => {
-    async function fetchCart() {
+    async function fetchShoppingList() {
       try {
-        const res = await fetch("/api/cart")
+        const res = await fetch("/api/shopping-list")
         const data = await res.json()
-        if (data.success && data.cart && Array.isArray(data.cart.items)) {
+        if (data.success && Array.isArray(data.items)) {
           setItems(
-            data.cart.items.map((item: any) => ({
-              id: item._id || item.id || item.name,
+            data.items.map((item: any) => ({
+              id: item.name, // name as unique id
               name: item.name,
-              quantity: item.quantity || 1,
+              quantity: item.count,
               category: item.category,
-              checked: typeof item.checked === 'boolean' ? item.checked : false,
+              checked: false,
+              recipes: item.recipes || [],
             }))
           )
         }
       } catch {}
     }
-    fetchCart()
+    fetchShoppingList()
   }, [])
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set(ingredientCategories.map((c) => c.value))
@@ -206,48 +226,24 @@ export function ShoppingListView() {
       sweets: [],
       snacks: [],
       household: [],
-    }
-    items.forEach((item) => {
-      groups[item.category].push(item)
-    })
-    return groups
-  }, [items])
-
-  const totalItems = items.length
-  const completedItems = items.filter((item) => item.checked).length
-  const progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0
-
-  const handleToggleItem = async (id: string) => {
-    setItems((prev) => {
-      const updated = prev.map((item) =>
-        item.id === id ? { ...item, checked: !item.checked } : item
-      );
-      // Pobierz aktualny stan z API, zaktualizuj tylko checked
-      (async () => {
-        try {
-          const res = await fetch('/api/cart');
-          const data = await res.json();
-          if (data.success && data.cart && Array.isArray(data.cart.items)) {
-            const itemsFromApi = data.cart.items;
-            // Zaktualizuj checked tylko dla danego id
-            const itemsToSave = itemsFromApi.map((item: any) => {
-              const key = item._id || item.id || item.name;
-              if (key === id) {
-                return { ...item, checked: !item.checked };
-              }
-              return item;
-            });
-            await fetch('/api/cart', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ items: itemsToSave }),
-            });
-          }
-        } catch {}
-      })();
-      return updated;
+    };
+    items.forEach((item: ShoppingItem) => {
+      groups[item.category].push(item);
     });
-  }
+    return groups;
+  }, [items]);
+
+  const totalItems: number = items.length;
+  const completedItems: number = items.filter((item: ShoppingItem) => item.checked).length;
+  const progress: number = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+
+  const handleToggleItem = (id: string) => {
+    setItems((prev: ShoppingItem[]) =>
+      prev.map((item: ShoppingItem) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
+  };
 
   const handleToggleCategory = (category: string) => {
     setExpandedCategories((prev) => {
