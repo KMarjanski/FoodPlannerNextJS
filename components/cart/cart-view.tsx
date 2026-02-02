@@ -35,6 +35,29 @@ interface CartContentProps {
   ingredients: Ingredient[]
 }
 function CartContent({ ingredients }: CartContentProps) {
+      const [lastSavedCart, setLastSavedCart] = useState<any>(null);
+      // Pobierz ostatni koszyk z bazy przy starcie
+      useEffect(() => {
+        (async () => {
+          try {
+            const res = await fetch("/api/cart");
+            const data = await res.json();
+            if (data.success && data.cart && Array.isArray(data.cart.items)) {
+              setLastSavedCart(data.cart.items);
+            }
+          } catch {}
+        })();
+      }, []);
+
+      // Porównanie koszyków (bez kolejności)
+      function areCartsEqual(a: any[], b: any[]): boolean {
+        if (!Array.isArray(a) || !Array.isArray(b)) return false;
+        if (a.length !== b.length) return false;
+        const sortFn = (x: any) => (x._id || x.name) + ":" + x.quantity;
+        const arrA = [...a].map(sortFn).sort();
+        const arrB = [...b].map(sortFn).sort();
+        return arrA.every((v, i) => v === arrB[i]);
+      }
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState<string | null>(null);
     // showSaveMsg: false | true | 'fading'
@@ -155,7 +178,7 @@ function CartContent({ ingredients }: CartContentProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleSaveCart}
-                disabled={cartItems.length === 0 || saving}
+                disabled={cartItems.length === 0 || saving || areCartsEqual(cartItems, lastSavedCart)}
                 className="mr-2"
               >
                 {saving ? t("Saving...") : t("Save cart")}
