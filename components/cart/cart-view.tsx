@@ -212,7 +212,7 @@ function CartContent({ ingredients }: CartContentProps) {
           </div>
         </div>
       </header>
-
+      <main className="px-6 py-6">
       <div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* All Ingredients Column */}
@@ -375,6 +375,7 @@ function CartContent({ ingredients }: CartContentProps) {
           </Card>
         </div>
       </div>
+      </main>
     </>
 
   )
