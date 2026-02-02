@@ -117,11 +117,11 @@ export function RecipesView() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <ChefHat className="h-5 w-5 text-primary" />
-                  {t('Recipes')}
+                  {typeof window !== 'undefined' && window.innerWidth < 768 ? null : <ChefHat className="h-5 w-5 text-primary" />}
+                  <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t('Recipes')}</span>
                 </h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  {filteredRecipes.length} {t('recipes available')}
+                  <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{filteredRecipes.length} {t('recipes available')}</span>
                 </p>
               </div>
               <Button

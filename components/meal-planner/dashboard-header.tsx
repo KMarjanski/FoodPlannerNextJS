@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Settings, CalendarDays } from "lucide-react"
+import { useIsMobile } from '@/hooks/use-mobile'
 import { Button } from "@/components/ui/button"
 import { SettingsModal } from "@/components/settings/settings-modal"
 import { useSettings } from "@/lib/settings-context"
@@ -10,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "
 export function DashboardHeader() {
   const { t } = useSettings()
   const [open, setOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   const handleReset = () => {
     const event = new CustomEvent('resetAllDays')
@@ -23,11 +25,11 @@ export function DashboardHeader() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-              <CalendarDays className="h-5 w-5 text-primary" />
-              {t('Weekly Meal Planner')}
+              {!isMobile && <CalendarDays className="h-5 w-5 text-primary" />}
+              <span className={isMobile ? 'ml-14' : ''}>{t('Weekly Meal Planner')}</span>
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {t('Plan your meals for the week')}
+              <span className={isMobile ? 'ml-14' : ''}>{t('Plan your meals for the week')}</span>
             </p>
           </div>
           <Button

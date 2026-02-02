@@ -67,7 +67,8 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void
 }) {
   const isMobile = useIsMobile()
-  const [openMobile, setOpenMobile] = React.useState(false)
+  // Domyślnie chowaj navbar na urządzeniach mobilnych
+  const [openMobile, setOpenMobile] = React.useState(() => (isMobile ? false : true))
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -181,6 +182,8 @@ function Sidebar({
   }
 
   if (isMobile) {
+    // Sidebar is hidden by default on mobile, only show if openMobile is true
+    if (!openMobile) return null;
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent

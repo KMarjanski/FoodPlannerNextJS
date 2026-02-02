@@ -198,11 +198,11 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5 text-primary" />
-                {t("Cart Builder")}
+                {typeof window !== 'undefined' && window.innerWidth < 768 ? null : <ShoppingCart className="h-5 w-5 text-primary" />}
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t("Cart Builder")}</span>
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {t("Build your shopping cart from available ingredients")}
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t("Build your shopping cart from available ingredients")}</span>
               </p>
             </div>
             <div className="flex items-center gap-3">

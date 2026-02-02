@@ -15,12 +15,15 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [sidebarHidden, setSidebarHidden] = useState(false)
+  const [sidebarHidden, setSidebarHidden] = useState(isMobile)
 
-  // Always collapse sidebar on mobile
+  // Always hide sidebar on mobile
   React.useEffect(() => {
     if (isMobile) {
       setSidebarCollapsed(true)
+      setSidebarHidden(true)
+    } else {
+      setSidebarHidden(false)
     }
   }, [isMobile])
 

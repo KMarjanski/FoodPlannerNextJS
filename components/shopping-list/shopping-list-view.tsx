@@ -340,11 +340,11 @@ export function ShoppingListView() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                <ListChecks className="h-5 w-5 text-primary" />
-                {t('Shopping List')}
+                {typeof window !== 'undefined' && window.innerWidth < 768 ? null : <ListChecks className="h-5 w-5 text-primary" />}
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t('Shopping List')}</span>
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {t('shoppingList.completed_count', { count: completedItems, total: totalItems, defaultValue: `${completedItems} z ${totalItems} ukończonych` })}
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t('shoppingList.completed_count', { count: completedItems, total: totalItems, defaultValue: `${completedItems} z ${totalItems} ukończonych` })}</span>
               </p>
             </div>
           </div>
