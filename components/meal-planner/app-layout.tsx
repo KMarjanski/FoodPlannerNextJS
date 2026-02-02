@@ -15,6 +15,7 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarHidden, setSidebarHidden] = useState(false)
 
   // Always collapse sidebar on mobile
   React.useEffect(() => {
@@ -29,11 +30,17 @@ export function AppLayout({ children }: AppLayoutProps) {
         <AppSidebar
           collapsed={isMobile ? true : sidebarCollapsed}
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+          hidden={sidebarHidden}
+          setHidden={setSidebarHidden}
         />
         <main
           className={cn(
             "transition-all duration-300 ease-out",
-            (isMobile || sidebarCollapsed) ? "ml-[72px]" : "ml-[240px]"
+            sidebarHidden
+              ? "ml-0"
+              : (isMobile || sidebarCollapsed)
+                ? "ml-[72px]"
+                : "ml-[240px]"
           )}
         >
           {children}

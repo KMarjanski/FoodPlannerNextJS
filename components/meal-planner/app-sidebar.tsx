@@ -41,12 +41,25 @@ const navItems: NavItem[] = [
 interface AppSidebarProps {
   collapsed: boolean
   onToggle: () => void
+  hidden?: boolean
+  setHidden?: (v: boolean) => void
 }
 
-export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
+export function AppSidebar({ collapsed, onToggle, hidden = false, setHidden }: AppSidebarProps) {
   const pathname = usePathname()
   const { t } = useSettings()
   const [settingsOpen, setSettingsOpen] = React.useState(false)
+
+  if (hidden) {
+    // Półprzezroczyste logo do przywracania sidebaru
+    return (
+      <div className="fixed left-2 top-2 z-50 cursor-pointer opacity-50 hover:opacity-90 transition-opacity" onClick={() => setHidden && setHidden(false)}>
+        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg">
+          <EggplantIcon className="w-8 h-8" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -61,7 +74,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
         )}
       >
         {/* Logo Section */}
-        <Link href="/" className="flex items-center gap-3 px-4 h-16 border-b border-border/50 hover:bg-accent/20 transition-colors">
+        <div className="flex items-center gap-3 px-4 h-16 border-b border-border/50 hover:bg-accent/20 transition-colors cursor-pointer" onClick={() => setHidden && setHidden(true)}>
           <div className="relative flex-shrink-0">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg">
               {/* Eggplant SVG Icon */}
@@ -79,7 +92,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
               {t('MealPlan')}
             </span>
           </div>
-        </Link>
+        </div>
 
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1">
