@@ -25,6 +25,12 @@ type IngredientCategory = (typeof ingredientCategories)[number]["value"];
 
 import type { Ingredient } from "@/lib/types"
 import { t } from "i18next"
+
+function polishItemLabel(count: number) {
+  if (count === 1) return "przedmiot";
+  if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) return "przedmioty";
+  return "przedmiotów";
+}
 interface CartContentProps {
   ingredients: Ingredient[]
 }
@@ -166,7 +172,7 @@ function CartContent({ ingredients }: CartContentProps) {
                 className="text-sm py-1.5 px-3 bg-secondary/80"
               >
                 <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
-                {totalItems} {t("items")}
+                {totalItems} {polishItemLabel(totalItems)}
               </Badge>
               {cartItems.length > 0 && (
                 <Button
