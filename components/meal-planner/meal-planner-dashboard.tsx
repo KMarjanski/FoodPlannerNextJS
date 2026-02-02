@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useMemo, useEffect } from "react"
+import { useIsMobile } from "@/components/ui/use-mobile"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 // Pobieranie danych przez API
 import type { Recipe } from "@/lib/recipes-data"
@@ -42,6 +43,7 @@ function generateEmptyWeek(weekNumber: number): WeekDataRecipes {
 
 export function MealPlannerDashboard() {
   const { weeksCount, t } = useSettings()
+  const isMobile = useIsMobile()
   const [mealData, setMealData] = useState<WeekDataRecipes[]>([])
     // Pobierz dane z API na start
     useEffect(() => {
@@ -95,30 +97,42 @@ export function MealPlannerDashboard() {
     <AppLayout>
       <div className="min-h-screen bg-background">
         <DashboardHeader />
-
-        <main className="px-6 py-6">
-          <Tabs value={activeWeek} onValueChange={setActiveWeek} className="space-y-6">
-            <TabsList className="bg-secondary/50 border border-border p-1 h-auto">
-              {displayedWeeks.map((week, index) => (
-                <TabsTrigger
-                  key={week.id}
-                  value={week.id}
-                  className="px-4 py-2 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm rounded-md transition-all"
-                >
-                  {`${t('Week')} ${index + 1}`}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {displayedWeeks.map((week) => (
-              <TabsContent key={week.id} value={week.id} className="mt-0">
+        <main className="px-6 py-6 space-y-10">
+          {isMobile ? (
+            <>
+              <div className="mb-6">
+                <Tabs value={activeWeek} onValueChange={setActiveWeek} className="space-y-6">
+                  <TabsList className="bg-secondary/50 border border-border p-1 h-auto">
+                    {displayedWeeks.map((week, index) => (
+                      <TabsTrigger
+                        key={week.id}
+                        value={week.id}
+                        className="px-4 py-2 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm rounded-md transition-all"
+                      >
+                        {`${t('Week')} ${index + 1}`}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  {displayedWeeks.map((week) => (
+                    <TabsContent key={week.id} value={week.id} className="mt-0">
+                      <section className="mb-8">
+                        <WeekGrid weekData={week} onEditDay={handleEditDay} />
+                      </section>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              </div>
+            </>
+          ) : (
+            displayedWeeks.map((week, index) => (
+              <section key={week.id} className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">{`${t('Week')} ${index + 1}`}</h2>
                 <WeekGrid weekData={week} onEditDay={handleEditDay} />
-              </TabsContent>
-            ))}
-          </Tabs>
+              </section>
+            ))
+          )}
         </main>
       </div>
-
       <DayEditModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
