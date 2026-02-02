@@ -108,7 +108,9 @@ function CategorySection({
   onToggleExpand,
 }: CategorySectionProps) {
   const completedCount = items.filter((item) => item.checked).length
-  const categoryLabel = ingredientCategories.find((c) => c.value === category)?.label
+  const categoryLabelRaw = ingredientCategories.find((c) => c.value === category)?.label
+  // Użyj tłumaczenia, jeśli dostępne, w przeciwnym razie oryginalna etykieta
+  const categoryLabel = categoryLabelRaw ? t(categoryLabelRaw) : category
 
   return (
     <Card className={cn("border transition-all duration-200", categoryColors[category])}>
