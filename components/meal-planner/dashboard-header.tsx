@@ -19,16 +19,20 @@ export function DashboardHeader() {
 
   return (
     <header className="border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-10">
-      <div className="px-6 py-3">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <CalendarDays className="h-5 w-5 text-primary" />
-            {t('Weekly Meal Planner')}
-          </h1>
+      <div className="px-6 py-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
+              <CalendarDays className="h-5 w-5 text-primary" />
+              {t('Weekly Meal Planner')}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {t('Plan your meals for the week')}
+            </p>
+          </div>
           <Button
-            variant="outline"
-            size="sm"
             onClick={() => setOpen(true)}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
           >
             {t ? t("Clear All") : "Wyczyść wszystkie dni"}
           </Button>
