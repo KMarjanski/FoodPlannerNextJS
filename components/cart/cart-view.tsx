@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react"
+import { useIsMobile } from "@/components/ui/use-mobile"
 import {
   Search,
   ShoppingCart,
@@ -35,65 +36,66 @@ interface CartContentProps {
   ingredients: Ingredient[]
 }
 function CartContent({ ingredients }: CartContentProps) {
-      const [lastSavedCart, setLastSavedCart] = useState<any>(null);
-      // Pobierz ostatni koszyk z bazy przy starcie
-      useEffect(() => {
-        (async () => {
-          try {
-            const res = await fetch("/api/cart");
-            const data = await res.json();
-            if (data.success && data.cart && Array.isArray(data.cart.items)) {
-              setLastSavedCart(data.cart.items);
-            }
-          } catch {}
-        })();
-      }, []);
-
-      // Porównanie koszyków (bez kolejności)
-      function areCartsEqual(a: any[], b: any[]): boolean {
-        if (!Array.isArray(a) || !Array.isArray(b)) return false;
-        if (a.length !== b.length) return false;
-        const sortFn = (x: any) => (x._id || x.name) + ":" + x.quantity;
-        const arrA = [...a].map(sortFn).sort();
-        const arrB = [...b].map(sortFn).sort();
-        return arrA.every((v, i) => v === arrB[i]);
-      }
-    const [saving, setSaving] = useState(false);
-    const [saveMsg, setSaveMsg] = useState<string | null>(null);
-    // showSaveMsg: false | true | 'fading'
-    const [showSaveMsg, setShowSaveMsg] = useState<false | true | 'fading'>(false);
-    async function handleSaveCart() {
-      setSaving(true);
-      setSaveMsg(null);
-      setShowSaveMsg(false);
+  // HOOKS: useIsMobile musi być zawsze na górze!
+  const isMobile = useIsMobile();
+  const [lastSavedCart, setLastSavedCart] = useState<any>(null);
+  // Pobierz ostatni koszyk z bazy przy starcie
+  useEffect(() => {
+    (async () => {
       try {
-        const res = await fetch("/api/cart", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: cartItems }),
-        });
+        const res = await fetch("/api/cart");
         const data = await res.json();
-        if (data.success) {
-          setSaveMsg(t("Cart saved!"));
-          setShowSaveMsg(true);
-        } else {
-          setSaveMsg("Błąd zapisu: " + (data.error || ""));
-          setShowSaveMsg(true);
+        if (data.success && data.cart && Array.isArray(data.cart.items)) {
+          setLastSavedCart(data.cart.items);
         }
-      } catch (e: any) {
-        setSaveMsg("Błąd zapisu: " + (e.message || ""));
-      } finally {
-        setSaving(false);
+      } catch {}
+    })();
+  }, []);
+
+  // Porównanie koszyków (bez kolejności)
+  function areCartsEqual(a: any[], b: any[]): boolean {
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    const sortFn = (x: any) => (x._id || x.name) + ":" + x.quantity;
+    const arrA = [...a].map(sortFn).sort();
+    const arrB = [...b].map(sortFn).sort();
+    return arrA.every((v, i) => v === arrB[i]);
+  }
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+  // showSaveMsg: false | true | 'fading'
+  const [showSaveMsg, setShowSaveMsg] = useState<false | true | 'fading'>(false);
+  async function handleSaveCart() {
+    setSaving(true);
+    setSaveMsg(null);
+    setShowSaveMsg(false);
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cartItems }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSaveMsg(t("Cart saved!"));
+        setShowSaveMsg(true);
+      } else {
+        setSaveMsg("Błąd zapisu: " + (data.error || ""));
+        setShowSaveMsg(true);
       }
+    } catch (e: any) {
+      setSaveMsg("Błąd zapisu: " + (e.message || ""));
+    } finally {
+      setSaving(false);
     }
+  }
   // Fade out komunikatu: najpierw 1s pełna widoczność, potem 1.2s ease-in do 0, potem usunięcie
   useEffect(() => {
     if (showSaveMsg === true) {
-      const fadeTimeout = setTimeout(() => setShowSaveMsg('fading'), 1000); // po 1s zaczyna znikać
+      const fadeTimeout = setTimeout(() => setShowSaveMsg('fading'), 1000);
       return () => clearTimeout(fadeTimeout);
     }
     if (showSaveMsg === 'fading') {
-      // po zakończeniu animacji fade-out (1200ms), ustaw na false
       const removeTimeout = setTimeout(() => {
         setShowSaveMsg(false);
         setSaveMsg(null);
@@ -197,17 +199,7 @@ function CartContent({ ingredients }: CartContentProps) {
                 <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
                 {totalItems} {polishItemLabel(totalItems)}
               </Badge>
-              {cartItems.length > 0 && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={() => (window.location.href = "/lista")}
-                >
-                  {t("Go to List")}
-                  <ArrowRight className="h-4 w-4 ml-1.5" />
-                </Button>
-              )}
+              {/* Go to List button removed as requested */}
             </div>
           </div>
         </div>
@@ -262,31 +254,45 @@ function CartContent({ ingredients }: CartContentProps) {
                     {error && <div className="text-xs text-destructive">{error}</div>}
                   </form>
                 )}
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    onClick={() => setSelectedCategory("all")}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-all ${
-                      selectedCategory === "all"
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-secondary/50 text-muted-foreground border-border/50 hover:border-primary/50"
-                    }`}
+                {/* Kategorie: select na mobile, buttony na desktop */}
+                {isMobile ? (
+                  <select
+                    value={selectedCategory}
+                    onChange={e => setSelectedCategory(e.target.value)}
+                    className="w-full px-2 py-1 rounded border border-border/50 bg-secondary/50 text-sm mb-2"
                   >
-                    {t("All")}
-                  </button>
-                  {ingredientCategories.map((cat) => (
+                    <option value="all">{t("All")}</option>
+                    {ingredientCategories.map(cat => (
+                      <option key={cat.value} value={cat.value}>{t(cat.label)}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
                     <button
-                      key={cat.value}
-                      onClick={() => setSelectedCategory(cat.value)}
+                      onClick={() => setSelectedCategory("all")}
                       className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-all ${
-                        selectedCategory === cat.value
+                        selectedCategory === "all"
                           ? "bg-primary text-primary-foreground border-primary"
                           : "bg-secondary/50 text-muted-foreground border-border/50 hover:border-primary/50"
                       }`}
                     >
-                      {t(cat.label)}
+                      {t("All")}
                     </button>
-                  ))}
-                </div>
+                    {ingredientCategories.map((cat) => (
+                      <button
+                        key={cat.value}
+                        onClick={() => setSelectedCategory(cat.value)}
+                        className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-all ${
+                          selectedCategory === cat.value
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-secondary/50 text-muted-foreground border-border/50 hover:border-primary/50"
+                        }`}
+                      >
+                        {t(cat.label)}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </CardHeader>
             <CardContent className="pt-0">
