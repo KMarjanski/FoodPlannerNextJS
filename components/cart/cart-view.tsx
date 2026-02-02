@@ -324,7 +324,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+              <div className="space-y-2 max-h-[77vh] overflow-y-auto pr-2">
                 {filteredIngredients.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground text-sm">
                     {t("No ingredients found")}
@@ -382,7 +382,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-4 max-h-[610px] overflow-y-auto pr-2">
+                <div className="space-y-4 max-h-[83vh] overflow-y-auto pr-2">
                   {Object.entries(groupedCartItems).map(([category, items]) => {
                     if (items.length === 0) return null
                     const categoryLabel = ingredientCategories.find(
