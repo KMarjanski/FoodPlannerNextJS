@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import {
   Search,
   ShoppingCart,
@@ -38,6 +38,9 @@ function CartContent({ ingredients }: CartContentProps) {
       return matchesSearch && matchesCategory;
     });
   }, [ingredients, searchQuery, selectedCategory]);
+  // Refs do inputów
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const addInputRef = useRef<HTMLInputElement>(null);
   const groupedCartItems = useMemo(() => {
     const groups: Record<IngredientCategory, typeof cartItems> = ingredientCategories.reduce((acc, cat) => {
       acc[cat.value as IngredientCategory] = [];
@@ -51,8 +54,15 @@ function CartContent({ ingredients }: CartContentProps) {
     return groups;
   }, [cartItems]);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  // Formularz dodawania składnika
-  const [newName, setNewName] = useState("");
+  // Dynamiczny formularz: wyszukiwarka lub dodawanie składnika
+    // Focus automatyczny przy zmianie trybu inputu
+    useEffect(() => {
+      if (filteredIngredients.length > 0) {
+        searchInputRef.current?.focus();
+      } else {
+        addInputRef.current?.focus();
+      }
+    }, [filteredIngredients.length]);
   const [newCategory, setNewCategory] = useState<IngredientCategory>(ingredientCategories[0]?.value || "fruits");
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
@@ -64,12 +74,11 @@ function CartContent({ ingredients }: CartContentProps) {
       const res = await fetch("/api/master-ingredients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName, category: newCategory }),
+        body: JSON.stringify({ name: searchQuery, category: newCategory }),
       });
       if (!res.ok) throw new Error("Failed to add ingredient");
-      setNewName("");
+      setSearchQuery("");
       setNewCategory(ingredientCategories[0]?.value || "fruits");
-      // Można dodać odświeżenie listy składników po stronie serwera lub przez re-fetch
       window.location.reload();
     } catch (err: any) {
       setError(err.message || "Error");
@@ -123,42 +132,46 @@ function CartContent({ ingredients }: CartContentProps) {
                 <Package className="h-4 w-4 text-primary" />
                 {t("All Ingredients")}
               </CardTitle>
-              {/* Formularz dodawania składnika */}
-              <form onSubmit={handleAddIngredient} className="flex flex-col gap-2 mt-4">
-                <div className="flex gap-2">
-                  <Input
-                    value={newName}
-                    onChange={e => setNewName(e.target.value)}
-                    placeholder={t("Ingredient name")}
-                    required
-                    className="bg-secondary/50 border-border/50"
-                  />
-                  <select
-                    value={newCategory}
-                    onChange={e => setNewCategory(e.target.value as IngredientCategory)}
-                    className="px-2 py-1 rounded border border-border/50 bg-secondary/50 text-sm"
-                  >
-                    {ingredientCategories.map(cat => (
-                      <option key={cat.value} value={cat.value}>{t(cat.label)}</option>
-                    ))}
-                  </select>
-                  <Button type="submit" size="sm" disabled={adding || !newName}>
-                    {adding ? t("Adding...") : t("Add")}
-                  </Button>
-                </div>
-                {error && <div className="text-xs text-destructive">{error}</div>}
-              </form>
-              {/* ...istniejący kod... */}
+              {/* Dynamiczny input: wyszukiwarka lub formularz dodawania */}
               <div className="space-y-3 mt-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t("Search ingredients...")}
-                    className="pl-9 bg-secondary/50 border-border/50"
-                  />
-                </div>
+                {filteredIngredients.length > 0 ? (
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      ref={searchInputRef}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={t("Search ingredients...")}
+                      className="pl-9 bg-secondary/50 border-border/50"
+                    />
+                  </div>
+                ) : (
+                  <form onSubmit={handleAddIngredient} className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <Input
+                        ref={addInputRef}
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder={t("Ingredient name")}
+                        required
+                        className="bg-secondary/50 border-border/50"
+                      />
+                      <select
+                        value={newCategory}
+                        onChange={e => setNewCategory(e.target.value as IngredientCategory)}
+                        className="px-2 py-1 rounded border border-border/50 bg-secondary/50 text-sm"
+                      >
+                        {ingredientCategories.map(cat => (
+                          <option key={cat.value} value={cat.value}>{t(cat.label)}</option>
+                        ))}
+                      </select>
+                      <Button type="submit" size="sm" disabled={adding || !searchQuery}>
+                        {adding ? t("Adding...") : t("Add")}
+                      </Button>
+                    </div>
+                    {error && <div className="text-xs text-destructive">{error}</div>}
+                  </form>
+                )}
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     onClick={() => setSelectedCategory("all")}
