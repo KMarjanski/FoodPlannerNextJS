@@ -125,5 +125,10 @@
     "All": "Wszystko",
     "Collapse": "Zwiń",
     "Are you sure you want to clear all days?": "Czy na pewno chcesz wyczyścić wszystkie dni?",
-    "This action cannot be undone.": "Tej operacji nie można cofnąć."
+    "This action cannot be undone.": "Tej operacji nie można cofnąć.",
+    "Are you sure?": "Czy na pewno?",
+    "Generate cart": "Generuj koszyk",
+    "This will remove all items from your cart.": "To usunie wszystkie produkty z koszyka.",
+    "Yes, clear all": "Tak, wyczyść wszystko",
+    "Cancel": "Anuluj"
 }

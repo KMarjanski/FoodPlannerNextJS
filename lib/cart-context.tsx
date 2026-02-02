@@ -38,35 +38,57 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const getIngredientKey = (ingredient: Ingredient & { _id?: string }) => ingredient._id || ingredient.name;
 
+  // Helper to save cart to API
+  const saveCartToAPI = async (items: CartItem[]) => {
+    try {
+      await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+      });
+    } catch {}
+  };
+
   const addToCart = useCallback((ingredient: Ingredient & { _id?: string }) => {
     setCartItems((prev) => {
       const key = ingredient._id || ingredient.name;
       const existing = prev.find((item) => (item._id || item.name) === key);
       if (existing) {
-        // Nie dodawaj ponownie, nie zwiększaj quantity, tylko ignoruj
         return prev;
       }
-      return [...prev, { ...ingredient, _id: ingredient._id || ingredient.name, quantity: 1 }];
+      const updated = [...prev, { ...ingredient, _id: ingredient._id || ingredient.name, quantity: 1 }];
+      saveCartToAPI(updated);
+      return updated;
     });
   }, []);
 
   const removeFromCart = useCallback((id: string) => {
-    setCartItems((prev) => prev.filter((item) => item._id !== id));
+    setCartItems((prev) => {
+      const updated = prev.filter((item) => item._id !== id);
+      saveCartToAPI(updated);
+      return updated;
+    });
   }, []);
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCartItems((prev) => prev.filter((item) => item._id !== id));
-    } else {
-      setCartItems((prev) =>
-        prev.map((item) => (item._id === id ? { ...item, quantity } : item))
-      );
-    }
+    setCartItems((prev) => {
+      let updated;
+      if (quantity <= 0) {
+        updated = prev.filter((item) => item._id !== id);
+      } else {
+        updated = prev.map((item) => (item._id === id ? { ...item, quantity } : item));
+      }
+      saveCartToAPI(updated);
+      return updated;
+    });
   }, []);
 
   const clearCart = useCallback(() => {
-    setCartItems([])
-  }, [])
+    setCartItems((prev) => {
+      saveCartToAPI([]);
+      return [];
+    });
+  }, []);
 
   const isInCart = useCallback(
     (id: string) => cartItems.some((item) => (item._id || item.name) === id),

@@ -13,5 +13,10 @@
 	"Collapse": "Collapse",
 	"Are you sure you want to clear all days?": "Are you sure you want to clear all days?",
 	"This action cannot be undone.": "This action cannot be undone.",
-	"Clear All": "Clear All"
+	"Clear All": "Clear All",
+	"Are you sure?": "Are you sure?",
+	"This will remove all items from your cart.": "This will remove all items from your cart.",
+	"Yes, clear all": "Yes, clear all",
+	"Cancel": "Cancel",
+	"Generate cart": "Generate cart"
 }

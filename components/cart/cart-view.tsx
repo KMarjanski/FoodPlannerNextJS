@@ -130,6 +130,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, isInCart } = useCart();
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Synchronizuj ingredients po każdej zmianie koszyka, by wymusić rerender i poprawne zaznaczenie
   useEffect(() => {
@@ -204,14 +205,61 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              {/* Save cart button removed, auto-save is now enabled */}
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
-                onClick={handleSaveCart}
-                disabled={cartItems.length === 0 || saving || areCartsEqual(cartItems, lastSavedCart)}
                 className="mr-2"
+                onClick={async () => {
+                  try {
+                    // Fetch all weeks and meals from planner
+                    const res = await fetch("/api/meal-data");
+                    const weeks = await res.json();
+                    // Gather all recipe IDs from all meals
+                    const recipeIds = new Set<string>();
+                    weeks.forEach((week: any) => {
+                      week.days.forEach((day: any) => {
+                        ["breakfast", "lunch", "dinner"].forEach((mealType) => {
+                          day[mealType]?.forEach((recipe: any) => {
+                            if (recipe && recipe.id) {
+                              recipeIds.add(recipe.id);
+                            }
+                          });
+                        });
+                      });
+                    });
+                    // Fetch all recipes from DB
+                    const recipesRes = await fetch("/api/recipes");
+                    const allRecipes = await recipesRes.json();
+                    // Collect all unique ingredients from recipes used in planner
+                    const allIngredients: Record<string, Ingredient> = {};
+                    allRecipes.forEach((recipe: any) => {
+                      if (recipeIds.has(recipe.id) && Array.isArray(recipe.ingredients)) {
+                        recipe.ingredients.forEach((ingredient: any) => {
+                          if (ingredient && (ingredient.id || ingredient._id)) {
+                            allIngredients[ingredient.id || ingredient._id] = ingredient;
+                          }
+                        });
+                      }
+                    });
+                    // Log how many unique ingredients were found
+                    const foundIngredients = Object.values(allIngredients);
+                    if (foundIngredients.length > 0) {
+                      clearCart();
+                      foundIngredients.forEach((ing) => addToCart(ing));
+                      setSaveMsg(`${t("Generate cart")}: ${foundIngredients.length} ${t("ingredients")}`);
+                      setShowSaveMsg(true);
+                    } else {
+                      setSaveMsg(`${t("Generate cart")}: 0 ${t("ingredients")}. Koszyk jest pusty, bo nie znaleziono żadnych składników w daniach.`);
+                      setShowSaveMsg(true);
+                    }
+                  } catch (err) {
+                    setSaveMsg("Error generating cart");
+                    setShowSaveMsg(true);
+                  }
+                }}
               >
-                {saving ? t("Saving...") : t("Save cart")}
+                {t("Generate cart")}
               </Button>
               {(showSaveMsg === true || showSaveMsg === 'fading') && (
                 <span
@@ -356,15 +404,35 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                   {t("Shopping Cart")}
                 </CardTitle>
                 {cartItems.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearCart}
-                    className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                    {t("Clear All")}
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowClearConfirm(true)}
+                      className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                      {t("Clear All")}
+                    </Button>
+                    {showClearConfirm && (
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                        <div className="bg-card p-6 rounded-lg shadow-lg border border-border w-full max-w-xs flex flex-col items-center">
+                          <div className="mb-4 text-center">
+                            <p className="text-base font-semibold text-destructive mb-2">{t("Are you sure?")}</p>
+                            <p className="text-sm text-muted-foreground">{t("This will remove all items from your cart.")}</p>
+                          </div>
+                          <div className="flex gap-3">
+                            <Button variant="destructive" size="sm" onClick={() => { clearCart(); setShowClearConfirm(false); }}>
+                              {t("Yes, clear all")}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setShowClearConfirm(false)}>
+                              {t("Cancel")}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </CardHeader>
