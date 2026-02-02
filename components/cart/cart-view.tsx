@@ -23,6 +23,7 @@ import {
 type IngredientCategory = (typeof ingredientCategories)[number]["value"];
 
 import type { Ingredient } from "@/lib/types"
+import { t } from "i18next"
 interface CartContentProps {
   ingredients: Ingredient[]
 }
@@ -83,10 +84,10 @@ function CartContent({ ingredients }: CartContentProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-xl font-semibold text-foreground">
-                Cart Builder
+                {t("Cart Builder")}
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Build your shopping cart from available ingredients
+                {t("Build your shopping cart from available ingredients")}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -95,7 +96,7 @@ function CartContent({ ingredients }: CartContentProps) {
                 className="text-sm py-1.5 px-3 bg-secondary/80"
               >
                 <ShoppingCart className="h-3.5 w-3.5 mr-1.5" />
-                {totalItems} items
+                {totalItems} {t("items")}
               </Badge>
               {cartItems.length > 0 && (
                 <Button
@@ -104,7 +105,7 @@ function CartContent({ ingredients }: CartContentProps) {
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                   onClick={() => (window.location.href = "/lista")}
                 >
-                  Go to List
+                  {t("Go to List")}
                   <ArrowRight className="h-4 w-4 ml-1.5" />
                 </Button>
               )}
@@ -120,7 +121,7 @@ function CartContent({ ingredients }: CartContentProps) {
             <CardHeader className="pb-4">
               <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                 <Package className="h-4 w-4 text-primary" />
-                All Ingredients
+                {t("All Ingredients")}
               </CardTitle>
               {/* Formularz dodawania składnika */}
               <form onSubmit={handleAddIngredient} className="flex flex-col gap-2 mt-4">
@@ -128,7 +129,7 @@ function CartContent({ ingredients }: CartContentProps) {
                   <Input
                     value={newName}
                     onChange={e => setNewName(e.target.value)}
-                    placeholder="Ingredient name"
+                    placeholder={t("Ingredient name")}
                     required
                     className="bg-secondary/50 border-border/50"
                   />
@@ -138,11 +139,11 @@ function CartContent({ ingredients }: CartContentProps) {
                     className="px-2 py-1 rounded border border-border/50 bg-secondary/50 text-sm"
                   >
                     {ingredientCategories.map(cat => (
-                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                      <option key={cat.value} value={cat.value}>{t(cat.label)}</option>
                     ))}
                   </select>
                   <Button type="submit" size="sm" disabled={adding || !newName}>
-                    {adding ? "Adding..." : "Add"}
+                    {adding ? t("Adding...") : t("Add")}
                   </Button>
                 </div>
                 {error && <div className="text-xs text-destructive">{error}</div>}
@@ -154,7 +155,7 @@ function CartContent({ ingredients }: CartContentProps) {
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search ingredients..."
+                    placeholder={t("Search ingredients...")}
                     className="pl-9 bg-secondary/50 border-border/50"
                   />
                 </div>
@@ -167,7 +168,7 @@ function CartContent({ ingredients }: CartContentProps) {
                         : "bg-secondary/50 text-muted-foreground border-border/50 hover:border-primary/50"
                     }`}
                   >
-                    All
+                    {t("All")}
                   </button>
                   {ingredientCategories.map((cat) => (
                     <button
@@ -179,7 +180,7 @@ function CartContent({ ingredients }: CartContentProps) {
                           : "bg-secondary/50 text-muted-foreground border-border/50 hover:border-primary/50"
                       }`}
                     >
-                      {cat.label}
+                      {t(cat.label)}
                     </button>
                   ))}
                 </div>
@@ -189,7 +190,7 @@ function CartContent({ ingredients }: CartContentProps) {
               <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
                 {filteredIngredients.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground text-sm">
-                    No ingredients found
+                    {t("No ingredients found")}
                   </div>
                 ) : (
                   filteredIngredients.map((ing) => (
@@ -212,7 +213,7 @@ function CartContent({ ingredients }: CartContentProps) {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <ShoppingCart className="h-4 w-4 text-primary" />
-                  Shopping Cart
+                  {t("Shopping Cart")}
                   {cartItems.length > 0 && (
                     <Badge
                       variant="secondary"
@@ -230,7 +231,7 @@ function CartContent({ ingredients }: CartContentProps) {
                     className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                    Clear All
+                    {t("Clear All")}
                   </Button>
                 )}
               </div>
@@ -242,10 +243,10 @@ function CartContent({ ingredients }: CartContentProps) {
                     <ShoppingCart className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <h3 className="text-sm font-medium text-foreground mb-1">
-                    Your cart is empty
+                    {t("Your cart is empty")}
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Add ingredients from the left panel
+                    {t("Add ingredients from the left panel")}
                   </p>
                 </div>
               ) : (
@@ -258,7 +259,7 @@ function CartContent({ ingredients }: CartContentProps) {
                     return (
                       <div key={category}>
                         <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                          {categoryLabel}
+                          {t(categoryLabel ?? "")}
                         </h4>
                         <div className="space-y-2">
                           {items.map((item) => (

@@ -4,6 +4,7 @@ import { Plus, Minus, GripVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Ingredient, IngredientCategory } from "@/lib/recipes-data"
+import { t } from "i18next"
 
 interface IngredientItemProps {
   ingredient: Ingredient
@@ -17,14 +18,23 @@ interface IngredientItemProps {
 }
 
 const categoryColors: Record<IngredientCategory, string> = {
-  vegetables: "bg-green-500/15 text-green-400 border-green-500/20",
   fruits: "bg-pink-500/15 text-pink-400 border-pink-500/20",
-  dairy: "bg-sky-500/15 text-sky-400 border-sky-500/20",
-  meat: "bg-red-500/15 text-red-400 border-red-500/20",
-  seafood: "bg-cyan-500/15 text-cyan-400 border-cyan-500/20",
-  grains: "bg-amber-500/15 text-amber-400 border-amber-500/20",
+  vegetables: "bg-green-500/15 text-green-400 border-green-500/20",
+  herbs: "bg-lime-500/15 text-lime-400 border-lime-500/20",
+  bread: "bg-yellow-800/15 text-yellow-700 border-yellow-800/20",
+  pastes: "bg-orange-300/15 text-orange-300 border-orange-300/20",
+  jars: "bg-amber-700/15 text-amber-600 border-amber-700/20",
+  cans: "bg-gray-400/15 text-gray-500 border-gray-400/20",
   spices: "bg-orange-500/15 text-orange-400 border-orange-500/20",
-  other: "bg-gray-500/15 text-gray-400 border-gray-500/20",
+  sauces: "bg-red-300/15 text-red-400 border-red-300/20",
+  "ready-meals": "bg-purple-500/15 text-purple-400 border-purple-500/20",
+  dairy: "bg-sky-500/15 text-sky-400 border-sky-500/20",
+  frozen: "bg-blue-500/15 text-blue-400 border-blue-500/20",
+  "dry-goods": "bg-amber-500/15 text-amber-400 border-amber-500/20",
+  beverages: "bg-cyan-500/15 text-cyan-400 border-cyan-500/20",
+  sweets: "bg-pink-300/15 text-pink-300 border-pink-300/20",
+  snacks: "bg-orange-200/15 text-orange-200 border-orange-200/20",
+  household: "bg-gray-500/15 text-gray-400 border-gray-500/20",
 }
 
 export function IngredientItem({
@@ -58,7 +68,7 @@ export function IngredientItem({
             categoryColors[ingredient.category]
           )}
         >
-          {ingredient.category}
+          {t(ingredient.category)}
         </span>
       </div>
 

@@ -38,7 +38,11 @@ export async function fetchRecipes(): Promise<Recipe[]> {
 export async function fetchMasterIngredients(): Promise<Ingredient[]> {
   await dbConnect();
   const data = await MasterIngredientModel.find().lean();
-  return data as Ingredient[];
+  // Convert _id to string and remove any non-plain fields
+  return data.map((item: any) => ({
+    ...item,
+    _id: item._id?.toString?.() ?? undefined,
+  })) as Ingredient[];
 }
 
 export async function addMasterIngredient({ name, category }: { name: string; category: string }) {
