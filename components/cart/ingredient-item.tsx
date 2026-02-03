@@ -106,6 +106,11 @@ export function IngredientItem({
   // Make the whole card clickable for adding to cart or removing from cart
   const clickableAdd = onAdd && !isInCart;
   const clickableRemove = onRemove && isInCart;
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    if (clickableAdd) onAdd && onAdd();
+    else if (clickableRemove) onRemove && onRemove(ingredient._id);
+  };
   return (
     <div
       className={cn(
@@ -119,7 +124,7 @@ export function IngredientItem({
       onTouchStart={!isInCart ? handleTouchStart : undefined}
       onTouchMove={!isInCart ? handleTouchMove : undefined}
       onTouchEnd={!isInCart ? handleTouchEnd : undefined}
-      onClick={clickableAdd ? onAdd : clickableRemove ? () => onRemove(ingredient._id) : undefined}
+      onClick={handleCardClick}
       tabIndex={clickableAdd || clickableRemove ? 0 : undefined}
       role={(clickableAdd || clickableRemove) ? "button" : undefined}
       aria-label={clickableAdd ? t("Add to cart") : clickableRemove ? t("Remove from cart") : undefined}

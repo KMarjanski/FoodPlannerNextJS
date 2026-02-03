@@ -414,8 +414,14 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                           isInCart={isInCart(key)}
                           onAdd={() => addToCart(ing)}
                           onRemove={isInCart(key)
-                            ? () => removeFromCart(key)
-                            : async () => { await refreshIngredients(); }
+                            ? () => {
+                                removeFromCart(key);
+                                setSearchQuery("");
+                              }
+                            : async () => {
+                                await refreshIngredients();
+                                setSearchQuery("");
+                              }
                           }
                           refreshIngredients={refreshIngredients}
                           isMobile={isMobile}
