@@ -17,9 +17,10 @@ import { RecipeCard } from "./recipe-card"
 import { AddRecipeModal } from "./add-recipe-modal"
 import type { Recipe } from "@/lib/recipes-data"
 import { recipeCategories } from "@/lib/recipes-data"
-import { t } from "i18next"
+import { useTranslation } from "react-i18next"
 
 export function RecipesView() {
+  const { t } = useTranslation();
 
   const [recipes, setRecipes] = useState<Recipe[]>([])
   // Pobierz przepisy przez API
@@ -109,6 +110,9 @@ export function RecipesView() {
     setIsAddModalOpen(true)
   }
 
+  // Helper to check if there are no filters/search
+  const noFilters = searchQuery.trim() === "" && categoryFilter === "all"
+
   return (
     <AppLayout>
       <div className="min-h-screen bg-background">
@@ -124,16 +128,26 @@ export function RecipesView() {
                   <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{filteredRecipes.length} {t('recipes available')}</span>
                 </p>
               </div>
-              <Button
-                onClick={() => {
-                  setEditingRecipe(null)
-                  setIsAddModalOpen(true)
-                }}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {t('Add New Recipe')}
-              </Button>
+              <div className="relative">
+                <Button
+                  onClick={() => {
+                    setEditingRecipe(null)
+                    setIsAddModalOpen(true)
+                  }}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+                  id="add-recipe-btn"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t('Add New Recipe')}
+                </Button>
+                {/* Arrow for empty state */}
+                {filteredRecipes.length === 0 && noFilters && (
+                  <div className="absolute -top-10 right-0 flex flex-col items-center animate-bounce z-20">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M17 7l-5 5-5-5"/></svg>
+                    <span className="text-xs text-primary mt-1">{t('Add your first recipe!')}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center w-full">
@@ -181,19 +195,29 @@ export function RecipesView() {
               <h3 className="text-lg font-medium text-foreground mb-2">
                 {t('No recipes')}
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                {t('Try adjusting your search or filter criteria')}
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchQuery("")
-                  setCategoryFilter("all")
-                }}
-                className="border-border/50"
-              >
-                {t('Clear Filters')}
-              </Button>
+              {noFilters ? (
+                <>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {t('You have no recipes yet. Click the button above to add your first recipe!')}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {t('Try adjusting your search or filter criteria')}
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchQuery("")
+                      setCategoryFilter("all")
+                    }}
+                    className="border-border/50"
+                  >
+                    {t('Clear Filters')}
+                  </Button>
+                </>
+              )}
             </div>
           ) : (
             <div
