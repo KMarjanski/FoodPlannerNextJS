@@ -1,13 +1,15 @@
+import { setPlannerLastModified } from "./planner-meta"
 
 export async function updateWeekData(id: string, days: any[], label?: string) {
   await dbConnect();
-  const updateObj: any = { days, lastModified: new Date() };
+  const updateObj: any = { days };
   if (label) updateObj.label = label;
   const updated = await WeekDataModel.findOneAndUpdate(
     { id },
     { $set: updateObj },
     { new: true, upsert: true }
   ).lean();
+  await setPlannerLastModified();
   return updated;
 }
 import dbConnect from "./mongodb"
@@ -43,7 +45,6 @@ const weekDataSchema = new mongoose.Schema({
       ],
     },
   ],
-  lastModified: { type: Date, default: Date.now },
 })
 
 const WeekDataModel = mongoose.models.WeekData || mongoose.model("WeekData", weekDataSchema)

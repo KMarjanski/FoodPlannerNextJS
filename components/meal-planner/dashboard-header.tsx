@@ -8,7 +8,11 @@ import { SettingsModal } from "@/components/settings/settings-modal"
 import { useSettings } from "@/lib/settings-context"
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog"
 
-export function DashboardHeader() {
+export function DashboardHeader({
+  tabsList
+}: {
+  tabsList?: React.ReactNode
+}) {
   const { t } = useSettings()
   const [open, setOpen] = useState(false)
   const isMobile = useIsMobile()
@@ -32,12 +36,16 @@ export function DashboardHeader() {
               <span className={isMobile ? 'ml-14' : ''}>{t('Plan your meals for the week')}</span>
             </p>
           </div>
-          <Button
-            onClick={() => setOpen(true)}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
-          >
-            {t ? t("Clear All") : "Wyczyść wszystkie dni"}
-          </Button>
+          <div className="flex flex-row items-center gap-4 sm:gap-6">
+            {/* TabsList goes here, aligned right */}
+            {tabsList}
+            <Button
+              onClick={() => setOpen(true)}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+            >
+              {t ? t("Clear All") : "Wyczyść wszystkie dni"}
+            </Button>
+          </div>
         </div>
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
