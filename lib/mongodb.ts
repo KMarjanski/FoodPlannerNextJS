@@ -1,3 +1,6 @@
+// Wymuś Google DNS dla MongoDB Atlas (działa także podczas builda)
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 /* eslint-disable no-unused-vars */
 import _mongoose from "mongoose";
 import type { Mongoose } from "mongoose";
@@ -8,6 +11,7 @@ declare global {
     conn: Mongoose | null;
   };
 }
+
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 

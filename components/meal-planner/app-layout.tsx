@@ -3,7 +3,7 @@
 import React from "react"
 
 import { useState } from "react"
-import { useIsMobile } from "@/components/ui/use-mobile"
+import { useDeviceType } from "@/hooks/use-device-type"
 import { cn } from "@/lib/utils"
 import { AppSidebar } from "./app-sidebar"
 import { CartProvider } from "@/lib/cart-context"
@@ -13,41 +13,67 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const isMobile = useIsMobile()
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [sidebarHidden, setSidebarHidden] = useState(isMobile)
+  const deviceType = useDeviceType();
+  // SSR: undefined, client: inicjalizacja na podstawie szerokości okna
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean | undefined>(() => {
+    if (typeof window === 'undefined') return undefined;
+    const width = window.innerWidth;
+    if (width <= 600) return true; // mobile
+    if (width <= 1180) return true; // tablet (zwinięty)
+    return false; // desktop
+  });
+  const [sidebarHidden, setSidebarHidden] = useState<boolean | undefined>(() => {
+    if (typeof window === 'undefined') return undefined;
+    const width = window.innerWidth;
+    if (width <= 600) return true; // mobile
+    return false;
+  });
+  const [hydrated, setHydrated] = useState(false);
 
-  // Always hide sidebar on mobile
   React.useEffect(() => {
-    if (isMobile) {
-      setSidebarCollapsed(true)
-      setSidebarHidden(true)
-    } else {
-      setSidebarHidden(false)
+    setHydrated(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (deviceType === 'mobile') {
+      setSidebarCollapsed(true);
+      setSidebarHidden(true);
+    } else if (deviceType === 'tablet') {
+      setSidebarCollapsed(true);
+      setSidebarHidden(false);
+    } else if (deviceType === 'desktop') {
+      setSidebarCollapsed(false);
+      setSidebarHidden(false);
     }
-  }, [isMobile])
+  }, [deviceType]);
 
   return (
     <CartProvider>
       <div className="min-h-screen bg-background">
-        <AppSidebar
-          collapsed={isMobile ? true : sidebarCollapsed}
-          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-          hidden={sidebarHidden}
-          setHidden={setSidebarHidden}
-        />
-        <main
-          className={cn(
-            "transition-all duration-300 ease-out",
-            sidebarHidden
-              ? "ml-0"
-              : (isMobile || sidebarCollapsed)
-                ? "ml-[72px]"
-                : "ml-[240px]"
+        <div style={!hydrated ? { visibility: 'hidden' } : undefined}>
+          {typeof sidebarCollapsed !== 'undefined' && typeof sidebarHidden !== 'undefined' && (
+            <AppSidebar
+              collapsed={sidebarCollapsed}
+              onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+              hidden={sidebarHidden}
+              setHidden={setSidebarHidden}
+            />
           )}
-        >
-          {children}
-        </main>
+          {typeof sidebarCollapsed !== 'undefined' && typeof sidebarHidden !== 'undefined' && (
+            <main
+              className={cn(
+                "transition-all duration-300 ease-out",
+                sidebarHidden
+                  ? "ml-0"
+                  : (sidebarCollapsed)
+                    ? "ml-[72px]"
+                    : "ml-[240px]"
+              )}
+            >
+              {children}
+            </main>
+          )}
+        </div>
       </div>
     </CartProvider>
   )

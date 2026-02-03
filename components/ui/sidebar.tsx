@@ -5,7 +5,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, VariantProps } from 'class-variance-authority'
 import { PanelLeftIcon } from 'lucide-react'
 
-import { useIsMobile } from '@/hooks/use-mobile'
+import { useDeviceType } from '@/hooks/use-device-type'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -33,14 +33,16 @@ const SIDEBAR_WIDTH_ICON = '3rem'
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
 type SidebarContextProps = {
-  state: 'expanded' | 'collapsed'
-  open: boolean
-  setOpen: (open: boolean) => void
-  openMobile: boolean
-  setOpenMobile: (open: boolean) => void
-  isMobile: boolean
-  toggleSidebar: () => void
-}
+  state: 'expanded' | 'collapsed';
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  openMobile: boolean;
+  setOpenMobile: (open: boolean) => void;
+  deviceType: 'mobile' | 'tablet' | 'desktop';
+  collapsed: boolean;
+  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleSidebar: () => void;
+};
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
 
@@ -66,9 +68,10 @@ function SidebarProvider({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
-  const isMobile = useIsMobile()
-  // Domyślnie chowaj navbar na urządzeniach mobilnych
-  const [openMobile, setOpenMobile] = React.useState(() => (isMobile ? false : true))
+  const deviceType = useDeviceType();
+  // Domyślnie chowaj navbar na telefonie, zwijaj na tablecie, rozwijaj na desktopie
+  const [openMobile, setOpenMobile] = React.useState(() => (deviceType === 'mobile' ? false : true));
+  const [collapsed, setCollapsed] = React.useState(() => deviceType === 'tablet');
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -91,8 +94,14 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
-  }, [isMobile, setOpen, setOpenMobile])
+    if (deviceType === 'mobile') {
+      setOpenMobile((open) => !open);
+    } else if (deviceType === 'tablet') {
+      setCollapsed((collapsed) => !collapsed);
+    } else {
+      setOpen((open) => !open);
+    }
+  }, [deviceType, setOpen, setOpenMobile, setCollapsed]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -112,19 +121,21 @@ function SidebarProvider({
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
-  const state = open ? 'expanded' : 'collapsed'
+  const state: 'expanded' | 'collapsed' = open ? 'expanded' : 'collapsed';
 
-  const contextValue = React.useMemo<SidebarContextProps>(
+  const contextValue = React.useMemo(
     () => ({
       state,
       open,
       setOpen,
-      isMobile,
+      deviceType,
+      collapsed,
+      setCollapsed,
       openMobile,
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [state, open, setOpen, deviceType, collapsed, setCollapsed, openMobile, setOpenMobile, toggleSidebar],
   )
 
   return (
@@ -164,7 +175,7 @@ function Sidebar({
   variant?: 'sidebar' | 'floating' | 'inset'
   collapsible?: 'offcanvas' | 'icon' | 'none'
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const { deviceType, state, openMobile, setOpenMobile, collapsed } = useSidebar()
 
   if (collapsible === 'none') {
     return (
@@ -181,7 +192,7 @@ function Sidebar({
     )
   }
 
-  if (isMobile) {
+  if (deviceType === 'mobile') {
     // Sidebar is hidden by default on mobile, only show if openMobile is true
     if (!openMobile) return null;
     return (
@@ -208,6 +219,60 @@ function Sidebar({
     )
   }
 
+  // Tablet: sidebar zwinięty domyślnie, rozwijany po kliknięciu
+  if (deviceType === 'tablet') {
+    return (
+      <div
+        className={cn(
+          'group peer text-sidebar-foreground hidden md:block',
+          collapsed ? 'group-data-[collapsible=offcanvas]:w-0' : '',
+          className,
+        )}
+        data-state={collapsed ? 'collapsed' : 'expanded'}
+        data-collapsible={collapsed ? 'offcanvas' : ''}
+        data-variant={variant}
+        data-side={side}
+        data-slot="sidebar"
+        {...props}
+      >
+        <div
+          data-slot="sidebar-gap"
+          className={cn(
+            'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
+            'group-data-[collapsible=offcanvas]:w-0',
+            'group-data-[side=right]:rotate-180',
+            variant === 'floating' || variant === 'inset'
+              ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
+              : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
+          )}
+        />
+        <div
+          data-slot="sidebar-container"
+          className={cn(
+            'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+            side === 'left'
+              ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
+              : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
+            // Adjust the padding for floating and inset variants.
+            variant === 'floating' || variant === 'inset'
+              ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
+              : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+            className,
+          )}
+        >
+          <div
+            data-sidebar="sidebar"
+            data-slot="sidebar-inner"
+            className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm"
+          >
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: sidebar zawsze rozwinięty
   return (
     <div
       className="group peer text-sidebar-foreground hidden md:block"
@@ -512,7 +577,7 @@ function SidebarMenuButton({
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? Slot : 'button'
-  const { isMobile, state } = useSidebar()
+  const { state } = useSidebar();
 
   const button = (
     <Comp
@@ -541,7 +606,7 @@ function SidebarMenuButton({
       <TooltipContent
         side="right"
         align="center"
-        hidden={state !== 'collapsed' || isMobile}
+        hidden={state !== 'collapsed'}
         {...tooltip}
       />
     </Tooltip>

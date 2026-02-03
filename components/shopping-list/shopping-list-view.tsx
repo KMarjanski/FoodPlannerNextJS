@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 import {
   Check,
   ChevronDown,
@@ -54,9 +55,8 @@ interface ShoppingItemRowProps {
 
 function ShoppingItemRow({ item, onToggle }: ShoppingItemRowProps) {
   const [showDetails, setShowDetails] = useState(false);
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const isMobile = useIsMobile();
   const longPressTimeout = useRef<NodeJS.Timeout | null>(null);
-
   const touchActive = useRef(false);
   function handleTouchStart(e: React.TouchEvent) {
     if (!isMobile) return;
