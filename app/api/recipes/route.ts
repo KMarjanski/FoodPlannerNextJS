@@ -2,6 +2,10 @@ export async function PUT(req) {
   await dbConnect()
   const body = await req.json()
   const { id, ...update } = body
+  // Formatowanie nazwy przepisu: pierwsza litera duża, reszta małe
+  if (update.name && typeof update.name === 'string') {
+    update.name = update.name.charAt(0).toUpperCase() + update.name.slice(1).toLowerCase();
+  }
   const updated = await RecipeModel.findOneAndUpdate({ id }, update, { new: true })
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(updated)
@@ -46,6 +50,10 @@ export async function GET() {
 export async function POST(req) {
   await dbConnect()
   const body = await req.json()
+  // Formatowanie nazwy przepisu: pierwsza litera duża, reszta małe
+  if (body.name && typeof body.name === 'string') {
+    body.name = body.name.charAt(0).toUpperCase() + body.name.slice(1).toLowerCase();
+  }
   const recipe = await RecipeModel.create(body)
   return NextResponse.json(recipe, { status: 201 })
 }

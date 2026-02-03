@@ -70,10 +70,15 @@ export function AddRecipeModal({
       setName(editRecipe.name)
       setIngredients(editRecipe.ingredients)
       setCategory(editRecipe.category || recipeCategories[0])
+    } else if (originalRecipe && !editRecipe) {
+      // kopiowanie przepisu: ustaw składniki z oryginału
+      setName("")
+      setIngredients(originalRecipe.ingredients)
+      setCategory(originalRecipe.category || recipeCategories[0])
     } else {
       resetForm()
     }
-  }, [editRecipe, open])
+  }, [editRecipe, originalRecipe, open])
 
   // For copy: only if originalRecipe is provided and editRecipe is not
   const isCopy = !!originalRecipe && !editRecipe
