@@ -128,13 +128,13 @@ export function RecipesView() {
                   <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{filteredRecipes.length} {t('recipes available')}</span>
                 </p>
               </div>
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <Button
                   onClick={() => {
                     setEditingRecipe(null)
                     setIsAddModalOpen(true)
                   }}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 w-full sm:w-auto"
                   id="add-recipe-btn"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -185,7 +185,6 @@ export function RecipesView() {
             </div>
           </div>
         </header>
-
         <main className="px-6 py-6">
           {filteredRecipes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
