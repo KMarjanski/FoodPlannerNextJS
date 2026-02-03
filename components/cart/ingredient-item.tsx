@@ -18,6 +18,7 @@ interface IngredientItemProps {
   isDragging?: boolean
   showQuantityControls?: boolean
   isMobile?: boolean
+  refreshIngredients?: () => Promise<void>;
 }
 
 const categoryColors: Record<IngredientCategory, string> = {
@@ -50,6 +51,7 @@ export function IngredientItem({
   isDragging,
   showQuantityControls,
   isMobile,
+  refreshIngredients,
 }: IngredientItemProps) {
   const [showConfirm, setShowConfirm] = React.useState(false);
   const [swipeStartX, setSwipeStartX] = React.useState<number | null>(null);
@@ -85,7 +87,10 @@ export function IngredientItem({
           body: JSON.stringify({ id: ingredient._id })
         });
         if (!res.ok) throw new Error("Delete failed");
-        if (onRemove) onRemove(ingredient._id); // usuń z UI
+        if (refreshIngredients) {
+          await refreshIngredients();
+        }
+        if (onRemove) await onRemove();
       } catch (err) {
         // Możesz dodać toast z błędem
       }

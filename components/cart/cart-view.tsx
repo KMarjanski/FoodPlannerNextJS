@@ -36,6 +36,20 @@ interface CartContentProps {
   ingredients: Ingredient[]
 }
 function CartContent({ ingredients: initialIngredients }: CartContentProps) {
+    // Funkcja do pobrania świeżej listy składników z API
+    async function refreshIngredients() {
+      try {
+        const res = await fetch("/api/master-ingredients");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setIngredients(data);
+          } else if (Array.isArray(data.ingredients)) {
+            setIngredients(data.ingredients);
+          }
+        }
+      } catch {}
+    }
   // HOOKS: useIsMobile musi być zawsze na górze!
   const isMobile = useIsMobile();
   const [ingredients, setIngredients] = useState<Ingredient[]>(initialIngredients);
@@ -179,10 +193,12 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
     setAdding(true);
     setError("");
     try {
+      // Formatowanie nazwy: pierwsza litera duża, reszta małe
+      const formattedName = searchQuery.charAt(0).toUpperCase() + searchQuery.slice(1).toLowerCase();
       const res = await fetch("/api/master-ingredients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: searchQuery, category: newCategory }),
+        body: JSON.stringify({ name: formattedName, category: newCategory }),
       });
       if (!res.ok) throw new Error("Failed to add ingredient");
       setSearchQuery("");
@@ -397,7 +413,11 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                           ingredient={ing}
                           isInCart={isInCart(key)}
                           onAdd={() => addToCart(ing)}
-                          onRemove={() => removeFromCart(key)}
+                          onRemove={isInCart(key)
+                            ? () => removeFromCart(key)
+                            : async () => { await refreshIngredients(); }
+                          }
+                          refreshIngredients={refreshIngredients}
                           isMobile={isMobile}
                         />
                       );
@@ -481,6 +501,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                                 key={key}
                                 ingredient={item}
                                 onRemove={() => removeFromCart(key)}
+                                refreshIngredients={refreshIngredients}
                                 isInCart={true}
                                 isMobile={isMobile}
                               />
