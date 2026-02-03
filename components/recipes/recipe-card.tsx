@@ -119,8 +119,8 @@ export function RecipeCard({ recipe, onEdit, onAddToPlanner, onDelete }: RecipeC
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
+                <AlertDialogCancel>{t('Cancel', { defaultValue: 'Anuluj' })}</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete}>{t('Delete', { defaultValue: 'Usuń' })}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
