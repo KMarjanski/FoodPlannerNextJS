@@ -1,9 +1,9 @@
 import React from "react"
-import { ThemeProvider } from "@/components/theme-provider"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SettingsProvider } from '@/lib/settings-context'
+import { cookies } from 'next/headers'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -32,19 +32,21 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Pobierz motyw z cookie ustawionego przez middleware
+  const cookieStore = await cookies();
+  const theme = cookieStore.get('theme')?.value || 'dark'
+  const themeClass = theme === 'dark' ? 'dark' : ''
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={themeClass}>
       <body className={`font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SettingsProvider>
-            {children}
-          </SettingsProvider>
-        </ThemeProvider>
+        <SettingsProvider>
+          {children}
+        </SettingsProvider>
         <Analytics />
       </body>
     </html>
