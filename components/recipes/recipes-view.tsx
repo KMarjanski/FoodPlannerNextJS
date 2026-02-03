@@ -118,10 +118,10 @@ export function RecipesView() {
               <div>
                 <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
                   {typeof window !== 'undefined' && window.innerWidth < 768 ? null : <ChefHat className="h-5 w-5 text-primary" />}
-                  <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t('Recipes')}</span>
+                  <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{t('Recipes')}</span>
                 </h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{filteredRecipes.length} {t('recipes available')}</span>
+                  <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{filteredRecipes.length} {t('recipes available')}</span>
                 </p>
               </div>
               <Button
@@ -148,7 +148,12 @@ export function RecipesView() {
               </div>
               <div className="flex items-center gap-2">
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="min-w-fit bg-secondary/50 border-border/50 px-3">
+                  <SelectTrigger
+                    className={
+                      `bg-secondary/50 border-border/50 px-3` +
+                      ((typeof window !== 'undefined' && window.innerWidth < 768) ? ' w-full' : ' min-w-fit')
+                    }
+                  >
                     <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
                     <SelectValue placeholder={t('Category')} />
                   </SelectTrigger>

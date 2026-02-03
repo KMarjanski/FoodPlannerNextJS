@@ -314,10 +314,10 @@ export function ShoppingListView() {
             <div>
               <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 {typeof window !== 'undefined' && window.innerWidth < 768 ? null : <ListChecks className="h-5 w-5 text-primary" />}
-                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t('Shopping List')}</span>
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{t('Shopping List')}</span>
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t('shoppingList.completed_count', { count: completedItems, total: totalItems, defaultValue: `${completedItems} z ${totalItems} ukończonych` })}</span>
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{t('shoppingList.completed_count', { count: completedItems, total: totalItems, defaultValue: `${completedItems} z ${totalItems} ukończonych` })}</span>
               </p>
             </div>
           </div>

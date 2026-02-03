@@ -202,18 +202,23 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
             <div>
               <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 {typeof window !== 'undefined' && window.innerWidth < 768 ? null : <ShoppingCart className="h-5 w-5 text-primary" />}
-                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t("Cart Builder")}</span>
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{t("Cart Builder")}</span>
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-14' : ''}>{t("Build your shopping cart from available ingredients")}</span>
+                <span className={typeof window !== 'undefined' && window.innerWidth < 768 ? 'ml-13' : ''}>{t("Build your shopping cart from available ingredients")}</span>
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full">
               {/* Save cart button removed, auto-save is now enabled */}
               <Button
                 variant="default"
                 size="sm"
-                className="mr-2"
+                className={
+                  "mr-2" +
+                  (typeof window !== 'undefined' && window.innerWidth < 768
+                    ? " flex-grow"
+                    : " ml-auto")
+                }
                 onClick={async () => {
                   try {
                     // Fetch all weeks and meals from planner

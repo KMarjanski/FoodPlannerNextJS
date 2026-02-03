@@ -2,7 +2,7 @@
 import * as React from "react"
 import { useState } from "react"
 import { Settings, CalendarDays } from "lucide-react"
-import { useIsMobile } from '@/hooks/use-mobile'
+import { useDeviceType } from '@/hooks/use-device-type'
 import { Button } from "@/components/ui/button"
 import { SettingsModal } from "@/components/settings/settings-modal"
 import { useSettings } from "@/lib/settings-context"
@@ -15,7 +15,7 @@ export function DashboardHeader({
 }) {
   const { t } = useSettings()
   const [open, setOpen] = useState(false)
-  const isMobile = useIsMobile()
+  const deviceType = useDeviceType()
 
   const handleReset = () => {
     const event = new CustomEvent('resetAllDays')
@@ -29,23 +29,46 @@ export function DashboardHeader({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-              {!isMobile && <CalendarDays className="h-5 w-5 text-primary" />}
-              <span className={isMobile ? 'ml-14' : ''}>{t('Weekly Meal Planner')}</span>
+              {deviceType !== 'mobile' && <CalendarDays className="h-5 w-5 text-primary" />}
+              <span className={deviceType === 'mobile' ? 'ml-13' : ''}>{t('Weekly Meal Planner')}</span>
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              <span className={isMobile ? 'ml-14' : ''}>{t('Plan your meals for the week')}</span>
+              <span className={deviceType === 'mobile' ? 'ml-13' : ''}>{t('Plan your meals for the week')}</span>
             </p>
           </div>
-          <div className="flex flex-row items-center gap-4 sm:gap-6">
-            {/* TabsList goes here, aligned right */}
-            {tabsList}
-            <Button
-              onClick={() => setOpen(true)}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
-            >
-              {t ? t("Clear All") : "Wyczyść wszystkie dni"}
-            </Button>
-          </div>
+          {/* Desktop: TabsList and button in a row. Mobile: TabsList in one row, button in another row below. */}
+          {deviceType === 'mobile' ? (
+            <>
+              <div className="flex flex-row items-center gap-4 sm:gap-6 w-full">{/* Force TabsList to full width on mobile */}
+                {tabsList && React.isValidElement(tabsList)
+                  ? React.cloneElement(
+                      tabsList as React.ReactElement<any>,
+                      {
+                        className: ((tabsList as any).props?.className ?? '') + ' w-full'
+                      }
+                    )
+                  : tabsList}
+              </div>
+              <div className="flex flex-row items-center gap-4 sm:gap-6 w-full mt-2">
+                <Button
+                  onClick={() => setOpen(true)}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 w-full"
+                >
+                  {t ? t("Clear All") : "Wyczyść wszystkie dni"}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-row items-center gap-4 sm:gap-6">
+              {tabsList}
+              <Button
+                onClick={() => setOpen(true)}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+              >
+                {t ? t("Clear All") : "Wyczyść wszystkie dni"}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
