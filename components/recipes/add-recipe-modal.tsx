@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { MoreHorizontal } from "lucide-react"
 import {
   type Recipe,
   type Ingredient,
@@ -47,6 +49,10 @@ export function AddRecipeModal({
   editRecipe,
   originalRecipe,
 }: AddRecipeModalProps) {
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  useEffect(() => {
+    if (!open) setShowAllCategories(false);
+  }, [open]);
   const [name, setName] = useState("")
   const [ingredients, setIngredients] = useState<Ingredient[]>([])
   const [searchQuery, setSearchQuery] = useState("")
@@ -215,21 +221,38 @@ export function AddRecipeModal({
             />
           </div>
 
-          {/* Recipe Category */}
+          {/* Recipe Category as Tabs */}
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-sm font-medium text-foreground">
+            <Label className="text-sm font-medium text-foreground">
               {t('Recipe Category')}
             </Label>
-            <select
-              id="category"
-              value={category}
-              onChange={e => setCategory(e.target.value)}
-              className="w-full bg-secondary/50 border border-border/50 focus:border-primary h-10 rounded px-3 text-foreground"
-            >
-              {recipeCategories.map(cat => (
-                <option key={cat} value={cat}>{t(cat)}</option>
-              ))}
-            </select>
+            <Tabs value={category} onValueChange={setCategory} className="w-full">
+              <TabsList className="w-full flex flex-wrap gap-1">
+                {showAllCategories
+                  ? recipeCategories.map(cat => (
+                      <TabsTrigger key={cat} value={cat} className="flex-1 min-w-[90px]">
+                        {t(cat)}
+                      </TabsTrigger>
+                    ))
+                  : <>
+                      {recipeCategories.slice(0, 3).map(cat => (
+                        <TabsTrigger key={cat} value={cat} className="flex-1 min-w-[90px]">
+                          {t(cat)}
+                        </TabsTrigger>
+                      ))}
+                      <TabsTrigger
+                        value="more"
+                        className="min-w-[40px] w-[40px] px-0 flex items-center justify-center"
+                        style={{ flex: 'none' }}
+                        onClick={e => { e.preventDefault(); setShowAllCategories(true); }}
+                        aria-label={t('More categories')}
+                      >
+                        <MoreHorizontal className="mx-auto" />
+                      </TabsTrigger>
+                    </>
+                }
+              </TabsList>
+            </Tabs>
           </div>
 
           {/* Ingredients */}
