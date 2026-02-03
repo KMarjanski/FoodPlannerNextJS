@@ -102,7 +102,8 @@ const ingredientToFoodCategory: Record<string, FoodItem["category"]> = {
 function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePickerSheetProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [recipes, setRecipes] = useState<Recipe[]>([])
-
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
+  // Do not focus input on open
   useEffect(() => {
     if (!open) {
       setSearchQuery("")
@@ -111,6 +112,12 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
         .then((res) => res.json())
         .then((data) => setRecipes(data))
         .catch(() => setRecipes([]))
+      // Prevent focus on open
+      setTimeout(() => {
+        if (searchInputRef.current) {
+          searchInputRef.current.blur();
+        }
+      }, 10);
     }
   }, [open])
 
@@ -147,11 +154,12 @@ function RecipePickerSheet({ open, onOpenChange, onSelect, mealType }: RecipePic
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              ref={searchInputRef}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("Search recipes...")}
               className="pl-10 h-10 bg-secondary/50 border-border/50"
-              autoFocus
+              tabIndex={0}
             />
           </div>
         </div>

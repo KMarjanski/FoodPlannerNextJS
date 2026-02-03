@@ -58,7 +58,6 @@ export function AddRecipeModal({
   const [showCustomForm, setShowCustomForm] = useState(false)
   
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (editRecipe) {
@@ -70,17 +69,13 @@ export function AddRecipeModal({
     }
   }, [editRecipe, open])
 
-  // For copy: if originalRecipe is provided, compare name and ingredients
-  const isCopy = !!originalRecipe
+  // For copy: only if originalRecipe is provided and editRecipe is not
+  const isCopy = !!originalRecipe && !editRecipe
   const isNameDifferent = isCopy ? name.trim() !== originalRecipe.name.trim() : true
   const areIngredientsDifferent = isCopy ? JSON.stringify(ingredients.map(i => ({ name: i.name, amount: i.amount, category: i.category }))) !== JSON.stringify(originalRecipe.ingredients.map(i => ({ name: i.name, amount: i.amount, category: i.category }))) : true
   const canSave = name.trim().length >= 3 && ingredients.length >= 2 && (!isCopy || (isNameDifferent && areIngredientsDifferent))
 
-  useEffect(() => {
-    if (open && nameInputRef.current) {
-      setTimeout(() => nameInputRef.current?.focus(), 100)
-    }
-  }, [open])
+
 
   const resetForm = () => {
     setName("")
@@ -186,12 +181,17 @@ export function AddRecipeModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-2xl min-h-[800px] max-h-[99vh] overflow-hidden flex flex-col bg-card border-border/50 shadow-2xl p-0 gap-0"
+        className="max-w-[98vw] w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl min-h-[650px] max-h-[99vh] md:min-h-[600px] md:max-h-[96vh] overflow-hidden flex flex-col bg-card border-border/50 shadow-2xl p-0 gap-0"
+        style={{ borderRadius: 24 }}
         onKeyDown={handleKeyDown}
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50">
           <DialogTitle className="text-lg font-semibold text-foreground">
-            {editRecipe ? t('Edit Recipe') : t('New Recipe')}
+            {isCopy
+              ? t('Copy Recipe', { defaultValue: 'Kopiuj przepis' })
+              : editRecipe
+                ? t('Edit Recipe', { defaultValue: 'Edytuj przepis' })
+                : t('New Recipe', { defaultValue: 'Nowy przepis' })}
           </DialogTitle>
         </DialogHeader>
 
@@ -202,12 +202,16 @@ export function AddRecipeModal({
               {t('Recipe Name')}
             </Label>
             <Input
-              ref={nameInputRef}
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('Enter recipe name')}
               className="bg-secondary/50 border-border/50 focus:border-primary h-10"
+              tabIndex={-1}
+              readOnly
+              onFocus={e => e.currentTarget.readOnly = false}
+              onMouseDown={e => e.currentTarget.readOnly = false}
+              onTouchStart={e => e.currentTarget.readOnly = false}
             />
           </div>
 
@@ -249,9 +253,13 @@ export function AddRecipeModal({
                     setSearchQuery(e.target.value)
                     setShowSuggestions(true)
                   }}
-                  onFocus={() => setShowSuggestions(true)}
+                  onFocus={e => { setShowSuggestions(true); e.currentTarget.readOnly = false; }}
+                  onMouseDown={e => e.currentTarget.readOnly = false}
+                  onTouchStart={e => e.currentTarget.readOnly = false}
                   placeholder={t('Search ingredients...')}
                   className="pl-10 bg-secondary/50 border-border/50 focus:border-primary h-10"
+                  tabIndex={-1}
+                  readOnly
                 />
               </div>
 
@@ -306,7 +314,6 @@ export function AddRecipeModal({
                     onChange={(e) => setCustomIngredientName(e.target.value)}
                     placeholder={t('Ingredient name')}
                     className="flex-1 bg-background/50 border-border/50 h-9"
-                    autoFocus
                   />
                   <Input
                     value={customIngredientAmount}
@@ -341,7 +348,7 @@ export function AddRecipeModal({
                     className="h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     <Plus className="h-3 w-3 mr-1" />
-                    Add
+                    {t('Add', { defaultValue: 'Dodaj' })}
                   </Button>
                   <Button
                     variant="ghost"
@@ -353,7 +360,7 @@ export function AddRecipeModal({
                     }}
                     className="h-8 text-xs text-muted-foreground"
                   >
-                    Cancel
+                    {t('Cancel', { defaultValue: 'Anuluj' })}
                   </Button>
                 </div>
               </div>
@@ -414,7 +421,11 @@ export function AddRecipeModal({
               className="h-8 px-4 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Check className="h-3.5 w-3.5 mr-1.5" />
-              {editRecipe ? t('Save') : t('Create Recipe')}
+              {isCopy
+                ? t('Copy', { defaultValue: 'Kopiuj' })
+                : editRecipe
+                  ? t('Edit', { defaultValue: 'Edytuj' })
+                  : t('Create Recipe', { defaultValue: 'Utwórz przepis' })}
             </Button>
           </div>
         </div>

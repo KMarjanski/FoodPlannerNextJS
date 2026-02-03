@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 
-import { Plus, Search, Filter, Grid3X3, List, ChefHat } from "lucide-react"
+import { Plus, Search, Filter, ChefHat } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -31,7 +31,7 @@ export function RecipesView() {
   }, [])
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  // usunięto przełącznik widoku grid/list
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
   const [copyingRecipe, setCopyingRecipe] = useState<Recipe | null>(null)
@@ -136,8 +136,8 @@ export function RecipesView() {
               </Button>
             </div>
 
-            <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center">
-              <div className="relative flex-1 max-w-md">
+            <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center w-full">
+              <div className="relative flex-1 w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   value={searchQuery}
@@ -148,7 +148,7 @@ export function RecipesView() {
               </div>
               <div className="flex items-center gap-2">
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-[140px] bg-secondary/50 border-border/50">
+                  <SelectTrigger className="min-w-fit bg-secondary/50 border-border/50 px-3">
                     <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
                     <SelectValue placeholder={t('Category')} />
                   </SelectTrigger>
@@ -161,32 +161,7 @@ export function RecipesView() {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="flex items-center rounded-lg border border-border/50 bg-secondary/50 p-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setViewMode("grid")}
-                    className={`h-7 w-7 ${
-                      viewMode === "grid"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Grid3X3 className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setViewMode("list")}
-                    className={`h-7 w-7 ${
-                      viewMode === "list"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <List className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
+                {/* usunięto przełącznik widoku grid/list */}
               </div>
             </div>
           </div>
@@ -217,11 +192,7 @@ export function RecipesView() {
             </div>
           ) : (
             <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-                  : "flex flex-col gap-3"
-              }
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
             >
               {filteredRecipes.map((recipe) => (
                 <RecipeCard
@@ -254,8 +225,8 @@ export function RecipesView() {
           if (!open) setCopyingRecipe(null)
         }}
         onSave={handleSaveRecipe}
-        editRecipe={copyingRecipe || editingRecipe}
-        originalRecipe={copyingRecipe && editingRecipe == null ? recipes.find(r => r.id === copyingRecipe.id.split('-copy-')[0]) : null}
+        editRecipe={copyingRecipe ? null : editingRecipe}
+        originalRecipe={copyingRecipe ? recipes.find(r => r.id === copyingRecipe.id.split('-copy-')[0]) : null}
       />
     </AppLayout>
   )

@@ -41,7 +41,6 @@ export function WeekGrid({ weekData, onEditDay, showToday }: WeekGridProps & { s
     }
     debug = { lastModified: (weekData as any).lastModified, lastMod: lastMod.toISOString(), today: now.toISOString(), diffDays, startIndex, todayIndex, todayName: weekData.days[todayIndex]?.day };
     // eslint-disable-next-line no-console
-    console.log('WEEKGRID DEBUG', debug);
   }
 
   return (

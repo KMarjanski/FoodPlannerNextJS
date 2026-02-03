@@ -98,18 +98,26 @@ export function IngredientItem({
     setSwiped(false);
   }
 
+  // Make the whole card clickable for adding to cart or removing from cart
+  const clickableAdd = onAdd && !isInCart;
+  const clickableRemove = onRemove && isInCart;
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 relative",
+        "flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 relative cursor-pointer",
         "bg-card/50 border-border/50",
         isDragging && "opacity-50 scale-95",
         isInCart && "border-primary/30 bg-primary/5",
-        !isInCart && swiped && isMobile && "bg-destructive/10 border-destructive/40"
+        !isInCart && swiped && isMobile && "bg-destructive/10 border-destructive/40",
+        (clickableAdd || clickableRemove) && "hover:bg-primary/10 focus:bg-primary/20"
       )}
       onTouchStart={!isInCart ? handleTouchStart : undefined}
       onTouchMove={!isInCart ? handleTouchMove : undefined}
       onTouchEnd={!isInCart ? handleTouchEnd : undefined}
+      onClick={clickableAdd ? onAdd : clickableRemove ? () => onRemove(ingredient._id) : undefined}
+      tabIndex={clickableAdd || clickableRemove ? 0 : undefined}
+      role={(clickableAdd || clickableRemove) ? "button" : undefined}
+      aria-label={clickableAdd ? t("Add to cart") : clickableRemove ? t("Remove from cart") : undefined}
     >
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground truncate">
@@ -145,7 +153,8 @@ export function IngredientItem({
       )}
 
       {/* Przerzucanie składników między listami */}
-      {onAdd && !isInCart && (
+      {/* Hide the plus/minus button if the whole card is clickable */}
+      {onAdd && !isInCart && !clickableAdd && (
         <Button
           variant="ghost"
           size="icon"
@@ -156,6 +165,19 @@ export function IngredientItem({
           aria-label={t("Add to cart")}
         >
           <Plus className="h-4 w-4" />
+        </Button>
+      )}
+      {onRemove && isInCart && !clickableRemove && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onRemove(ingredient._id)}
+          className={cn(
+            "h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+          )}
+          aria-label={t("Remove from cart")}
+        >
+          <Minus className="h-4 w-4" />
         </Button>
       )}
       {onRemove && isInCart && (

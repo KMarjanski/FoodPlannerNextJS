@@ -160,14 +160,17 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
   }, [cartItems]);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   // Dynamiczny formularz: wyszukiwarka lub dodawanie składnika
-    // Focus automatyczny przy zmianie trybu inputu
-    useEffect(() => {
-      if (filteredIngredients.length > 0) {
-        searchInputRef.current?.focus();
-      } else {
-        addInputRef.current?.focus();
-      }
-    }, [filteredIngredients.length]);
+  // Focus automatyczny tylko na pierwszym renderze lub po przełączeniu trybu (nie po zmianie kategorii)
+  const prevFilteredLength = useRef(filteredIngredients.length);
+  useEffect(() => {
+    // focus only if mode (search/add) changed, not after every filter/category change
+    if (prevFilteredLength.current === 0 && filteredIngredients.length > 0) {
+      searchInputRef.current?.focus();
+    } else if (prevFilteredLength.current > 0 && filteredIngredients.length === 0) {
+      addInputRef.current?.focus();
+    }
+    prevFilteredLength.current = filteredIngredients.length;
+  }, [filteredIngredients.length]);
   const [newCategory, setNewCategory] = useState<IngredientCategory>(ingredientCategories[0]?.value || "fruits");
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
@@ -389,10 +392,7 @@ function CartContent({ ingredients: initialIngredients }: CartContentProps) {
                           ingredient={ing}
                           isInCart={isInCart(key)}
                           onAdd={() => addToCart(ing)}
-                          onRemove={(id) => {
-                            if (id) setIngredients(prev => prev.filter(i => i._id !== id));
-                            else removeFromCart(key);
-                          }}
+                          onRemove={() => removeFromCart(key)}
                           isMobile={isMobile}
                         />
                       );

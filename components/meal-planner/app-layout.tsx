@@ -51,27 +51,27 @@ export function AppLayout({ children }: AppLayoutProps) {
     <CartProvider>
       <div className="min-h-screen bg-background">
         <div style={!hydrated ? { visibility: 'hidden' } : undefined}>
-          {typeof sidebarCollapsed !== 'undefined' && typeof sidebarHidden !== 'undefined' && (
-            <AppSidebar
-              collapsed={sidebarCollapsed}
-              onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-              hidden={sidebarHidden}
-              setHidden={setSidebarHidden}
-            />
-          )}
-          {typeof sidebarCollapsed !== 'undefined' && typeof sidebarHidden !== 'undefined' && (
-            <main
-              className={cn(
-                "transition-all duration-300 ease-out",
-                sidebarHidden
-                  ? "ml-0"
-                  : (sidebarCollapsed)
-                    ? "ml-[72px]"
-                    : "ml-[240px]"
-              )}
-            >
-              {children}
-            </main>
+          {hydrated && typeof sidebarCollapsed !== 'undefined' && typeof sidebarHidden !== 'undefined' && (
+            <>
+              <AppSidebar
+                collapsed={sidebarCollapsed}
+                onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+                hidden={sidebarHidden}
+                setHidden={setSidebarHidden}
+              />
+              <main
+                className={cn(
+                  "transition-all duration-300 ease-out",
+                  sidebarHidden
+                    ? "ml-0"
+                    : (sidebarCollapsed)
+                      ? "ml-[72px]"
+                      : "ml-[240px]"
+                )}
+              >
+                {children}
+              </main>
+            </>
           )}
         </div>
       </div>
